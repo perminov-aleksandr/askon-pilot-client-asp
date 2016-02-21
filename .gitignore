@@ -1,0 +1,4 @@
+/.vs/Pilot-ICE-WebClient/v14/*.suo
+/*.user
+src/Ascon.Pilot.WebClient/node_modules/*
+src/Ascon.Pilot.WebClient/wwwroot/lib/*
