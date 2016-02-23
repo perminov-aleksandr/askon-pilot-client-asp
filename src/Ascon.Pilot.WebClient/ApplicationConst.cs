@@ -1,9 +1,18 @@
-﻿namespace Ascon.Pilot.WebClient
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Ascon.Pilot.WebClient
 {
     public static class ApplicationConst
     {
-        public static readonly string PilotServerUrl = "http://localhost:5545";
-        public static readonly string PilotServerAppName = "IServerApi";
+        static ApplicationConst()
+        {
+            var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
+            var config = builder.Build();
+            PilotServerUrl = config["PilotServer:Url"];
+        }
+
+        public static readonly string PilotServerUrl;
+        public static readonly string PilotServerApiName = "IServerApi";
         public static readonly string OpenDatabaseMethod = "OpenDatabase";
 
         public static readonly string PilotServerConnectUrl = "/web/connect";

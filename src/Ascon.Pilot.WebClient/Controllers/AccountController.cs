@@ -73,7 +73,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             var openDatabaseRequest = new OpenDatabaseRequest
             {
                 licenseType = 100,
-                api = ApplicationConst.PilotServerAppName,
+                api = ApplicationConst.PilotServerApiName,
                 method = ApplicationConst.OpenDatabaseMethod,
                 useWindowsAuth = false,
                 database = model.DatabaseName,
