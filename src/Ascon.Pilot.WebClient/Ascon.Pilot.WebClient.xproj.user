@@ -3,5 +3,6 @@
   <PropertyGroup>
     <ActiveDebugProfile>IIS Express</ActiveDebugProfile>
     <DebugCLRTypeOverride>NETCore</DebugCLRTypeOverride>
+    <NameOfLastUsedPublishProfile>DeployFS</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

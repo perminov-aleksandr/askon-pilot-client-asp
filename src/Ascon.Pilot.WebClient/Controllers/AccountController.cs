@@ -28,19 +28,24 @@ namespace Ascon.Pilot.WebClient.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var serializedData = SerializeOpenDatabaseRequestData(model);
-
                 var baseAddress = new Uri(ApplicationConst.PilotServerUrl);
                 using (var handler = new HttpClientHandler { CookieContainer = new CookieContainer() })
                 using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
                 {
-                    var result = await client.PostAsync(ApplicationConst.PilotServerConnectUrl, new StringContent(string.Empty));
-                    if (!result.IsSuccessStatusCode)
+                    HttpResponseMessage result;
+                    try
+                    {
+                        result = await client.PostAsync(ApplicationConst.PilotServerConnectUrl, new StringContent(string.Empty));
+                        if (!result.IsSuccessStatusCode)
+                            throw new Exception(string.Format("Server connection failed with status: {0}", result.StatusCode));
+                    }
+                    catch (Exception)
                     {
                         ModelState.AddModelError("", "Не удается подключиться к серверу");
                         return View(model);
                     }
 
+                    var serializedData = SerializeOpenDatabaseRequestData(model);
                     var content = new StringContent(serializedData, Encoding.UTF8, "application/json");
                     result = await client.PostAsync(ApplicationConst.PilotServerCallApiUrl, content);
                     var resultContent = await result.Content.ReadAsStringAsync();
@@ -48,7 +53,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                     try
                     {
                         var deserializedResult = JsonConvert.DeserializeObject(resultContent);
-                        return Json("Вы успешно авторизованы в системе");
+                        return View("LoginSuccess", "Вы успешно авторизованы в системе");
                     }
                     catch (JsonReaderException)
                     {
