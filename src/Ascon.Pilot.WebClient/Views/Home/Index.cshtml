@@ -1,3 +1,14 @@
-﻿@{
+﻿@model string
+@{
     ViewData["Title"] = "Главная";
 }
+
+@section sidePanel {
+    <div id="sidePanel">
+        @Model
+    </div>
+}
+
+<script type="text/javascript">
+    var sidePanelData = {};
+</script>

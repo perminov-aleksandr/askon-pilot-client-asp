@@ -24,12 +24,19 @@
     @if (!IsSectionDefined("title"))
     {
         <h2>@ViewBag.Title</h2>
-        <br/>
+        <br />
     }
-    @RenderBody()
+    <div class="row">
+        <div class="col-md-2">
+            @RenderSection("sidePanel", false)
+        </div>
+        <div class="col-md-10">
+            @RenderBody()
+        </div>
+    </div>
     <hr/>
     <footer>
-        <p>&copy; 2016 - Web-клиент сервера Pilot-ICE</p>
+        <p>&copy; 2016 - Web-клиент сервера Pilot</p>
     </footer>
 </div>
 
@@ -42,15 +49,13 @@
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"
             asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
             asp-fallback-test="window.jQuery">
-        
     </script>
     <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js"
             asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
             asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
-
-    
     </script>
     <script src="~/js/site.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"></script>
 </environment>
 
 @RenderSection("scripts", false)

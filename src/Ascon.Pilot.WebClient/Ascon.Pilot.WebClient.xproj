@@ -19,5 +19,11 @@
     <DnxInvisibleContent Include=".bowerrc" />
     <DnxInvisibleContent Include="package.json" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Askon.Pilot.Transport.Core\Ascon.Pilot.Server.Api\Ascon.Pilot.Server.Api.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <DnxInvisibleFolder Include="Ascon.Pilot\" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\DNX\Microsoft.DNX.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

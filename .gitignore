@@ -3,3 +3,4 @@
 src/Ascon.Pilot.WebClient/node_modules/*
 src/Ascon.Pilot.WebClient/wwwroot/lib/*
 publish
+/src/Ascon.Pilot.WebClient.IdentityAuth/*
