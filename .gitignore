@@ -2,5 +2,8 @@
 *.user
 src/Ascon.Pilot.WebClient/node_modules/*
 src/Ascon.Pilot.WebClient/wwwroot/lib/*
-publish
+/publish
 /src/Ascon.Pilot.WebClient.IdentityAuth/*
+/packages
+/Askon.Pilot.Transport.Core
+/artifacts
