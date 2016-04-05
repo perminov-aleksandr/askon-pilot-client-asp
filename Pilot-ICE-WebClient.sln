@@ -8,9 +8,20 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4BC994A6-1239-44E8-A3C2-6FE12A1B4615}"
 	ProjectSection(SolutionItems) = preProject
 		global.json = global.json
+		nlog.config = nlog.config
+		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Ascon.Pilot.WebClient", "src\Ascon.Pilot.WebClient\Ascon.Pilot.WebClient.xproj", "{E39A380E-C0A9-4AEC-BD7C-6B606A85D2A9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{357D080B-723A-4417-82CD-CFAE130DDE3C} = {357D080B-723A-4417-82CD-CFAE130DDE3C}
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Ascon.Pilot.Core", "src\Ascon.Pilot.Core\Ascon.Pilot.Core.xproj", "{A88DC35B-281D-4699-A57B-C4FA0976D44C}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Ascon.Pilot.Transport", "src\Ascon.Pilot.Transport\Ascon.Pilot.Transport.xproj", "{357D080B-723A-4417-82CD-CFAE130DDE3C}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Ascon.Pilot.Server.Api", "src\Ascon.Pilot.Server.Api\Ascon.Pilot.Server.Api.xproj", "{FD6C1C4C-B0BE-4490-A53B-AA35FD4756B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,11 +36,33 @@ Global
 		{E39A380E-C0A9-4AEC-BD7C-6B606A85D2A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E39A380E-C0A9-4AEC-BD7C-6B606A85D2A9}.Signing|Any CPU.ActiveCfg = Release|Any CPU
 		{E39A380E-C0A9-4AEC-BD7C-6B606A85D2A9}.Signing|Any CPU.Build.0 = Release|Any CPU
+		{A88DC35B-281D-4699-A57B-C4FA0976D44C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A88DC35B-281D-4699-A57B-C4FA0976D44C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A88DC35B-281D-4699-A57B-C4FA0976D44C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A88DC35B-281D-4699-A57B-C4FA0976D44C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A88DC35B-281D-4699-A57B-C4FA0976D44C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A88DC35B-281D-4699-A57B-C4FA0976D44C}.Signing|Any CPU.ActiveCfg = Debug|Any CPU
+		{A88DC35B-281D-4699-A57B-C4FA0976D44C}.Signing|Any CPU.Build.0 = Debug|Any CPU
+		{357D080B-723A-4417-82CD-CFAE130DDE3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{357D080B-723A-4417-82CD-CFAE130DDE3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{357D080B-723A-4417-82CD-CFAE130DDE3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{357D080B-723A-4417-82CD-CFAE130DDE3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{357D080B-723A-4417-82CD-CFAE130DDE3C}.Signing|Any CPU.ActiveCfg = Debug|Any CPU
+		{357D080B-723A-4417-82CD-CFAE130DDE3C}.Signing|Any CPU.Build.0 = Debug|Any CPU
+		{FD6C1C4C-B0BE-4490-A53B-AA35FD4756B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD6C1C4C-B0BE-4490-A53B-AA35FD4756B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD6C1C4C-B0BE-4490-A53B-AA35FD4756B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD6C1C4C-B0BE-4490-A53B-AA35FD4756B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD6C1C4C-B0BE-4490-A53B-AA35FD4756B6}.Signing|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD6C1C4C-B0BE-4490-A53B-AA35FD4756B6}.Signing|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E39A380E-C0A9-4AEC-BD7C-6B606A85D2A9} = {DFF323FE-3405-47E7-A439-FDD561F1122A}
+		{A88DC35B-281D-4699-A57B-C4FA0976D44C} = {DFF323FE-3405-47E7-A439-FDD561F1122A}
+		{357D080B-723A-4417-82CD-CFAE130DDE3C} = {DFF323FE-3405-47E7-A439-FDD561F1122A}
+		{FD6C1C4C-B0BE-4490-A53B-AA35FD4756B6} = {DFF323FE-3405-47E7-A439-FDD561F1122A}
 	EndGlobalSection
 EndGlobal

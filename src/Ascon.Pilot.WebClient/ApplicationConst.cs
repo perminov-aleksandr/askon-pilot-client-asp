@@ -14,6 +14,9 @@ namespace Ascon.Pilot.WebClient
         public static readonly string PilotServerUrl;
         public static readonly string PilotServerApiName = "IServerApi";
         public static readonly string PilotMiddlewareInstanceName = "AskonPilotMiddlewareInstance";
+
+        public static readonly string HttpSchemeName = "http";
+        public static readonly string SchemeDelimiter = "://";
     }
 
     public static class ApiMethod

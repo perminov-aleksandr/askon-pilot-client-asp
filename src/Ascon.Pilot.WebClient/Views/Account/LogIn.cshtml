@@ -5,7 +5,7 @@
     ViewBag.Title = "Войти";
 }
 
-@using (Html.BeginForm(FormMethod.Post, new {@class = "form-horizontal"}))
+@using (Html.BeginForm("AltLogIn", "Account", FormMethod.Post, new {@class = "form-horizontal"}))
 {
     @Html.ValidationSummary(true)
     <div class="form-group">

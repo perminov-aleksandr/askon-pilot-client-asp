@@ -7,6 +7,7 @@ using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace Ascon.Pilot.WebClient
 {
@@ -49,8 +50,11 @@ namespace Ascon.Pilot.WebClient
                 options.AutomaticChallenge = true;
             });
 
+            loggerFactory.AddNLog();
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            env.ConfigureNLog("../../nlog.config");
 
             if (env.IsDevelopment())
             {

@@ -1,0 +1,30 @@
+{
+  "version": "0.0.1-*",
+  "description": "Ascon.Pilot.Server.Api Class Library",
+  "authors": [ "alexander" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "frameworks": {
+    "net451": {
+    },
+    "dotnet5.4": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-beta-23516",
+        "System.Collections": "4.0.11-beta-23516",
+        "System.Linq": "4.0.1-beta-23516",
+        "System.Runtime": "4.0.21-beta-23516",
+        "System.Threading": "4.0.11-beta-23516",
+        "System.Net.Utilities": "4.0.0-beta-23516"
+      }
+    }
+  },
+  "dependencies": {
+    "Ascon.Pilot.Core": "0.0.1-*",
+    "Ascon.Pilot.Transport": "0.0.1-*",
+    "Microsoft.Net.Http": "2.2.22",
+    "NLog": "4.4.0-beta2",
+    "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11",
+    "System.Net.Primitives": "4.0.11-beta-23516"
+  }
+}

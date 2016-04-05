@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
+using Ascon.Pilot.Server.Api;
+using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.WebClient.Models;
 using Ascon.Pilot.WebClient.ViewModels;
 using Microsoft.AspNet.Authorization;
@@ -25,45 +27,39 @@ namespace Ascon.Pilot.WebClient.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[AllowAnonymous]
-        //public async Task<IActionResult> AltLogIn(LogInViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var message = new MarshallingMessage()
-        //        {
-        //            Interface = ApplicationConst.PilotServerApiName,
-        //            Method = ApiMethod.OpenDatabase
-        //        };
-        //        var baseAddress = new Uri(ApplicationConst.PilotServerUrl);
-        //        using (var handler = new HttpClientHandler { CookieContainer = new CookieContainer() })
-        //        using (var client = new HttpClient(handler) {BaseAddress = baseAddress})
-        //        {
-        //            using (var ms = new MemoryStream())
-        //            {
-        //                ProtoBuf.Serializer.Serialize(ms, message);
-        //                using (var content = new ByteArrayContent(ms.ToArray()))
-        //                {
-        //                    var task = await client.PostAsync(PilotMethod.CALL, content);
-        //                    await ProcessResponse(task);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return View("LogIn");
-        //}
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> AltLogIn(LogInViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View("LogIn");
 
-        //private async Task<IActionResult> ProcessResponse(HttpResponseMessage task)
-        //{
-        //    var serializedResult = await task.Content.ReadAsByteArrayAsync();
-        //    using (var ms = new MemoryStream(serializedResult))
-        //    {
-        //        var result = ProtoBuf.Serializer.Deserialize<MarshallingMessage>(ms);
-        //    }
-        //    return View();
-        //}
+            using (var client = new HttpPilotClient())
+            {
+                var serverUrl = string.Format("{0}/{1}", ApplicationConst.PilotServerUrl, model.DatabaseName);
+                client.Connect(ConnectionCredentials.GetConnectionCredentials(serverUrl, model.Login, model.Password.ConvertToSecureString()));
+                var serviceCallbackProxy = new Castle.DynamicProxy.ProxyGenerator().CreateInterfaceProxyWithoutTarget<IServerCallback>();
 
+                var serverApi = client.GetServerApi(serviceCallbackProxy);
+                var dbInfo = serverApi.OpenDatabase(model.DatabaseName, model.Login, model.Password.EncryptAes(), false);
+                if (dbInfo == null)
+                {
+                    ModelState.AddModelError("", "Авторизация не удалась, проверьте данные и повторите вход");
+                    return View("LogIn", model);
+                }
+
+                await SignIn(dbInfo);
+                
+                var objects = serverApi.GetObjects(new[] { DObject.RootId });
+                if (objects != null && objects.Any())
+                {
+                    var childrenCount = objects[0].Children.Count;
+                }
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel model, string returnUrl = null)
@@ -97,22 +93,9 @@ namespace Ascon.Pilot.WebClient.Controllers
                     try
                     {
                         var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
-
                         var cookieString = cookieContainer.GetCookieHeader(baseAddress);
-                        cookieString = cookieContainer.GetCookies(baseAddress)["SID"].ToString();
+                        await SignIn(dbInfo);
 
-                        var claims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, dbInfo.Person.Login),
-                            new Claim(ClaimTypes.GivenName, dbInfo.Person.DisplayName),
-                            new Claim(ClaimTypes.Role, dbInfo.Person.IsAdmin ? Roles.Admin : Roles.User),
-                            new Claim(ClaimTypes.Sid, cookieString)
-                        };
-
-                        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Custom"));
-                        
-                        await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
-                        
                         return RedirectToAction("Index", "Home");
                     }
                     catch (JsonReaderException)
@@ -131,6 +114,21 @@ namespace Ascon.Pilot.WebClient.Controllers
                 }
             }
             return View(model);
+        }
+
+        private async Task SignIn(DDatabaseInfo dbInfo)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, dbInfo.Person.Login),
+                new Claim(ClaimTypes.GivenName, dbInfo.Person.DisplayName),
+                new Claim(ClaimTypes.Role, dbInfo.Person.IsAdmin ? Roles.Admin : Roles.User),
+                new Claim(ClaimTypes.Sid, dbInfo.Person.Sid),
+                new Claim("DatabaseId", dbInfo.DatabaseId.ToString())
+            };
+
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Custom"));
+            await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
         }
 
         public async Task<IActionResult> LogOff()

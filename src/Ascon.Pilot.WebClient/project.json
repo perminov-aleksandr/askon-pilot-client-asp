@@ -20,17 +20,24 @@
     "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
     "Microsoft.Net.Http": "2.2.22",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-rc1-final",
-    "Microsoft.AspNet.Identity": "3.0.0-rc1-final"
+    "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
+    "NLog": "4.4.0-beta2",
+    "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11"    
   },
 
   "commands": {
     "web": "Microsoft.AspNet.Server.Kestrel"
   },
 
-  "frameworks": {
+  "frameworks": {    
     "dnx451": {
       "dependencies": {
-        "protobuf-portable-net": "2.0.0.668"
+        "Ascon.Pilot.Core": "0.0.1-*",
+        "Ascon.Pilot.Server.Api": "0.0.1-*",
+        "Ascon.Pilot.Transport": "0.0.1-*",
+        "Castle.Core": "3.3.3",
+        "protobuf-portable-net": "2.0.0.668",
+        "System.Net.Http": "4.0.1-rc2-23805"
       },
       "frameworkAssemblies": {
         "System.Net.Http": "4.0.0.0"
@@ -38,14 +45,18 @@
     },
     "dnxcore50": {
       "dependencies": {
+        "Ascon.Pilot.Core": "0.0.1-*",
+        "Ascon.Pilot.Server.Api": "0.0.1-*",
+        "Ascon.Pilot.Transport": "0.0.1-*",
+        "castle.core.netcore": "3.3.4-beta8",
         "protobuf-portable-net": "2.0.0.668",
         "System.Net.Http": "4.0.0-beta-22816",
-        "System.Net.Utilities": "4.0.0-beta-23516",
-        "System.Net.Http.WinHttpHandler": "4.0.0-beta-23516"
+        "System.Net.Http.WinHttpHandler": "4.0.0-beta-23516",
+        "System.Net.Utilities": "4.0.0-beta-23516"
       }
     }
   },
-
+  
   "exclude": [
     "wwwroot",
     "node_modules"
