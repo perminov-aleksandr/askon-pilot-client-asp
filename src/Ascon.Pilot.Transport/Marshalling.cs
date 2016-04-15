@@ -118,7 +118,7 @@ namespace Ascon.Pilot.Transport
             }
         }
 
-        private Object GetImplementation(string interfaceName)
+        private object GetImplementation(string interfaceName)
         {
             return _registered.GetOrAdd(interfaceName, (iName) => _factory.GetImplementation(iName));
         }
@@ -187,7 +187,7 @@ namespace Ascon.Pilot.Transport
                 return Convert.ChangeType(null, method.ReturnType);
             using (var mem = new MemoryStream(data))
             {
-                var result = ProtoSerializer.Deserialize(mem.ToArray(), method.ReturnType);
+                var result = ProtoSerializer.Deserialize(mem, method.ReturnType);
                 return Convert.ChangeType(result, method.ReturnType);
             }
         }
@@ -204,15 +204,7 @@ namespace Ascon.Pilot.Transport
         {
             return ProtoBuf.Meta.RuntimeTypeModel.Default.DeserializeWithLengthPrefix(stream, null, type, PrefixStyle.Base128, 0);
         }
-
-        public static object Deserialize(byte[] data, Type type)
-        {
-            using (var ms = new MemoryStream(data))
-            {
-                return ProtoBuf.Meta.RuntimeTypeModel.Default.DeserializeWithLengthPrefix(ms, null, type, PrefixStyle.Base128, 0);
-            }
-        }
-
+        
         public static T Deserialize<T>(Stream stream)
         {
             return Serializer.DeserializeWithLengthPrefix<T>(stream, PrefixStyle.Base128, 0);

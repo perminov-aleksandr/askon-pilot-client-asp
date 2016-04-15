@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.WebClient.Extensions;
-using Ascon.Pilot.WebClient.Models;
+using Ascon.Pilot.WebClient.Models.Requests;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
@@ -18,10 +17,10 @@ namespace Ascon.Pilot.WebClient.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            //var sidePanel = await RecieveSidePanel();
-            var sidePanel = AltRecieveSidePanel();
+            var sidePanel = await RecieveSidePanel();
+            //var sidePanel = AltRecieveSidePanel();
             return View(model: sidePanel);
         }
 
@@ -61,7 +60,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                 var response = await client.PostAsync(PilotMethod.WEB_CALL, content);
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception(string.Format("Server connection failed with status: {0}", response.StatusCode));
+                    throw new Exception($"Server connection failed with status: {response.StatusCode}");
                 }
                 var result = await response.Content.ReadAsStringAsync();
                 return result;
@@ -70,11 +69,11 @@ namespace Ascon.Pilot.WebClient.Controllers
 
         private static string SerializeObjectsRequest()
         {
-            var getObjectsRequest = new GetObjectsRequest()
+            var getObjectsRequest = new GetObjectsRequest
             {
                 api = ApplicationConst.PilotServerApiName,
                 method = ApiMethod.GetObjects,
-                ids = new[] {Guid.Parse("00000001-0001-0001-0001-000000000001") }
+                ids = new[] { DObject.RootId }
             };
             return JsonConvert.SerializeObject(getObjectsRequest);
         }

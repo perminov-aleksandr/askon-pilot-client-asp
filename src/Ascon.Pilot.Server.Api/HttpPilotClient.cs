@@ -26,6 +26,12 @@ namespace Ascon.Pilot.Server.Api
             _transportCallback = new CallbackReceiverAdapter(_unmarshaller, CallbackError);
         }
 
+        public HttpPilotClient(ConnectionCredentials credentials) 
+            : this()
+        {
+            Connect(credentials);
+        }
+
         public void SetConnectionLostListener(IConnectionLostListener connectionLostListener)
         {
             _connectionLostListener = connectionLostListener;

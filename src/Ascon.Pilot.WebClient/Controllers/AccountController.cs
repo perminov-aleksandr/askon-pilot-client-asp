@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
-using Ascon.Pilot.WebClient.Models;
+using Ascon.Pilot.WebClient.Models.Requests;
 using Ascon.Pilot.WebClient.ViewModels;
+using Castle.Core.Internal;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
@@ -34,12 +35,12 @@ namespace Ascon.Pilot.WebClient.Controllers
             if (!ModelState.IsValid)
                 return View("LogIn");
 
-            using (var client = new HttpPilotClient())
+            //var serverUrl = $"{ApplicationConst.PilotServerUrl}/{model.DatabaseName}";
+            var serverUrl = ApplicationConst.PilotServerUrl;
+            var connectionCredentials = ConnectionCredentials.GetConnectionCredentials(serverUrl, model.Login, model.Password.ConvertToSecureString());
+            using (var client = new HttpPilotClient(connectionCredentials))
             {
-                var serverUrl = string.Format("{0}/{1}", ApplicationConst.PilotServerUrl, model.DatabaseName);
-                client.Connect(ConnectionCredentials.GetConnectionCredentials(serverUrl, model.Login, model.Password.ConvertToSecureString()));
                 var serviceCallbackProxy = new Castle.DynamicProxy.ProxyGenerator().CreateInterfaceProxyWithoutTarget<IServerCallback>();
-
                 var serverApi = client.GetServerApi(serviceCallbackProxy);
                 var dbInfo = serverApi.OpenDatabase(model.DatabaseName, model.Login, model.Password.EncryptAes(), false);
                 if (dbInfo == null)

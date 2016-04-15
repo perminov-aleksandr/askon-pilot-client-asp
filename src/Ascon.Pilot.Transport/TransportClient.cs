@@ -158,6 +158,9 @@ namespace Ascon.Pilot.Transport
             {
                 string stringedData = Encoding.Unicode.GetString(data);
                 exception = JsonConvert.DeserializeObject<Exception>(stringedData);
+                if (exception == null)
+                    exception = new ArgumentException("Can not deserialize exception from server");
+                return exception;
             }
             catch (Exception)
             {
