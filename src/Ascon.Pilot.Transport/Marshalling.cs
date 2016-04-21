@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Castle.DynamicProxy;
+using Newtonsoft.Json;
 using ProtoBuf;
 
 namespace Ascon.Pilot.Transport
@@ -37,6 +40,22 @@ namespace Ascon.Pilot.Transport
         {
             var generator = new ProxyGenerator();
             return generator.CreateInterfaceProxyWithoutTarget<T>(new Interceptor(_service));
+        }
+    }
+
+    public class JsonMarshaller : IGetService
+    {
+        private readonly ICallService _service;
+
+        public JsonMarshaller(ICallService service)
+        {
+            this._service = service;
+        }
+
+        public T Get<T>() where T : class
+        {
+            var generator = new ProxyGenerator();
+            return generator.CreateInterfaceProxyWithoutTarget<T>(new JsonInterceptor(_service));
         }
     }
 
@@ -121,6 +140,65 @@ namespace Ascon.Pilot.Transport
         private object GetImplementation(string interfaceName)
         {
             return _registered.GetOrAdd(interfaceName, (iName) => _factory.GetImplementation(iName));
+        }
+    }
+
+    public class JsonInterceptor : IInterceptor
+    {
+        private readonly ICallService _service;
+
+        public JsonInterceptor(ICallService service)
+        {
+            _service = service;
+        }
+
+        public void Intercept(IInvocation invocation)
+        {
+            var method = invocation.Method;
+
+            /*if (method.Name == "GetHashCode")
+                return new ReturnMessage(this.GetHashCode(), null, 0, methodCall.LogicalCallContext, methodCall);
+            if (method.Name == "Equals")
+                return new ReturnMessage(this.Equals(methodCall.Args[0]), null, 0, methodCall.LogicalCallContext, methodCall);
+            if (method.Name == "ToString")
+                return new ReturnMessage(this.ToString(), null, 0, methodCall.LogicalCallContext, methodCall);*/
+
+            try
+            {
+                var data = CallToData(method, invocation);
+                var result = _service.Call(data);
+                invocation.ReturnValue = DataToResult(result, method);
+            }
+            catch (Exception e)
+            {
+                invocation.ReturnValue = null;
+            }
+        }
+
+        private byte[] CallToData(MethodInfo method, IInvocation invocation)
+        {
+            dynamic value = new ExpandoObject();
+            value.api = method.DeclaringType.Name;
+            value.method = method.Name;
+
+            var parameters = invocation.Method.GetParameters();
+            for (int i = 0; i < invocation.Arguments.Length; i++)
+            {
+                JsonConvert.PopulateObject(parameters[i].Name, value);
+            }
+                
+            var res = JsonConvert.SerializeObject(value);
+            return Encoding.UTF8.GetBytes(res);
+        }
+
+        private object DataToResult(byte[] data, MethodInfo method)
+        {
+            if (data.Length == 0)
+                return Convert.ChangeType(null, method.ReturnType);
+
+            var serializedResult = Encoding.UTF8.GetString(data);
+            var deserializedObject = JsonConvert.DeserializeObject(serializedResult);
+            return Convert.ChangeType(deserializedObject, method.ReturnType);
         }
     }
 

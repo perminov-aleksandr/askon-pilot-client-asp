@@ -1728,7 +1728,7 @@
           "ref/dotnet5.4/System.Security.Cryptography.X509Certificates.dll": {}
         }
       },
-      "System.Security.Principal/4.0.0": {
+      "System.Security.Principal/4.0.1-beta-23409": {
         "type": "package",
         "dependencies": {
           "System.Runtime": "4.0.0"
@@ -4443,7 +4443,7 @@
           "ref/dotnet5.4/System.Security.Cryptography.X509Certificates.dll": {}
         }
       },
-      "System.Security.Principal/4.0.0": {
+      "System.Security.Principal/4.0.1-beta-23409": {
         "type": "package",
         "dependencies": {
           "System.Runtime": "4.0.0"
@@ -6044,7 +6044,7 @@
           "ref/dotnet5.4/System.Security.Cryptography.X509Certificates.dll": {}
         }
       },
-      "System.Security.Principal/4.0.0": {
+      "System.Security.Principal/4.0.1-beta-23409": {
         "type": "package",
         "dependencies": {
           "System.Runtime": "4.0.0"
@@ -9232,36 +9232,36 @@
         "System.Security.Cryptography.X509Certificates.nuspec"
       ]
     },
-    "System.Security.Principal/4.0.0": {
+    "System.Security.Principal/4.0.1-beta-23409": {
       "type": "package",
       "serviceable": true,
-      "sha512": "FOhq3jUOONi6fp5j3nPYJMrKtSJlqAURpjiO3FaDIV4DJNEYymWW5uh1pfxySEB8dtAW+I66IypzNge/w9OzZQ==",
+      "sha512": "Btr2WL0J5DU3yKH+q8W1q9t9UzfrtNtvod0HQ4YVjSLBVc4xEAzJion5R3LdPqZN+bo7jY/0aH+dHl84IcFoKQ==",
       "files": [
+        "lib/dotnet/de/System.Security.Principal.xml",
+        "lib/dotnet/es/System.Security.Principal.xml",
+        "lib/dotnet/fr/System.Security.Principal.xml",
+        "lib/dotnet/it/System.Security.Principal.xml",
+        "lib/dotnet/ja/System.Security.Principal.xml",
+        "lib/dotnet/ko/System.Security.Principal.xml",
+        "lib/dotnet/ru/System.Security.Principal.xml",
         "lib/dotnet/System.Security.Principal.dll",
+        "lib/dotnet/System.Security.Principal.xml",
+        "lib/dotnet/zh-hans/System.Security.Principal.xml",
+        "lib/dotnet/zh-hant/System.Security.Principal.xml",
         "lib/net45/_._",
         "lib/netcore50/System.Security.Principal.dll",
+        "lib/netcore50/System.Security.Principal.xml",
         "lib/win8/_._",
         "lib/wp80/_._",
         "lib/wpa81/_._",
-        "ref/dotnet/de/System.Security.Principal.xml",
-        "ref/dotnet/es/System.Security.Principal.xml",
-        "ref/dotnet/fr/System.Security.Principal.xml",
-        "ref/dotnet/it/System.Security.Principal.xml",
-        "ref/dotnet/ja/System.Security.Principal.xml",
-        "ref/dotnet/ko/System.Security.Principal.xml",
-        "ref/dotnet/ru/System.Security.Principal.xml",
         "ref/dotnet/System.Security.Principal.dll",
-        "ref/dotnet/System.Security.Principal.xml",
-        "ref/dotnet/zh-hans/System.Security.Principal.xml",
-        "ref/dotnet/zh-hant/System.Security.Principal.xml",
         "ref/net45/_._",
         "ref/netcore50/System.Security.Principal.dll",
-        "ref/netcore50/System.Security.Principal.xml",
         "ref/win8/_._",
         "ref/wp80/_._",
         "ref/wpa81/_._",
-        "System.Security.Principal.4.0.0.nupkg",
-        "System.Security.Principal.4.0.0.nupkg.sha512",
+        "System.Security.Principal.4.0.1-beta-23409.nupkg",
+        "System.Security.Principal.4.0.1-beta-23409.nupkg.sha512",
         "System.Security.Principal.nuspec"
       ]
     },
@@ -9910,7 +9910,7 @@
       "System.Security.Cryptography.Cng >= 4.0.0-beta-23516",
       "System.Security.Cryptography.Algorithms >= 4.0.0-beta-23225",
       "System.Security.Principal.Windows >= 4.0.0-beta-23516",
-      "System.Security.Principal >= 4.0.0"
+      "System.Security.Principal >= 4.0.1-beta-23409"
     ]
   }
 }

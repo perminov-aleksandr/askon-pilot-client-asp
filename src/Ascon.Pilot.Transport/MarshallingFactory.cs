@@ -9,7 +9,7 @@ namespace Ascon.Pilot.Transport
         IGetService GetMarshaller(ICallService callService);
     }
 
-    class MarshallingFactory : IMarshallingFactory
+    public class MarshallingFactory : IMarshallingFactory
     {
         private IGetService _marshaller;
         private ICallService _unmarshaller;
@@ -25,7 +25,7 @@ namespace Ascon.Pilot.Transport
         }
     }
 
-    class JsonMarshallingFactory : IMarshallingFactory
+    public class JsonMarshallingFactory : IMarshallingFactory
     {
         private IGetService _marshaller;
         private ICallService _unmarshaller;
@@ -37,7 +37,7 @@ namespace Ascon.Pilot.Transport
 
         public IGetService GetMarshaller(ICallService callService)
         {
-            return _marshaller ?? (_marshaller = new Marshaller(callService));
+            return _marshaller ?? (_marshaller = new JsonMarshaller(callService));
         }
     }
 }

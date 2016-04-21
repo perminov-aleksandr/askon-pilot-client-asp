@@ -1,11 +1,12 @@
 ﻿@using System.Threading.Tasks
 @using Ascon.Pilot.WebClient.ViewModels
+@using Microsoft.AspNet.Mvc.Rendering
 @model LogInViewModel
 @{
     ViewBag.Title = "Войти";
 }
 
-@using (Html.BeginForm("AltLogIn", "Account", FormMethod.Post, new {@class = "form-horizontal"}))
+@using (Html.BeginForm("AltAltLogIn", "Account", FormMethod.Post, new {@class = "form-horizontal"}))
 {
     @Html.ValidationSummary(true)
     <div class="form-group">

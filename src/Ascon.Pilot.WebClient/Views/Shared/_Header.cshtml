@@ -14,7 +14,15 @@
             <ul class="nav navbar-nav">
                 <li></li>
                 <li><a asp-controller="Home" asp-action="Index">Главная</a></li>
-                <li><a asp-controller="Account" asp-action="LogIn">Авторизоваться</a></li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a><b>@User.Identity.Name</b></a></li>
+                    <li><a asp-controller="Account" asp-action="LogOff">Выйти</a></li>
+                }
+                else
+                {
+                    <li><a asp-controller="Account" asp-action="LogIn">Авторизоваться</a></li>
+                }
             </ul>
         </div>
     </div>

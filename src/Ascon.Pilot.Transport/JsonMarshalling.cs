@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using Castle.DynamicProxy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -19,6 +20,39 @@ namespace Ascon.Pilot.Transport
         public JsonUnmarshaller(IImplementationFactory factory)
         {
             this._factory = factory;
+        }
+
+        public byte[] Call(IInvocation invocation)
+        {
+            var obj = GetImplementation(invocation.Method.DeclaringType.Name);
+            var method = obj.GetType().GetMethod(invocation.Method.Name);
+            var parameters = method.GetParameters();
+
+            var values = invocation.Arguments;
+            for (var i = 0; i < invocation.Arguments.Length; i++)
+            {
+                var argumentObject = invocation.Arguments[i];
+                if (parameters[i].Name == "protectedPassword")
+                    values[i] = Convert.ChangeType(argumentObject.ToString().EncryptAes(), parameters[i].ParameterType);
+            }
+
+            try
+            {
+                var result = method.Invoke(obj, values);
+                //TODO пока не знаю что делать. Это костыль!!!
+                if (method.ReturnType.FullName == "System.Byte[]")
+                {
+                    return result as byte[];
+                }
+                return ResultToBytes(result);
+            }
+            catch (Exception e)
+            {
+                if (e is TargetInvocationException && e.InnerException != null)
+                    return Encoding.UTF8.GetBytes(e.InnerException.Message);
+
+                return Encoding.UTF8.GetBytes(e.Message);
+            }
         }
 
         public byte[] Call(byte[] data)

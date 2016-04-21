@@ -8,6 +8,7 @@ using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.Models.Requests;
+using Ascon.Pilot.WebClient.ViewModels;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
@@ -19,12 +20,21 @@ namespace Ascon.Pilot.WebClient.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            var sidePanel = await RecieveSidePanel();
-            //var sidePanel = AltRecieveSidePanel();
-            return View(model: sidePanel);
+            //var sidePanel = await SidePanelAsync();
+            return View();
         }
 
-        private string AltRecieveSidePanel()
+        private async Task<string> SidePanelAsync()
+        {
+            var client = HttpContext.Session.GetClient();
+            var content = new GetObjectsRequest {ids = new[] {DObject.RootId}}.ToString();
+            var result = await client.PostAsync(PilotMethod.WEB_CALL, new StringContent(content));
+            if (result.IsSuccessStatusCode)
+                return await result.Content.ReadAsStringAsync();
+            throw new Exception("Server call failed");
+        }
+
+        private string AltSidePanel()
         {
             using (var client = new HttpPilotClient())
             {
@@ -39,43 +49,6 @@ namespace Ascon.Pilot.WebClient.Controllers
         public IActionResult Error(string message)
         {
             return View(message);
-        }
-        
-        public async Task<string> RecieveSidePanel()
-        {
-            var serializedData = SerializeObjectsRequest();
-            var content = new StringContent(serializedData, Encoding.UTF8, "application/json");
-
-            var result = await MakeCall(content);
-            DObject[] deserializedResult = JsonConvert.DeserializeObject<DObject[]>(result);
-            return result;
-        }
-
-        private async Task<string> MakeCall(StringContent content)
-        {
-            var baseAddress = new Uri(ApplicationConst.PilotServerUrl);
-            using (var handler = new HttpClientHandler {CookieContainer = User.GetCookieContainer(baseAddress)})
-            using (var client = new HttpClient(handler) {BaseAddress = baseAddress})
-            {
-                var response = await client.PostAsync(PilotMethod.WEB_CALL, content);
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception($"Server connection failed with status: {response.StatusCode}");
-                }
-                var result = await response.Content.ReadAsStringAsync();
-                return result;
-            }
-        }
-
-        private static string SerializeObjectsRequest()
-        {
-            var getObjectsRequest = new GetObjectsRequest
-            {
-                api = ApplicationConst.PilotServerApiName,
-                method = ApiMethod.GetObjects,
-                ids = new[] { DObject.RootId }
-            };
-            return JsonConvert.SerializeObject(getObjectsRequest);
         }
     }
 }

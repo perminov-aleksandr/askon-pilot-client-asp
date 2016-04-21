@@ -1,0 +1,8 @@
+﻿@model Ascon.Pilot.WebClient.ViewModels.SidePanelViewModel
+
+<ul>
+    @foreach (var dObject in Model.Items)
+    {
+        <li><b>@dObject.TypeId</b>@dObject.Id</li>
+    }
+</ul>

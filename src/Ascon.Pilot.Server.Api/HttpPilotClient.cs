@@ -10,24 +10,34 @@ namespace Ascon.Pilot.Server.Api
     {
         private readonly TransportClient _client;
         private readonly CallbackReceiverAdapter _transportCallback;
-        private readonly Marshaller _marshaller;
-        private readonly Unmarshaller _unmarshaller;
+        private readonly IGetService _marshaller;
+        private readonly ICallService _unmarshaller;
         private IServerCallback _serverCallback;
         private IServerAdminCallback _adminCallback;
         private IServerUpdateCallback _updateCallback;
         private bool _isBroken;
         private IConnectionLostListener _connectionLostListener;
 
-        public HttpPilotClient()
+        public HttpPilotClient() : this(new MarshallingFactory())
+        {
+
+        }
+
+        public HttpPilotClient(IMarshallingFactory factory)
         {
             _client = new TransportClient();
-            _marshaller = new Marshaller(new CallServiceAdapter(_client));
-            _unmarshaller = new Unmarshaller(this);
+            _marshaller = factory.GetMarshaller(new CallServiceAdapter(_client));
+            _unmarshaller = factory.GetUnmarshaller(this);
             _transportCallback = new CallbackReceiverAdapter(_unmarshaller, CallbackError);
         }
 
-        public HttpPilotClient(ConnectionCredentials credentials) 
-            : this()
+        public HttpPilotClient(ConnectionCredentials credentials)
+            : this(credentials, new MarshallingFactory())
+        {
+        }
+
+        public HttpPilotClient(ConnectionCredentials credentials, IMarshallingFactory factory) 
+            : this(factory)
         {
             Connect(credentials);
         }
@@ -138,10 +148,10 @@ namespace Ascon.Pilot.Server.Api
 
         private class CallbackReceiverAdapter : ICallbackReceiver
         {
-            private readonly Unmarshaller _unmarshaller;
+            private readonly ICallService _unmarshaller;
             private readonly Action _action;
 
-            public CallbackReceiverAdapter(Unmarshaller unmarshaller, Action action)
+            public CallbackReceiverAdapter(ICallService unmarshaller, Action action)
             {
                 _unmarshaller = unmarshaller;
                 _action = action;

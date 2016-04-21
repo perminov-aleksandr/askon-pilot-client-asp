@@ -7,5 +7,12 @@
         public string database { get; set; }
         public string login { get; set; }
         public string protectedPassword { get; set; }
+
+        public OpenDatabaseRequest() 
+            : base(ApplicationConst.PilotServerApiName, ApiMethod.OpenDatabase)
+        {
+            licenseType = 100;
+            useWindowsAuth = false;
+        }
     }
 }

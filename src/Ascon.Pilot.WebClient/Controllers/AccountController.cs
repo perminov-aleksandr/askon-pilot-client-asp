@@ -9,10 +9,13 @@ using System.Threading.Tasks;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
+using Ascon.Pilot.Transport;
+using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.Models.Requests;
 using Ascon.Pilot.WebClient.ViewModels;
 using Castle.Core.Internal;
 using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
 
@@ -38,7 +41,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             //var serverUrl = $"{ApplicationConst.PilotServerUrl}/{model.DatabaseName}";
             var serverUrl = ApplicationConst.PilotServerUrl;
             var connectionCredentials = ConnectionCredentials.GetConnectionCredentials(serverUrl, model.Login, model.Password.ConvertToSecureString());
-            using (var client = new HttpPilotClient(connectionCredentials))
+            using (var client = new HttpPilotClient(connectionCredentials, new JsonMarshallingFactory()))
             {
                 var serviceCallbackProxy = new Castle.DynamicProxy.ProxyGenerator().CreateInterfaceProxyWithoutTarget<IServerCallback>();
                 var serverApi = client.GetServerApi(serviceCallbackProxy);
@@ -49,7 +52,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                     return View("LogIn", model);
                 }
 
-                await SignIn(dbInfo);
+                await SignIn(dbInfo, "");
                 
                 var objects = serverApi.GetObjects(new[] { DObject.RootId });
                 if (objects != null && objects.Any())
@@ -60,7 +63,49 @@ namespace Ascon.Pilot.WebClient.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
-        
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> AltAltLogIn(LogInViewModel model, string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var client = HttpContext.Session.GetClient();
+            if (client == null)
+            {
+                ModelState.AddModelError("", "Не удается подключиться к серверу");
+                return View(model);
+            }
+
+            var serializedData = SerializeOpenDatabaseRequestData(model);
+            var content = new StringContent(serializedData, Encoding.UTF8, "application/json");
+            var result = await client.PostAsync(PilotMethod.WEB_CALL, content);
+            var resultContent = await result.Content.ReadAsStringAsync();
+
+            try
+            {
+                var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
+                await SignIn(dbInfo, "");
+
+                return RedirectToAction("Index", "Home");
+            }
+            catch (JsonReaderException)
+            {
+                var databaseNotFoundMessage = $"Database [{model.DatabaseName}] not found";
+                if (resultContent == databaseNotFoundMessage)
+                {
+                    ModelState.AddModelError("", "Указанное название базы данных не существует");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Указанные имя пользователи или пароль неверны. Проверьте данные и попробуйте еще раз");
+                }
+                return View(model);
+            }
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel model, string returnUrl = null)
@@ -74,17 +119,6 @@ namespace Ascon.Pilot.WebClient.Controllers
                 using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
                 {
                     HttpResponseMessage result;
-                    try
-                    {
-                        result = await client.PostAsync(PilotMethod.WEB_CONNECT, new StringContent(string.Empty));
-                        if (!result.IsSuccessStatusCode)
-                            throw new Exception(string.Format("Server connection failed with status: {0}", result.StatusCode));
-                    }
-                    catch (Exception)
-                    {
-                        ModelState.AddModelError("", "Не удается подключиться к серверу");
-                        return View(model);
-                    }
 
                     var serializedData = SerializeOpenDatabaseRequestData(model);
                     var content = new StringContent(serializedData, Encoding.UTF8, "application/json");
@@ -95,13 +129,13 @@ namespace Ascon.Pilot.WebClient.Controllers
                     {
                         var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
                         var cookieString = cookieContainer.GetCookieHeader(baseAddress);
-                        await SignIn(dbInfo);
+                        await SignIn(dbInfo, cookieString);
 
                         return RedirectToAction("Index", "Home");
                     }
                     catch (JsonReaderException)
                     {
-                        var databaseNotFoundMessage = string.Format("Database [{0}] not found", model.DatabaseName);
+                        var databaseNotFoundMessage = $"Database [{model.DatabaseName}] not found";
                         if (resultContent == databaseNotFoundMessage)
                         {
                             ModelState.AddModelError("", "Указанное название базы данных не существует");
@@ -117,24 +151,26 @@ namespace Ascon.Pilot.WebClient.Controllers
             return View(model);
         }
 
-        private async Task SignIn(DDatabaseInfo dbInfo)
+        private async Task SignIn(DDatabaseInfo dbInfo, string sid)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, dbInfo.Person.Login),
                 new Claim(ClaimTypes.GivenName, dbInfo.Person.DisplayName),
                 new Claim(ClaimTypes.Role, dbInfo.Person.IsAdmin ? Roles.Admin : Roles.User),
-                new Claim(ClaimTypes.Sid, dbInfo.Person.Sid),
+                new Claim(ClaimTypes.Sid, sid),
                 new Claim("DatabaseId", dbInfo.DatabaseId.ToString())
             };
 
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "Custom"));
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, ApplicationConst.PilotMiddlewareInstanceName));
             await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
         }
 
         public async Task<IActionResult> LogOff()
         {
             await HttpContext.Authentication.SignOutAsync(ApplicationConst.PilotMiddlewareInstanceName);
+            HttpContext.Session.GetClient().Dispose();
+            HttpContext.Session.Remove(ApplicationConst.SessionClientIdKey);
             return RedirectToAction("Index", "Home");
         }
 

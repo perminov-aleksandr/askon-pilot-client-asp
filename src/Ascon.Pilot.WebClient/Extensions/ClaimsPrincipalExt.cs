@@ -13,8 +13,12 @@ namespace Ascon.Pilot.WebClient.Extensions
             {
                 var sidString = principal.FindFirst(x => x.Type == ClaimTypes.Sid).Value;
                 cookieContainer.SetCookies(baseAddress, sidString);
+                return cookieContainer;
             }
-            throw new ArgumentException("There is no SID set at current ClaimsPrincipal");
+            else
+            {
+                throw new ArgumentException("There is no SID set at current ClaimsPrincipal");
+            }
         }
     }
 }
