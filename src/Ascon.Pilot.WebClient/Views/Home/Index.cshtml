@@ -1,10 +1,101 @@
-﻿@model string
+﻿@using System.Threading.Tasks
+@model Ascon.Pilot.WebClient.ViewModels.UserPositionViewModel
 @{
-    ViewData["Title"] = "Главная";
+    ViewBag.Title = Model.Path.Last();
 }
 
-@*@section sidePanel {
-    @Html.Raw(Model)
-}*@
+<div class="row">
+    <div class="col-md-3" id="sidePanel">
+        @await Component.InvokeAsync("SidePanel", Model.SidePanel.ObjectId)
+    </div>
+    <div class="col-md-9">
+        <div>
+            @Html.Partial("_Breadcrumbs", Model.Path)
+        </div>
+        <div id="filesPanel">
+            @await Component.InvokeAsync("FilesPanel", Model.SidePanel.ObjectId)
+        </div>
+    </div>
+</div>
 
+@section scripts
+{
+    <script type="text/javascript">
+        var getFilesUrl = '@Html.Raw(Url.Action("GetObject", "Home"))';
+        var getChildsUrl = '@Html.Raw(Url.Action("GetNodeChilds", "Home"))';
+        var getSidePanelUrl = '@Html.Raw(Url.Action("SidePanel", "Home"))';
 
+        $(document).ready(function() {
+            createTreeView();
+        });
+
+        function pushHistory(id) {
+            history.pushState(null, '', '/Home/Index/' + id);
+        }
+
+        function createTreeView() {
+            var tree = $('#tree');
+            tree.treeview({
+                data: treeData,
+                showIcon: true,
+                onNodeSelected: function(event, node) {
+                    window.recieveFiles(node['id']);
+                },
+                onNodeExpanded: function(event, node) {
+                    window.getChilds(node);
+                }
+            });
+        }
+
+        function recieveSidePanel(id) {
+            pushHistory(id);
+            $.ajax(getSidePanelUrl, {
+                data: {
+                    id: id
+                },
+                success: function(data) {
+                    $('#sidePanel').html(data);
+                },
+                error: function(data) {
+
+                }
+            });
+        }
+
+        function getChilds(node) {
+            $.ajax(getChildsUrl, {
+                data: {
+                    id: node['id']
+                },
+                success: function(data) {
+                    var nodeToAppendChilds = $.grep(treeData, function(e) { return e.id === id; });
+                    nodeToAppendChilds['nodes'] = data;
+                    var treeControl = $('#tree').treeview(true);
+                    var expandedNodes = treeControl.getExpanded();
+                    treeControl.remove();
+                    
+                    createTreeView();
+                    treeControl.revealNode(node, {silent: true});
+                    /*$.each(expandedNodes, function(i, e) {
+                        treeControl.expandNode(e['nodeId'], { silent: true });
+                    });*/
+                }
+            });
+        }
+
+        function recieveFiles(folderId) {
+            pushHistory(folderId);
+            $.ajax(getFilesUrl, {
+                data: {
+                    id: folderId
+                },
+                success: function(data) {
+                    $('#filesPanel').html(data);
+                },
+                error: function(data) {
+
+                }
+            });
+        }
+    </script>
+}

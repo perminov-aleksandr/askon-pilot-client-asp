@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Net;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.WebClient.Extensions;
@@ -14,47 +14,82 @@ namespace Ascon.Pilot.WebClient.ViewComponents
 {
     public class SidePanelViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(Guid? id)
         {
-            var client = HttpContext.Session.GetClient();
-            var content = new GetObjectsRequest { ids = new[] { DObject.RootId } }.ToString();
-            var result = await client.PostAsync(PilotMethod.WEB_CALL, new StringContent(content));
-            if (result.IsSuccessStatusCode)
-            {
-                var stringResult = await result.Content.ReadAsStringAsync();
-                DObject[] objects = JsonConvert.DeserializeObject<DObject[]>(stringResult);
-                return View(new SidePanelViewModel {
-                    Items = objects
-                });
-            }
-            throw new Exception("Server call failed");
-            //var getObjectsRequest = new GetObjectsRequest
-            //{
-            //    ids = new[] { DObject.RootId }
-            //};
-            //var serializedRequest = getObjectsRequest.ToString();
-            //var content = new StringContent(serializedRequest, Encoding.UTF8, "application/json");
-            
-            //var result = await MakeCall(content);
-            //DObject[] objects = JsonConvert.DeserializeObject<DObject[]>(result);
-            //return View(new SidePanelViewModel
-            //{
-            //    Items = objects
-            //});
+            return await GetSidePanelAsync(id);
         }
         
-        private async Task<string> MakeCall(StringContent content)
+        public async Task<IViewComponentResult> GetSidePanelAsync(Guid? id)
         {
             var client = HttpContext.Session.GetClient();
-            if (client == null)
-                throw new WebException("Unable to connect to server");
-            var response = await client.PostAsync(PilotMethod.WEB_CALL, content);
-            if (!response.IsSuccessStatusCode)
+            DObject[] objects = await GetObjectsAsync(client, new []{ id ?? DObject.RootId});
+            var childrens = await GetObjectsAsync(client, objects[0].Children.Select(x => x.ObjectId).ToArray());
+            var model = new SidePanelViewModel {
+                ObjectId = id ?? DObject.RootId,
+                Items = childrens?.Select(x =>
+                {
+                    var childs = GetObjectsAsync(client, x.Children?.Select(y => y.ObjectId).ToArray()).Result;
+                    return new SidePanelItem
+                    {
+                        DObject = x,
+                        SubItems = childs?.Select(z => new SidePanelItem { DObject = z }).ToList()
+                    };
+                }).ToList()
+            };
+
+            if (!id.HasValue || id.Value == DObject.RootId)
+                return View(model);
+
+            var prevId = id.Value;
+            Guid parentId = objects[0].ParentId;
+            while (parentId != DObject.RootId)
             {
-                throw new Exception($"Server call request failed with status: {response.StatusCode}");
+                var parentObject = await GetObjectsAsync(client, new[] { parentId });
+                var parentChilds = await GetObjectsAsync(client, parentObject[0].Children.Select(x => x.ObjectId).ToArray());
+                model.Items = new List<SidePanelItem>(parentChilds.Select(x => new SidePanelItem {
+                    DObject = x,
+                    SubItems = x.Id == prevId ? model.Items : new List<SidePanelItem>()
+                }).ToArray());
+                prevId = parentId;
+                parentId = parentObject[0].ParentId;
             }
-            var result = await response.Content.ReadAsStringAsync();
-            return result;
+            return View(model);
+        }
+
+        public async Task<SidePanelItem> GetItemsWithChilds(DObject obj)
+        {
+            var childrens = await GetObjectsAsync(HttpContext.Session.GetClient(), obj.Children.Select(x => x.ObjectId).ToArray());
+            return new SidePanelItem
+            {
+                DObject = obj,
+                SubItems = childrens.Select(x => new SidePanelItem
+                {
+                    DObject = x,
+                    SubItems = new List<SidePanelItem>()
+                }).ToList()
+            };
+        }
+
+        private static async Task<DObject[]> GetObjectsAsync(HttpClient client, Guid[] ids)
+        {
+            var content = new GetObjectsRequest { ids = ids }.ToString();
+            var result = await client.PostAsync(PilotMethod.WEB_CALL, new StringContent(content));
+            if (!result.IsSuccessStatusCode)
+            {
+                result = await client.PostAsync(PilotMethod.WEB_CONNECT, new StringContent(""));
+                if (!result.IsSuccessStatusCode)
+                    throw new Exception("Server call failed while call GetObjects");
+            }
+
+            var stringResult = await result.Content.ReadAsStringAsync();
+            try
+            {
+                return JsonConvert.DeserializeObject<DObject[]>(stringResult);
+            }
+            catch (JsonReaderException ex)
+            {
+                return null;
+            }
         }
     }
 }

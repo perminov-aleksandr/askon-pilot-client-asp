@@ -20,6 +20,7 @@ namespace Ascon.Pilot.WebClient
 
         public static readonly string HttpSchemeName = "http";
         public static readonly string SchemeDelimiter = "://";
+        public static readonly string AppName = "Web-клиент Pilot ICE";
     }
 
     public static class ApiMethod

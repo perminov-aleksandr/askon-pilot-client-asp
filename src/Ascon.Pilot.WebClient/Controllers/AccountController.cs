@@ -13,9 +13,7 @@ using Ascon.Pilot.Transport;
 using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.Models.Requests;
 using Ascon.Pilot.WebClient.ViewModels;
-using Castle.Core.Internal;
 using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
 
@@ -37,8 +35,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         {
             if (!ModelState.IsValid)
                 return View("LogIn");
-
-            //var serverUrl = $"{ApplicationConst.PilotServerUrl}/{model.DatabaseName}";
+            
             var serverUrl = ApplicationConst.PilotServerUrl;
             var connectionCredentials = ConnectionCredentials.GetConnectionCredentials(serverUrl, model.Login, model.Password.ConvertToSecureString());
             using (var client = new HttpPilotClient(connectionCredentials, new JsonMarshallingFactory()))
@@ -52,7 +49,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                     return View("LogIn", model);
                 }
 
-                await SignIn(dbInfo, "");
+                await SignIn(dbInfo, model.Password, "");
                 
                 var objects = serverApi.GetObjects(new[] { DObject.RootId });
                 if (objects != null && objects.Any())
@@ -70,13 +67,13 @@ namespace Ascon.Pilot.WebClient.Controllers
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid)
-                return View(model);
+                return View("LogIn", model);
 
             var client = HttpContext.Session.GetClient();
             if (client == null)
             {
                 ModelState.AddModelError("", "Не удается подключиться к серверу");
-                return View(model);
+                return View("LogIn", model);
             }
 
             var serializedData = SerializeOpenDatabaseRequestData(model);
@@ -87,7 +84,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             try
             {
                 var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
-                await SignIn(dbInfo, "");
+                await SignIn(dbInfo, model.Password, "");
 
                 return RedirectToAction("Index", "Home");
             }
@@ -102,7 +99,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                 {
                     ModelState.AddModelError("", "Указанные имя пользователи или пароль неверны. Проверьте данные и попробуйте еще раз");
                 }
-                return View(model);
+                return View("LogIn", model);
             }
         }
 
@@ -118,18 +115,16 @@ namespace Ascon.Pilot.WebClient.Controllers
                 using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
                 using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
                 {
-                    HttpResponseMessage result;
-
                     var serializedData = SerializeOpenDatabaseRequestData(model);
                     var content = new StringContent(serializedData, Encoding.UTF8, "application/json");
-                    result = await client.PostAsync(PilotMethod.WEB_CALL, content);
+                    var result = await client.PostAsync(PilotMethod.WEB_CALL, content);
                     var resultContent = await result.Content.ReadAsStringAsync();
 
                     try
                     {
                         var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
                         var cookieString = cookieContainer.GetCookieHeader(baseAddress);
-                        await SignIn(dbInfo, cookieString);
+                        await SignIn(dbInfo, model.Password, cookieString);
 
                         return RedirectToAction("Index", "Home");
                     }
@@ -151,7 +146,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             return View(model);
         }
 
-        private async Task SignIn(DDatabaseInfo dbInfo, string sid)
+        private async Task SignIn(DDatabaseInfo dbInfo, string pwd, string sid)
         {
             var claims = new List<Claim>
             {
@@ -159,6 +154,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                 new Claim(ClaimTypes.GivenName, dbInfo.Person.DisplayName),
                 new Claim(ClaimTypes.Role, dbInfo.Person.IsAdmin ? Roles.Admin : Roles.User),
                 new Claim(ClaimTypes.Sid, sid),
+                new Claim("PWD", pwd),
                 new Claim("DatabaseId", dbInfo.DatabaseId.ToString())
             };
 
@@ -170,7 +166,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         {
             await HttpContext.Authentication.SignOutAsync(ApplicationConst.PilotMiddlewareInstanceName);
             HttpContext.Session.GetClient().Dispose();
-            HttpContext.Session.Remove(ApplicationConst.SessionClientIdKey);
+            HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
 

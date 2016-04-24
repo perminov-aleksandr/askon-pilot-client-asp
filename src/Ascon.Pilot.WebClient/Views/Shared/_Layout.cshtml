@@ -1,11 +1,11 @@
-﻿@using System.Security.Claims
+﻿@using Ascon.Pilot.Core
 @using Microsoft.AspNet.Mvc.Rendering
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - Web-клиент сервера Pilot-ICE</title>
+    <title>@ViewData["Title"] - @ApplicationConst.AppName</title>
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css"/>
@@ -21,26 +21,12 @@
 <body>
 @Html.Partial("_Header")
 <div class="container body-content">
+    <br/>
     @RenderSection("title", false)
-    @if (!IsSectionDefined("title"))
-    {
-        <h2>@ViewBag.Title</h2>
-        <br />
-    }
-    <div class="row">
-        <div class="col-md-2">
-            @if (User.Identity.IsAuthenticated)
-            {
-                @await Component.InvokeAsync("SidePanel")
-            }
-        </div>
-        <div class="col-md-10">
-            @RenderBody()
-        </div>
-    </div>
+    @RenderBody()
     <hr/>
     <footer>
-        <p>&copy; 2016 - Web-клиент сервера Pilot</p>
+        <p>&copy; 2016 - @ApplicationConst.AppName</p>
     </footer>
 </div>
 
@@ -59,8 +45,9 @@
             asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
     </script>
     <script src="~/js/site.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"></script>
 </environment>
+
+<script src="~/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"></script>
 
 @RenderSection("scripts", false)
 </body>

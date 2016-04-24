@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.Server.Api;
@@ -18,31 +18,48 @@ namespace Ascon.Pilot.WebClient.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        public async Task<IActionResult> Index()
+        public IActionResult Index(Guid? id)
         {
-            //var sidePanel = await SidePanelAsync();
-            return View();
+            var model = new UserPositionViewModel
+            {
+                Path = id.HasValue ? GetPath(id.Value) : new List<string> { "Root" },
+                SidePanel = new SidePanelViewModel
+                {
+                    ObjectId = id ?? DObject.RootId
+                }
+            };
+            return View(model);
         }
 
-        private async Task<string> SidePanelAsync()
+        private List<string> GetPath(Guid id)
+        {
+            return new List<string> {"Root"};
+        }
+
+        public IActionResult SidePanel(Guid? id)
+        {
+            return ViewComponent("SidePanel", id);
+        }
+
+        public async Task<IActionResult> GetNodeChilds(Guid id)
         {
             var client = HttpContext.Session.GetClient();
-            var content = new GetObjectsRequest {ids = new[] {DObject.RootId}}.ToString();
-            var result = await client.PostAsync(PilotMethod.WEB_CALL, new StringContent(content));
-            if (result.IsSuccessStatusCode)
-                return await result.Content.ReadAsStringAsync();
-            throw new Exception("Server call failed");
+            var request = new GetObjectsRequest{ids = new [] {id}};
+            var result = await request.SendAsync(client);
+            var childsIds = result[0].Children.Select(x => x.ObjectId).ToArray();
+            request = new GetObjectsRequest{ids = childsIds};
+            result = await request.SendAsync(client);
+            var childNodes = result.Select(x => new
+            {
+                id = x.Id,
+                text = x.Id
+            }).ToArray();
+            return Json(childNodes);
         }
 
-        private string AltSidePanel()
+        public IActionResult GetObject(Guid? id)
         {
-            using (var client = new HttpPilotClient())
-            {
-                var serverApi = client.GetServerApi(CallbackFactory.Get<IServerCallback>());
-
-                var objects = serverApi.GetObjects(new[] { DObject.RootId });
-                return string.Join("<br>", objects.SelectMany(x => new [] {x.Id.ToString(), x.TypeId.ToString()}));
-            }
+            return ViewComponent("FilesPanel", id);
         }
 
         [AllowAnonymous]
