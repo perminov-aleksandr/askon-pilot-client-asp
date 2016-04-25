@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -49,7 +50,8 @@ namespace Ascon.Pilot.WebClient.Controllers
                     return View("LogIn", model);
                 }
 
-                await SignIn(dbInfo, model.Password, "");
+                await SignInAsync(dbInfo, model.Password, "");
+
                 
                 var objects = serverApi.GetObjects(new[] { DObject.RootId });
                 if (objects != null && objects.Any())
@@ -84,7 +86,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             try
             {
                 var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
-                await SignIn(dbInfo, model.Password, "");
+                await SignInAsync(dbInfo, model.Password, "");
 
                 return RedirectToAction("Index", "Home");
             }
@@ -124,7 +126,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                     {
                         var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
                         var cookieString = cookieContainer.GetCookieHeader(baseAddress);
-                        await SignIn(dbInfo, model.Password, cookieString);
+                        await SignInAsync(dbInfo, model.Password, cookieString);
 
                         return RedirectToAction("Index", "Home");
                     }
@@ -146,7 +148,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             return View(model);
         }
 
-        private async Task SignIn(DDatabaseInfo dbInfo, string pwd, string sid)
+        private async Task SignInAsync(DDatabaseInfo dbInfo, string pwd, string sid)
         {
             var claims = new List<Claim>
             {
@@ -160,6 +162,17 @@ namespace Ascon.Pilot.WebClient.Controllers
 
             var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, ApplicationConst.PilotMiddlewareInstanceName));
             await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
+
+            SetSessionValues(dbInfo);
+        }
+
+        private void SetSessionValues(DDatabaseInfo dbInfo)
+        {
+            using (var bs = new MemoryStream())
+            {
+                ProtoBuf.Serializer.Serialize(bs, dbInfo);
+                HttpContext.Session.Set(SessionKeys.DBInfo, bs.ToArray());
+            }
         }
 
         public async Task<IActionResult> LogOff()

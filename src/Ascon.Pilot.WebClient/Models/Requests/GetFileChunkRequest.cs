@@ -2,9 +2,9 @@
 
 namespace Ascon.Pilot.WebClient.Models.Requests
 {
-    public class GetFileChunkRequest : Request
+    public class GetFileChunkRequest : Request<byte[]>
     {
-        public GetFileChunkRequest() : base(ApplicationConst.PilotServerApiName, "GetFileChunk")
+        public GetFileChunkRequest() : base(ApplicationConst.PilotServerApiName, ApiMethod.GetFileChunk)
         {
         }
 

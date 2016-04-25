@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Ascon.Pilot.Core.MType>
+
+<h2>Типы файлов</h2>
+<br/>
+
+<table class="table"> 
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Name</th>
+        <th>Kind</th>
+        <th>HasFiles</th>
+        <th>IsDeleted</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var type in Model)
+    {
+        <tr>
+            <td>@type.Id</td>
+            <td>@type.Title</td>
+            <td>@type.Name</td>
+            <td>@type.Kind</td>
+            <td>@type.HasFiles</td>
+            <td>@type.IsDeleted</td>
+        </tr>
+    }
+    </tbody>
+</table>

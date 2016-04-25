@@ -13,7 +13,7 @@ namespace Ascon.Pilot.WebClient.Extensions
 
         public static HttpClient GetClient(this ISession session)
         {
-            var clientIdString = session.GetString(ApplicationConst.SessionClientIdKey);
+            var clientIdString = session.GetString(SessionKeys.ClientId);
             if (string.IsNullOrEmpty(clientIdString))
                 return null;
 

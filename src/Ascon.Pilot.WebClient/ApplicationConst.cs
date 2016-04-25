@@ -15,18 +15,18 @@ namespace Ascon.Pilot.WebClient
         public static readonly string PilotServerApiName = "IServerApi";
         public static readonly string PilotMiddlewareInstanceName = "AskonPilotMiddlewareInstance";
 
-        public static readonly string SessionClientIdKey = "ClientId";
-        public static readonly string SessionVisitsCountKey = "VisitsCount";
-
         public static readonly string HttpSchemeName = "http";
         public static readonly string SchemeDelimiter = "://";
         public static readonly string AppName = "Web-клиент Pilot ICE";
     }
-
+    
+    //todo: use reflection with IServerApi methods
     public static class ApiMethod
     {
         public static readonly string OpenDatabase = "OpenDatabase";
         public static readonly string GetObjects = "GetObjects";
+        public static readonly string GetFileChunk = "GetFileChunk";
+        public static readonly string GetMetadata = "GetMetadata";
     }
 
     public static class Roles

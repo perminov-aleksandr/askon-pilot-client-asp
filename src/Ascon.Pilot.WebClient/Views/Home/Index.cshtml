@@ -1,4 +1,5 @@
 ﻿@using System.Threading.Tasks
+@using Ascon.Pilot.Core
 @model Ascon.Pilot.WebClient.ViewModels.UserPositionViewModel
 @{
     ViewBag.Title = Model.Path.Last();
@@ -24,31 +25,35 @@
         var getFilesUrl = '@Html.Raw(Url.Action("GetObject", "Home"))';
         var getChildsUrl = '@Html.Raw(Url.Action("GetNodeChilds", "Home"))';
         var getSidePanelUrl = '@Html.Raw(Url.Action("SidePanel", "Home"))';
+        var ROOT_ID = '@DObject.RootId';
+        
+        var treeControl;
+        var treeData;
 
         $(document).ready(function() {
-            createTreeView();
+            treeControl = createTreeView(treeData);
         });
 
         function pushHistory(id) {
             history.pushState(null, '', '/Home/Index/' + id);
         }
 
-        function createTreeView() {
+        function createTreeView(data) {
             var tree = $('#tree');
             tree.treeview({
-                data: treeData,
+                data: data,
                 showIcon: true,
                 onNodeSelected: function(event, node) {
-                    window.recieveFiles(node['id']);
+                    window.recieveFiles(node);
                 },
                 onNodeExpanded: function(event, node) {
                     window.getChilds(node);
                 }
             });
+            return tree.treeview(true);;
         }
 
         function recieveSidePanel(id) {
-            pushHistory(id);
             $.ajax(getSidePanelUrl, {
                 data: {
                     id: id
@@ -63,37 +68,40 @@
         }
 
         function getChilds(node) {
+            var id = node['id'];
             $.ajax(getChildsUrl, {
                 data: {
-                    id: node['id']
+                    id: id
                 },
                 success: function(data) {
                     var nodeToAppendChilds = $.grep(treeData, function(e) { return e.id === id; });
-                    nodeToAppendChilds['nodes'] = data;
-                    var treeControl = $('#tree').treeview(true);
-                    var expandedNodes = treeControl.getExpanded();
+                    nodeToAppendChilds[0]['nodes'] = data;
                     treeControl.remove();
-                    
-                    createTreeView();
+                    treeControl = createTreeView(treeData);
                     treeControl.revealNode(node, {silent: true});
-                    /*$.each(expandedNodes, function(i, e) {
-                        treeControl.expandNode(e['nodeId'], { silent: true });
-                    });*/
                 }
             });
         }
 
-        function recieveFiles(folderId) {
-            pushHistory(folderId);
+        function recieveFiles(node) {
+            var folderId = node['id'];
+
+            /*var parentId;
+            var parent = treeControl.getParent(node);
+            if (typeof parent === "undefined")
+                parentId = ROOT_ID;
+            else
+                parentId = parent['id'];*/
+            
             $.ajax(getFilesUrl, {
                 data: {
                     id: folderId
                 },
-                success: function(data) {
+                success: function (data) {
                     $('#filesPanel').html(data);
+                    pushHistory(folderId);
                 },
                 error: function(data) {
-
                 }
             });
         }

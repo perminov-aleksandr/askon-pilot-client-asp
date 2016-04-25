@@ -3,11 +3,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 
 namespace Ascon.Pilot.WebClient.Models.Requests
 {
-    public class GetObjectsRequest : Request
+    public class GetObjectsRequest : Request<DObject[]>
     {
         public GetObjectsRequest() 
             : base(ApplicationConst.PilotServerApiName, ApiMethod.GetObjects)
@@ -16,18 +17,18 @@ namespace Ascon.Pilot.WebClient.Models.Requests
         
         public Guid[] ids { get; set; }
 
-        public async Task<DObject[]> SendAsync(HttpClient client)
-        {
-            if (ids == null || ids.Length == 0)
-                throw new Exception("ids must be defined");
+        //public async Task<DObject[]> SendAsync(HttpClient client)
+        //{
+        //    if (ids == null || ids.Length == 0)
+        //        throw new Exception("ids must be defined");
 
-            var serializedRequest = ToString();
-            var result = await client.PostAsync(PilotMethod.WEB_CALL, new StringContent(serializedRequest));
-            if (!result.IsSuccessStatusCode)
-                throw new Exception("Server call failed");
+        //    var serializedRequest = ToString();
+        //    var result = await client.PostAsync(PilotMethod.WEB_CALL, new StringContent(serializedRequest));
+        //    if (!result.IsSuccessStatusCode)
+        //        throw new Exception("Server call failed");
 
-            var stringResult = await result.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<DObject[]>(stringResult);
-        }
+        //    var stringResult = await result.Content.ReadAsStringAsync();
+        //    return JsonConvert.DeserializeObject<DObject[]>(stringResult);
+        //}
     }
 }

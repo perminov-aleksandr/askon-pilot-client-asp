@@ -1,6 +1,8 @@
-﻿namespace Ascon.Pilot.WebClient.Models.Requests
+﻿using Ascon.Pilot.Core;
+
+namespace Ascon.Pilot.WebClient.Models.Requests
 {
-    public class OpenDatabaseRequest : Request
+    public class OpenDatabaseRequest : Request<DDatabaseInfo>
     {
         public int licenseType { get; set; }
         public bool useWindowsAuth { get; set; }

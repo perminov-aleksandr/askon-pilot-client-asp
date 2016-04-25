@@ -70,12 +70,12 @@ namespace Ascon.Pilot.WebClient
 
             app.Use(async (context, next) =>
             {
-                int visits = context.Session.GetInt32(ApplicationConst.SessionVisitsCountKey) ?? 0;
+                int visits = context.Session.GetInt32(SessionKeys.VisitsCount) ?? 0;
                 if (visits == 0)
                 {
                     // New session, do any initial setup and then mark the session as ready
-                    context.Session.SetInt32(ApplicationConst.SessionVisitsCountKey, 1);
-                    context.Session.SetString(ApplicationConst.SessionClientIdKey, Guid.NewGuid().ToString());
+                    context.Session.SetInt32(SessionKeys.VisitsCount, 1);
+                    context.Session.SetString(SessionKeys.ClientId, Guid.NewGuid().ToString());
                 }
                 await next();
             });

@@ -1,19 +1,12 @@
 ﻿@using Newtonsoft.Json
 @model Ascon.Pilot.WebClient.ViewModels.SidePanelViewModel
 @{
-    var treeData = Model.Items.Select(x => new
-    {
-        id = x.DObject.Id,
-        text = x.DObject.Id,
-        nodes = x.SubItems?.Select(y => new {
-            id = y.DObject.Id,
-            text = y.DObject.Id}).ToArray()
-    }).ToArray();
+    var treeData = Model.ToDynamic();
     var serializedTreeData = JsonConvert.SerializeObject(treeData);
 }
 
 <div id="tree"></div>
 
 <script type="text/javascript">
-    var treeData = @Html.Raw(serializedTreeData);
+    window.treeData = @Html.Raw(serializedTreeData);
 </script>

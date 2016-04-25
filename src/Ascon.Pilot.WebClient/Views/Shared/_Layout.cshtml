@@ -1,5 +1,6 @@
 ﻿@using Ascon.Pilot.Core
 @using Microsoft.AspNet.Mvc.Rendering
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,7 +27,7 @@
     @RenderBody()
     <hr/>
     <footer>
-        <p>&copy; 2016 - @ApplicationConst.AppName</p>
+        <p>&copy; @DateTime.Now.Year - @ApplicationConst.AppName</p>
     </footer>
 </div>
 
