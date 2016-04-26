@@ -24,7 +24,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
 
     public class SidePanelItem
     {
-        //public string Name { get; set; }
+        public MType Type { get; set; }
         public DObject DObject { get; set; }
         public List<SidePanelItem> SubItems { get; set; }
 
@@ -36,14 +36,16 @@ namespace Ascon.Pilot.WebClient.ViewModels
                 {
                     nodes.Add(sidePanelItem.GetDynamic(id, types));
                 }
+            var mType = types[DObject.TypeId];
             return new
             {
                 id = DObject.Id,
-                text = $"{types[DObject.TypeId].Title} {DObject.Id}",
+                text = DObject.GetTitle(mType),
+                icon = mType.IsProjectFolder() ? "glyphicon glyphicon-folder-open" : "glyphicon glyphicon-file",
                 state = new {
                     selected = DObject.Id == id
                 },
-                nodes = nodes.Any() ? nodes.ToArray() : null
+                nodes = nodes.Any() || DObject.Children.Any() ? nodes.ToArray() : null
             };
         }
     }

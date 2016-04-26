@@ -162,16 +162,30 @@ namespace Ascon.Pilot.WebClient.Controllers
             var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, ApplicationConst.PilotMiddlewareInstanceName));
             await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
 
-            SetSessionValues(dbInfo);
+            SetSessionValues(SessionKeys.DBInfo, dbInfo);
+            RecieveAndSetMetatypes(dbInfo.MetadataVersion);
         }
 
-        private void SetSessionValues(DDatabaseInfo dbInfo)
+        /// <summary>
+        /// Set value of type <typeparam name="T">T</typeparam> at session dictionary using protobuf-net
+        /// </summary>
+        /// <typeparam name="T">type of value to set. Must be proto-serializable</typeparam>
+        /// <param name="key">key of value</param>
+        /// <param name="value">value to set</param>
+        private void SetSessionValues<T>(string key, T value)
         {
             using (var bs = new MemoryStream())
             {
-                ProtoBuf.Serializer.Serialize(bs, dbInfo);
-                HttpContext.Session.Set(SessionKeys.DBInfo, bs.ToArray());
+                ProtoBuf.Serializer.Serialize(bs, value);
+                HttpContext.Session.Set(key, bs.ToArray());
             }
+        }
+
+        private void RecieveAndSetMetatypes(long metadataVersion)
+        {
+            var client = HttpContext.Session.GetClient();
+            var response = new GetMetadataRequest { localVersion = metadataVersion }.SendAsync(client).Result;
+            SetSessionValues(SessionKeys.MetaTypes, response.Types.ToDictionary(x => x.Id, y => y));
         }
 
         public async Task<IActionResult> LogOff()

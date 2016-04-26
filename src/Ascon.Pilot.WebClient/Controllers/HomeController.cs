@@ -19,7 +19,7 @@ namespace Ascon.Pilot.WebClient.Controllers
     {
         private const string RootBreadcrumb = "Root";
 
-        public async Task<ViewResult> Index(Guid? id)
+        public ViewResult Index(Guid? id)
         {
             var model = new UserPositionViewModel
             {
@@ -43,14 +43,27 @@ namespace Ascon.Pilot.WebClient.Controllers
             var client = HttpContext.Session.GetClient();
             var request = new GetObjectsRequest { ids = new[] { id } };
             var result = await request.SendAsync(client);
+
             var childsIds = result[0].Children.Select(x => x.ObjectId).ToArray();
             request = new GetObjectsRequest { ids = childsIds };
             result = await request.SendAsync(client);
-            var childNodes = result.Select(x => new
-            {
-                id = x.Id,
-                text = x.Id
-            }).ToArray();
+
+            var types = HttpContext.Session.GetMetatypes();
+
+            var childNodes = result
+                .Where(x => types[x.TypeId].IsProjectFolder())
+                .Select(x =>
+                {
+                    var mType = types[x.TypeId];
+                    return new
+                    {
+                        id = x.Id,
+                        text = x.GetTitle(mType),
+                        icon = mType.IsProjectFile() ? "glyphicon glyphicon-file" : "glyphicon glyphicon-folder-open",
+                        nodes = x.Children.Any() ? new dynamic[] {} : null
+                    };
+                })
+                .ToArray();
             return Json(childNodes);
         }
 
@@ -64,18 +77,9 @@ namespace Ascon.Pilot.WebClient.Controllers
             return ViewComponent(typeof(FilesPanelViewComponent), id);
         }
 
-        public async Task<IActionResult> Types()
+        public IActionResult Types()
         {
-            var client = HttpContext.Session.GetClient();
-            long localMetadata;
-            using (var ms = new MemoryStream(HttpContext.Session.Get(SessionKeys.DBInfo)))
-            {
-                var dbInfo = ProtoBuf.Serializer.Deserialize<DDatabaseInfo>(ms);
-                localMetadata = dbInfo.MetadataVersion;
-            }
-            var getMetadataRequest = new GetMetadataRequest {localVersion = localMetadata};
-            var response = await getMetadataRequest.SendAsync(client);
-            return View(response.Types);
+            return View(HttpContext.Session.GetMetatypes());
         }
 
         [AllowAnonymous]

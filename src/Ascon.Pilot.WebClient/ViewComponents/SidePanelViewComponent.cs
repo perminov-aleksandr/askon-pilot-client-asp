@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -34,20 +35,27 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 localVersion = metadataVersion
             }.SendAsync(client);
 
+            var mTypes = metadata?.Types.ToDictionary(x => x.Id, y => y);
+            Debug.Assert(mTypes != null, $"{nameof(mTypes)} != null");
             var model = new SidePanelViewModel {
                 ObjectId = id.Value,
-                Types = metadata?.Types.ToDictionary(x => x.Id, y => y),
-                Items = childrens?.Select(x =>
-                {
-                    var childs = GetObjectsAsync(client, x.Children?.Select(y => y.ObjectId).ToArray()).Result;
-                    return new SidePanelItem
-                    {
-                        DObject = x,
-                        SubItems = childs == null || childs.Length == 0 
-                                   ? null
-                                   : childs.Select(z => GetItemsWithChilds(z, client).Result).ToList()
-                    };
-                }).ToList()
+                Types = mTypes,
+                Items = childrens?//.Where(x => mTypes[x.TypeId].IsProjectFolder())
+                        .Select(x =>
+                        {
+                            var childIds = x.Children?.Select(y => y.ObjectId).ToArray();
+                            var childs = GetObjectsAsync(client, childIds).Result;
+                            return new SidePanelItem
+                            {
+                                Type = mTypes[x.TypeId],
+                                DObject = x,
+                                SubItems = childs == null || childs.Length == 0 
+                                           ? (x.Children != null && x.Children.Any() ? new List<SidePanelItem>() : null)
+                                           : childs//.Where(obj => mTypes[obj.TypeId].IsProjectFolder())
+                                                    .Select(z => GetItemsWithChilds(z, client).Result).ToList()
+                            };
+                        })
+                        .ToList()
             };
 
             if (id.Value == DObject.RootId)
@@ -62,11 +70,13 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 if (parentChilds.Length != 0)
                 {
                     var subtree = model.Items;
-                    model.Items = new List<SidePanelItem>(parentChilds.Select(x => new SidePanelItem
-                    {
-                        DObject = x,
-                        SubItems = x.Id == prevId ? subtree : null
-                    }).ToArray());
+                    model.Items = parentChilds
+                        //.Where(x => mTypes[x.TypeId].IsProjectFolder())
+                        .Select(x => new SidePanelItem
+                        {
+                            DObject = x,
+                            SubItems = x.Id == prevId ? subtree : null
+                        }).ToList();
                 }
                 prevId = parentId;
                 parentId = parentObject[0].ParentId;

@@ -5,5 +5,6 @@
         public static readonly string ClientId = "ClientId";
         public static readonly string VisitsCount = "VisitsCount";
         public static readonly string DBInfo = "DBInfo";
+        public static readonly string MetaTypes = "MetaTypes";
     }
 }

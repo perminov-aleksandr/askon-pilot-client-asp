@@ -1,12 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using Ascon.Pilot.Core;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Features;
 
 namespace Ascon.Pilot.WebClient.Extensions
 {
+    public static class SessionExt
+    {
+        public static IDictionary<int, MType> GetMetatypes(this ISession session)
+        {
+            using (var ms = new MemoryStream(session.Get(SessionKeys.MetaTypes)))
+            {
+                return ProtoBuf.Serializer.Deserialize<IDictionary<int, MType>>(ms);
+            }
+        }
+    }
+
     public static class ClientsStorage
     {
         private static readonly Dictionary<Guid, HttpClient>  ClientsDictionary = new Dictionary<Guid, HttpClient>();

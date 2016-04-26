@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Ascon.Pilot.Core.Numerators;
-//using Ascon.Pilot.Core.WorkFlow;
 
 namespace Ascon.Pilot.Core
 {
@@ -154,9 +152,9 @@ namespace Ascon.Pilot.Core
             return GetObjectTitle(obj, type);
         }
 
-#region Tasks
+        #region Tasks
 
-	    public static IEnumerable<Guid> TaskVersions(this DObject obj)
+        public static IEnumerable<Guid> TaskVersions(this DObject obj)
         {
             return obj.Children.Where(x => x.TypeId == obj.TypeId).Select(x => x.ObjectId);
         }
@@ -210,12 +208,12 @@ namespace Ascon.Pilot.Core
             return obj.Attributes.TryGetValue(SystemAttributes.TASK_STAGE_ORDER, out order) ? int.Parse(order.ToString()) : 0;
         }
 
-#endregion
+        #endregion
 
         private static string GetObjectTitle(DObject obj, MType type)
         {
             var sb = new StringBuilder();
-            var attibutes = AttributeFormatter.Format(type, obj.Attributes.ToDictionary(attr => attr.Key, attr =>(attr.Value)));
+            var attibutes = AttributeFormatter.Format(type, obj.Attributes.ToDictionary(attr => attr.Key, attr => (attr.Value)));
 
             foreach (var displayableAttr in type.GetDisplayAttributes())
             {
@@ -226,23 +224,6 @@ namespace Ascon.Pilot.Core
                     if (sb.Length != 0)
                         sb.Append(Constants.PROJECT_TITLE_ATTRIBUTES_DELIMITER);
 
-                    if (displayableAttr.Type == MAttrType.Numerator)
-                    {
-                        try
-                        {
-                            strValue = new NumeratorFormatter(new NumeratorKeywordProviderAggregator(new INumeratorKeywordProvider[]
-                            {
-                                new CurrentDateProvider(), 
-                                new AttributeKeywordProvider(), 
-                                new UnknownProvider()
-                            })).Format(obj, value.ToString());
-                        }
-                        catch (FormatException)
-                        {
-                            return string.Empty;
-                        }
-                    }
-
                     sb.Append(strValue);
                 }
             }
@@ -252,36 +233,31 @@ namespace Ascon.Pilot.Core
 
     public static class NTypeExtensions
     {
-        /*public static bool IsProjectFolder(this NType type)
+        public static bool IsProjectFolder(this MType type)
         {
             return IsProjectFolder(type.Name);
-        }*/
+        }
 
         public static bool IsProjectFolder(string typeName)
         {
             return typeName.Equals(SystemTypes.PROJECT_FOLDER, StringComparison.Ordinal);
         }
 
-        /*public static bool IsProjectFile(this NType type)
+        public static bool IsProjectFile(this MType type)
         {
             return IsProjectFile(type.Name);
-        }*/
+        }
 
         public static bool IsProjectFile(string typeName)
         {
             return typeName.Equals(SystemTypes.PROJECT_FILE, StringComparison.Ordinal);
         }
 
-        /*public static bool IsProjectFileOrFolder(this NType type)
-        {
-            return IsProjectFileOrFolder(type.Name);
-        }*/
-
         public static bool IsProjectFileOrFolder(this MType type)
         {
             return IsProjectFileOrFolder(type.Name);
         }
-
+        
         public static bool IsProjectFileOrFolder(string typeName)
         {
             return IsProjectFile(typeName) || IsProjectFolder(typeName);

@@ -7483,7 +7483,7 @@
     },
     "NLog/4.4.0-beta2": {
       "type": "package",
-      "sha512": "BLpQZ0+ukBWFEYDV3nehAEp2qzuc81Xh3fEXZcjCm1KgLa28rMGuzM6PiOvgTNqBa8DNp6l3g8UVRrgJ+7ow/w==",
+      "sha512": "hwsr/zoePrYkb+cSNngKqqXpU8wIna6trk5Oz62rryoQJJLECT4tdJyR+q5xq/Nab3z6kktT/Gjjll78eTE2vQ==",
       "files": [
         "lib/dotnet5.4/NLog.dll",
         "lib/dotnet5.4/NLog.xml",
