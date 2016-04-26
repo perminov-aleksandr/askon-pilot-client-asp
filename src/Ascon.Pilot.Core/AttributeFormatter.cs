@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using Ascon.Pilot.Core;
 
-namespace Ascon.Pilot.WebClient.Utils
+namespace Ascon.Pilot.Core
 {
     public static class AttributeFormatter
     {

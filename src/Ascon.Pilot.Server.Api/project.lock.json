@@ -12,7 +12,8 @@
           "protobuf-portable-net": "2.0.0.668"
         },
         "frameworkAssemblies": [
-          "System.Runtime"
+          "System.Runtime",
+          "System.Xml.Linq"
         ]
       },
       "Ascon.Pilot.Transport/0.0.1": {
@@ -21,11 +22,12 @@
         "dependencies": {
           "Castle.Core": "3.3.3",
           "Microsoft.Net.Http": "2.2.22",
-          "Newtonsoft.Json": "6.0.6",
+          "Newtonsoft.Json": "8.0.3",
           "NLog": "4.4.0-beta2",
           "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11",
           "protobuf-portable-net": "2.0.0.668",
           "System.Collections.Concurrent": "4.0.11-beta-23516",
+          "System.Net.Http": "4.0.0",
           "System.Threading.Timer": "4.0.1-beta-23516"
         },
         "frameworkAssemblies": [
@@ -533,7 +535,7 @@
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/8.0.3": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -627,6 +629,18 @@
           "lib/net45/_._": {}
         }
       },
+      "System.Net.Http/4.0.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
       "System.Net.Primitives/4.0.11-beta-23516": {
         "type": "package",
         "compile": {
@@ -681,7 +695,8 @@
           "System.Security.Principal": "4.0.1-beta-23409",
           "System.Security.Principal.Windows": "4.0.0-beta-23516",
           "System.Security.SecureString": "4.0.0-beta-23414",
-          "System.Threading": "4.0.11-beta-23516"
+          "System.Threading": "4.0.11-beta-23516",
+          "System.Xml.XDocument": "4.0.10"
         }
       },
       "Ascon.Pilot.Transport/0.0.1": {
@@ -691,7 +706,7 @@
           "castle.core.netcore": "3.3.4-beta8",
           "Microsoft.CSharp": "4.0.1-beta-23516",
           "Microsoft.Net.Http": "2.2.22",
-          "Newtonsoft.Json": "6.0.6",
+          "Newtonsoft.Json": "8.0.3",
           "NLog": "4.4.0-beta2",
           "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11",
           "protobuf-portable-net": "2.0.0.668",
@@ -699,7 +714,7 @@
           "System.Collections.Concurrent": "4.0.11-beta-23516",
           "System.Collections.Specialized": "4.0.1-beta-23516",
           "System.Linq": "4.0.1-beta-23516",
-          "System.Net.Http": "4.0.1-rc2-23805",
+          "System.Net.Http": "4.0.0",
           "System.Runtime": "4.0.21-beta-23516",
           "System.Runtime.Serialization.Primitives": "4.0.11-beta-23409",
           "System.Security.Cryptography.Cng": "4.0.0-beta-23516",
@@ -1242,13 +1257,13 @@
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/8.0.3": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
       "NLog/4.4.0-beta2": {
@@ -1648,7 +1663,7 @@
           "ref/dotnet5.4/System.Linq.Expressions.dll": {}
         }
       },
-      "System.Net.Http/4.0.1-rc2-23805": {
+      "System.Net.Http/4.0.0": {
         "type": "package",
         "dependencies": {
           "System.IO": "4.0.0",
@@ -1658,7 +1673,7 @@
           "System.Threading.Tasks": "4.0.0"
         },
         "compile": {
-          "ref/dotnet5.2/System.Net.Http.dll": {}
+          "ref/dotnet/System.Net.Http.dll": {}
         }
       },
       "System.Net.Primitives/4.0.11-beta-23516": {
@@ -2136,6 +2151,28 @@
           "lib/dotnet/System.Xml.ReaderWriter.dll": {}
         }
       },
+      "System.Xml.XDocument/4.0.10": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.Reflection": "4.0.10",
+          "System.Resources.ResourceManager": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Xml.ReaderWriter": "4.0.10"
+        },
+        "compile": {
+          "ref/dotnet/System.Xml.XDocument.dll": {}
+        },
+        "runtime": {
+          "lib/dotnet/System.Xml.XDocument.dll": {}
+        }
+      },
       "System.Xml.XmlDocument/4.0.1-beta-23516": {
         "type": "package",
         "dependencies": {
@@ -2168,7 +2205,8 @@
           "protobuf-portable-net": "2.0.0.668"
         },
         "frameworkAssemblies": [
-          "System.Runtime"
+          "System.Runtime",
+          "System.Xml.Linq"
         ]
       },
       "Ascon.Pilot.Transport/0.0.1": {
@@ -2177,11 +2215,12 @@
         "dependencies": {
           "Castle.Core": "3.3.3",
           "Microsoft.Net.Http": "2.2.22",
-          "Newtonsoft.Json": "6.0.6",
+          "Newtonsoft.Json": "8.0.3",
           "NLog": "4.4.0-beta2",
           "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11",
           "protobuf-portable-net": "2.0.0.668",
           "System.Collections.Concurrent": "4.0.11-beta-23516",
+          "System.Net.Http": "4.0.0",
           "System.Threading.Timer": "4.0.1-beta-23516"
         },
         "frameworkAssemblies": [
@@ -2689,7 +2728,7 @@
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/8.0.3": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -2782,6 +2821,18 @@
       },
       "System.Diagnostics.Tracing/4.0.0": {
         "type": "package",
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "System.Net.Http/4.0.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
         "compile": {
           "ref/net45/_._": {}
         },
@@ -2836,7 +2887,8 @@
           "protobuf-portable-net": "2.0.0.668"
         },
         "frameworkAssemblies": [
-          "System.Runtime"
+          "System.Runtime",
+          "System.Xml.Linq"
         ]
       },
       "Ascon.Pilot.Transport/0.0.1": {
@@ -2845,11 +2897,12 @@
         "dependencies": {
           "Castle.Core": "3.3.3",
           "Microsoft.Net.Http": "2.2.22",
-          "Newtonsoft.Json": "6.0.6",
+          "Newtonsoft.Json": "8.0.3",
           "NLog": "4.4.0-beta2",
           "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11",
           "protobuf-portable-net": "2.0.0.668",
           "System.Collections.Concurrent": "4.0.11-beta-23516",
+          "System.Net.Http": "4.0.0",
           "System.Threading.Timer": "4.0.1-beta-23516"
         },
         "frameworkAssemblies": [
@@ -3357,7 +3410,7 @@
           "lib/net451/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/8.0.3": {
         "type": "package",
         "compile": {
           "lib/net45/Newtonsoft.Json.dll": {}
@@ -3450,6 +3503,18 @@
       },
       "System.Diagnostics.Tracing/4.0.0": {
         "type": "package",
+        "compile": {
+          "ref/net45/_._": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        }
+      },
+      "System.Net.Http/4.0.0": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Net.Http"
+        ],
         "compile": {
           "ref/net45/_._": {}
         },
@@ -3511,7 +3576,8 @@
           "System.Security.Principal": "4.0.1-beta-23409",
           "System.Security.Principal.Windows": "4.0.0-beta-23516",
           "System.Security.SecureString": "4.0.0-beta-23414",
-          "System.Threading": "4.0.11-beta-23516"
+          "System.Threading": "4.0.11-beta-23516",
+          "System.Xml.XDocument": "4.0.10"
         }
       },
       "Ascon.Pilot.Transport/0.0.1": {
@@ -3521,7 +3587,7 @@
           "castle.core.netcore": "3.3.4-beta8",
           "Microsoft.CSharp": "4.0.1-beta-23516",
           "Microsoft.Net.Http": "2.2.22",
-          "Newtonsoft.Json": "6.0.6",
+          "Newtonsoft.Json": "8.0.3",
           "NLog": "4.4.0-beta2",
           "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11",
           "protobuf-portable-net": "2.0.0.668",
@@ -3529,7 +3595,7 @@
           "System.Collections.Concurrent": "4.0.11-beta-23516",
           "System.Collections.Specialized": "4.0.1-beta-23516",
           "System.Linq": "4.0.1-beta-23516",
-          "System.Net.Http": "4.0.1-rc2-23805",
+          "System.Net.Http": "4.0.0",
           "System.Runtime": "4.0.21-beta-23516",
           "System.Runtime.Serialization.Primitives": "4.0.11-beta-23409",
           "System.Security.Cryptography.Cng": "4.0.0-beta-23516",
@@ -4072,13 +4138,13 @@
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/8.0.3": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
       "NLog/4.4.0-beta2": {
@@ -4258,12 +4324,6 @@
         },
         "runtime": {
           "runtimes/win7/lib/dotnet5.4/System.IO.FileSystem.Watcher.dll": {}
-        }
-      },
-      "runtime.win7.System.Net.Http/4.0.1-rc2-23805": {
-        "type": "package",
-        "compile": {
-          "ref/dotnet/_._": {}
         }
       },
       "runtime.win7.System.Net.Primitives/4.0.11-beta-23516": {
@@ -4713,7 +4773,7 @@
           "ref/dotnet5.4/System.Linq.Expressions.dll": {}
         }
       },
-      "System.Net.Http/4.0.1-rc2-23805": {
+      "System.Net.Http/4.0.0": {
         "type": "package",
         "dependencies": {
           "System.IO": "4.0.0",
@@ -4723,7 +4783,7 @@
           "System.Threading.Tasks": "4.0.0"
         },
         "compile": {
-          "ref/dotnet5.2/System.Net.Http.dll": {}
+          "ref/dotnet/System.Net.Http.dll": {}
         }
       },
       "System.Net.Primitives/4.0.11-beta-23516": {
@@ -5250,6 +5310,28 @@
           "lib/dotnet/System.Xml.ReaderWriter.dll": {}
         }
       },
+      "System.Xml.XDocument/4.0.10": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.Reflection": "4.0.10",
+          "System.Resources.ResourceManager": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Xml.ReaderWriter": "4.0.10"
+        },
+        "compile": {
+          "ref/dotnet/System.Xml.XDocument.dll": {}
+        },
+        "runtime": {
+          "lib/dotnet/System.Xml.XDocument.dll": {}
+        }
+      },
       "System.Xml.XmlDocument/4.0.1-beta-23516": {
         "type": "package",
         "dependencies": {
@@ -5289,7 +5371,8 @@
           "System.Security.Principal": "4.0.1-beta-23409",
           "System.Security.Principal.Windows": "4.0.0-beta-23516",
           "System.Security.SecureString": "4.0.0-beta-23414",
-          "System.Threading": "4.0.11-beta-23516"
+          "System.Threading": "4.0.11-beta-23516",
+          "System.Xml.XDocument": "4.0.10"
         }
       },
       "Ascon.Pilot.Transport/0.0.1": {
@@ -5299,7 +5382,7 @@
           "castle.core.netcore": "3.3.4-beta8",
           "Microsoft.CSharp": "4.0.1-beta-23516",
           "Microsoft.Net.Http": "2.2.22",
-          "Newtonsoft.Json": "6.0.6",
+          "Newtonsoft.Json": "8.0.3",
           "NLog": "4.4.0-beta2",
           "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11",
           "protobuf-portable-net": "2.0.0.668",
@@ -5307,7 +5390,7 @@
           "System.Collections.Concurrent": "4.0.11-beta-23516",
           "System.Collections.Specialized": "4.0.1-beta-23516",
           "System.Linq": "4.0.1-beta-23516",
-          "System.Net.Http": "4.0.1-rc2-23805",
+          "System.Net.Http": "4.0.0",
           "System.Runtime": "4.0.21-beta-23516",
           "System.Runtime.Serialization.Primitives": "4.0.11-beta-23409",
           "System.Security.Cryptography.Cng": "4.0.0-beta-23516",
@@ -5850,13 +5933,13 @@
           "lib/dotnet/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Newtonsoft.Json/6.0.6": {
+      "Newtonsoft.Json/8.0.3": {
         "type": "package",
         "compile": {
-          "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         },
         "runtime": {
-          "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll": {}
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
         }
       },
       "NLog/4.4.0-beta2": {
@@ -6036,12 +6119,6 @@
         },
         "runtime": {
           "runtimes/win7/lib/dotnet5.4/System.IO.FileSystem.Watcher.dll": {}
-        }
-      },
-      "runtime.win7.System.Net.Http/4.0.1-rc2-23805": {
-        "type": "package",
-        "compile": {
-          "ref/dotnet/_._": {}
         }
       },
       "runtime.win7.System.Net.Primitives/4.0.11-beta-23516": {
@@ -6491,7 +6568,7 @@
           "ref/dotnet5.4/System.Linq.Expressions.dll": {}
         }
       },
-      "System.Net.Http/4.0.1-rc2-23805": {
+      "System.Net.Http/4.0.0": {
         "type": "package",
         "dependencies": {
           "System.IO": "4.0.0",
@@ -6501,7 +6578,7 @@
           "System.Threading.Tasks": "4.0.0"
         },
         "compile": {
-          "ref/dotnet5.2/System.Net.Http.dll": {}
+          "ref/dotnet/System.Net.Http.dll": {}
         }
       },
       "System.Net.Primitives/4.0.11-beta-23516": {
@@ -7026,6 +7103,28 @@
         },
         "runtime": {
           "lib/dotnet/System.Xml.ReaderWriter.dll": {}
+        }
+      },
+      "System.Xml.XDocument/4.0.10": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10",
+          "System.Diagnostics.Debug": "4.0.10",
+          "System.Globalization": "4.0.10",
+          "System.IO": "4.0.10",
+          "System.Reflection": "4.0.10",
+          "System.Resources.ResourceManager": "4.0.0",
+          "System.Runtime": "4.0.20",
+          "System.Runtime.Extensions": "4.0.10",
+          "System.Text.Encoding": "4.0.10",
+          "System.Threading": "4.0.10",
+          "System.Xml.ReaderWriter": "4.0.10"
+        },
+        "compile": {
+          "ref/dotnet/System.Xml.XDocument.dll": {}
+        },
+        "runtime": {
+          "lib/dotnet/System.Xml.XDocument.dll": {}
         }
       },
       "System.Xml.XmlDocument/4.0.1-beta-23516": {
@@ -7755,9 +7854,9 @@
         "ref/xamarinmac20/_._"
       ]
     },
-    "Newtonsoft.Json/6.0.6": {
+    "Newtonsoft.Json/8.0.3": {
       "type": "package",
-      "sha512": "w26uZNyCG5VeoKiEOJ4+9/o8koSofLKwHl7WLreIcp0U6r57L7WiRXmjp8MTKFw6dYNZ9AE0lw69WYbIhUsU9Q==",
+      "sha512": "KGsYQdS2zLH+H8x2cZaSI7e+YZ4SFIbyy1YJQYl6GYBWjf5o4H1A68nxyq+WTyVSOJQ4GqS/DiPE+UseUizgMg==",
       "files": [
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -7767,21 +7866,19 @@
         "lib/net40/Newtonsoft.Json.xml",
         "lib/net45/Newtonsoft.Json.dll",
         "lib/net45/Newtonsoft.Json.xml",
-        "lib/netcore45/Newtonsoft.Json.dll",
-        "lib/netcore45/Newtonsoft.Json.xml",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll",
-        "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.xml",
-        "Newtonsoft.Json.6.0.6.nupkg",
-        "Newtonsoft.Json.6.0.6.nupkg.sha512",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
+        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
+        "Newtonsoft.Json.8.0.3.nupkg",
+        "Newtonsoft.Json.8.0.3.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "tools/install.ps1"
       ]
     },
     "NLog/4.4.0-beta2": {
       "type": "package",
-      "sha512": "hwsr/zoePrYkb+cSNngKqqXpU8wIna6trk5Oz62rryoQJJLECT4tdJyR+q5xq/Nab3z6kktT/Gjjll78eTE2vQ==",
+      "sha512": "BLpQZ0+ukBWFEYDV3nehAEp2qzuc81Xh3fEXZcjCm1KgLa28rMGuzM6PiOvgTNqBa8DNp6l3g8UVRrgJ+7ow/w==",
       "files": [
         "lib/dotnet5.4/NLog.dll",
         "lib/dotnet5.4/NLog.xml",
@@ -7964,21 +8061,6 @@
         "runtimes/win7/lib/win8/_._",
         "runtimes/win7/lib/wp8/_._",
         "runtimes/win7/lib/wpa81/_._"
-      ]
-    },
-    "runtime.win7.System.Net.Http/4.0.1-rc2-23805": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "wWT9F2B72QiVYDiL15Pwq3/sOA4dy5l4pF/aSln51Vrem/D5GMvjrYQg7UU0genr4IFHioiVR7SMdBvGTS/VXg==",
-      "files": [
-        "dotnet_library_license.txt",
-        "ref/dotnet/_._",
-        "runtime.win7.System.Net.Http.4.0.1-rc2-23805.nupkg",
-        "runtime.win7.System.Net.Http.4.0.1-rc2-23805.nupkg.sha512",
-        "runtime.win7.System.Net.Http.nuspec",
-        "runtimes/win7/lib/DNXCore50/System.Net.Http.dll",
-        "runtimes/win7/lib/netcore50/System.Net.Http.dll",
-        "ThirdPartyNotices.txt"
       ]
     },
     "runtime.win7.System.Net.Primitives/4.0.11-beta-23516": {
@@ -9302,45 +9384,35 @@
         "System.Linq.Expressions.nuspec"
       ]
     },
-    "System.Net.Http/4.0.1-rc2-23805": {
+    "System.Net.Http/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "LekX2AYgeB9oMdtgVLipjw1HjPbwob+A8DCeOGsj3z7j/LWVFhrRuGSNmKbTJKhHoHG9vqdVZuriHejS3tHnKA==",
+      "sha512": "mZuAl7jw/mFY8jUq4ITKECxVBh9a8SJt9BC/+lJbmo7cRKspxE3PsITz+KiaCEsexN5WYPzwBOx0oJH/0HlPyQ==",
       "files": [
-        "dotnet_library_license.txt",
+        "lib/DNXCore50/System.Net.Http.dll",
         "lib/net45/_._",
+        "lib/netcore50/System.Net.Http.dll",
         "lib/win8/_._",
         "lib/wpa81/_._",
-        "ref/dotnet5.2/de/System.Net.Http.xml",
-        "ref/dotnet5.2/es/System.Net.Http.xml",
-        "ref/dotnet5.2/fr/System.Net.Http.xml",
-        "ref/dotnet5.2/it/System.Net.Http.xml",
-        "ref/dotnet5.2/ja/System.Net.Http.xml",
-        "ref/dotnet5.2/ko/System.Net.Http.xml",
-        "ref/dotnet5.2/ru/System.Net.Http.xml",
-        "ref/dotnet5.2/System.Net.Http.dll",
-        "ref/dotnet5.2/System.Net.Http.xml",
-        "ref/dotnet5.2/zh-hans/System.Net.Http.xml",
-        "ref/dotnet5.2/zh-hant/System.Net.Http.xml",
+        "ref/dotnet/de/System.Net.Http.xml",
+        "ref/dotnet/es/System.Net.Http.xml",
+        "ref/dotnet/fr/System.Net.Http.xml",
+        "ref/dotnet/it/System.Net.Http.xml",
+        "ref/dotnet/ja/System.Net.Http.xml",
+        "ref/dotnet/ko/System.Net.Http.xml",
+        "ref/dotnet/ru/System.Net.Http.xml",
+        "ref/dotnet/System.Net.Http.dll",
+        "ref/dotnet/System.Net.Http.xml",
+        "ref/dotnet/zh-hans/System.Net.Http.xml",
+        "ref/dotnet/zh-hant/System.Net.Http.xml",
         "ref/net45/_._",
-        "ref/netcore50/de/System.Net.Http.xml",
-        "ref/netcore50/es/System.Net.Http.xml",
-        "ref/netcore50/fr/System.Net.Http.xml",
-        "ref/netcore50/it/System.Net.Http.xml",
-        "ref/netcore50/ja/System.Net.Http.xml",
-        "ref/netcore50/ko/System.Net.Http.xml",
-        "ref/netcore50/ru/System.Net.Http.xml",
         "ref/netcore50/System.Net.Http.dll",
         "ref/netcore50/System.Net.Http.xml",
-        "ref/netcore50/zh-hans/System.Net.Http.xml",
-        "ref/netcore50/zh-hant/System.Net.Http.xml",
         "ref/win8/_._",
         "ref/wpa81/_._",
-        "runtime.json",
-        "System.Net.Http.4.0.1-rc2-23805.nupkg",
-        "System.Net.Http.4.0.1-rc2-23805.nupkg.sha512",
-        "System.Net.Http.nuspec",
-        "ThirdPartyNotices.txt"
+        "System.Net.Http.4.0.0.nupkg",
+        "System.Net.Http.4.0.0.nupkg.sha512",
+        "System.Net.Http.nuspec"
       ]
     },
     "System.Net.Primitives/4.0.11-beta-23516": {
@@ -11067,6 +11139,38 @@
         "System.Xml.ReaderWriter.4.0.10.nupkg",
         "System.Xml.ReaderWriter.4.0.10.nupkg.sha512",
         "System.Xml.ReaderWriter.nuspec"
+      ]
+    },
+    "System.Xml.XDocument/4.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "+ej0g0INnXDjpS2tDJsLO7/BjyBzC+TeBXLeoGnvRrm4AuBH9PhBjjZ1IuKWOhCkxPkFognUOKhZHS2glIOlng==",
+      "files": [
+        "lib/dotnet/System.Xml.XDocument.dll",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net46/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "ref/dotnet/de/System.Xml.XDocument.xml",
+        "ref/dotnet/es/System.Xml.XDocument.xml",
+        "ref/dotnet/fr/System.Xml.XDocument.xml",
+        "ref/dotnet/it/System.Xml.XDocument.xml",
+        "ref/dotnet/ja/System.Xml.XDocument.xml",
+        "ref/dotnet/ko/System.Xml.XDocument.xml",
+        "ref/dotnet/ru/System.Xml.XDocument.xml",
+        "ref/dotnet/System.Xml.XDocument.dll",
+        "ref/dotnet/System.Xml.XDocument.xml",
+        "ref/dotnet/zh-hans/System.Xml.XDocument.xml",
+        "ref/dotnet/zh-hant/System.Xml.XDocument.xml",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net46/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "System.Xml.XDocument.4.0.10.nupkg",
+        "System.Xml.XDocument.4.0.10.nupkg.sha512",
+        "System.Xml.XDocument.nuspec"
       ]
     },
     "System.Xml.XmlDocument/4.0.1-beta-23516": {

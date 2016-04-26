@@ -51,7 +51,6 @@ namespace Ascon.Pilot.WebClient.Controllers
                 }
 
                 await SignInAsync(dbInfo, model.Password, "");
-
                 
                 var objects = serverApi.GetObjects(new[] { DObject.RootId });
                 if (objects != null && objects.Any())
