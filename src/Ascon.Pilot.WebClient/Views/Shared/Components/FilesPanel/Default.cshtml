@@ -10,14 +10,15 @@
     {
         foreach (var fileModel in Model)
         {
-            <div class="col-sm-2">
-                <div>
-                    <a href="@Url.Action("Download", "Files", new {id = fileModel.Id, size = fileModel.Size})" class="thumbnail">
-                        <img src="@Url.Content("~/images/file.png")" width="100" height="100" alt="@fileModel.Name"/>
-                    </a>
+            <div class="col-sm-2 file-card" data-id="@fileModel.Id" onclick="processFileCardClick(this)">
+                <div class="file-card-icon">
+                    <img src="@Url.Content("~/images/file.png")" width="100" height="100" alt="@fileModel.Name"/>
                 </div>
-                <div>
-                    <a href="@Url.Action("Download", "Files", new {id = fileModel.Id, size = fileModel.Size})">@fileModel.Name</a>
+                <div class="file-card-name">
+                    <a title="Скачать файл" href="@Url.Action("Download", "Files", new {id = fileModel.Id, size = fileModel.Size})" class="text-center">
+                        Скачать <span class="glyphicon glyphicon-download-alt"></span>
+                    </a>
+                    <p>@fileModel.Name</p>
                 </div>
             </div>
         }
