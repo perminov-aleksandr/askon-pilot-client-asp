@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ProtoBuf;
 
 namespace Ascon.Pilot.Core
@@ -366,7 +369,7 @@ namespace Ascon.Pilot.Core
         public int CreatorId { get; set; }
 
         [ProtoMember(9)]
-        public SortedList<string, DValue> Attributes { get; private set; }
+        public SortedList<string, DValue> Attributes { get; set; }
 
         [ProtoMember(10)]
         public List<DFile> Files { get; private set; }

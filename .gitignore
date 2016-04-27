@@ -1,9 +1,9 @@
 /.vs/Pilot-ICE-WebClient/v14/*.suo
 *.user
+packages
 src/Ascon.Pilot.WebClient/node_modules/*
 src/Ascon.Pilot.WebClient/wwwroot/lib/*
 /publish
 /src/Ascon.Pilot.WebClient.IdentityAuth/*
-/src/packages
 /Askon.Pilot.Transport.Core
 /artifacts

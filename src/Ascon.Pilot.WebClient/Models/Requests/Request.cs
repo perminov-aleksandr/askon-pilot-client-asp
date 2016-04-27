@@ -1,6 +1,5 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Ascon.Pilot.Core;
 using Newtonsoft.Json;
 
 namespace Ascon.Pilot.WebClient.Models.Requests
@@ -23,11 +22,17 @@ namespace Ascon.Pilot.WebClient.Models.Requests
 
         public async Task<TResult> SendAsync(HttpClient client)
         {
+            var serializedResult = await PostAsync(client);
+            var deserializedResult = JsonConvert.DeserializeObject<TResult>(serializedResult);
+            return deserializedResult;
+        }
+
+        protected async Task<string> PostAsync(HttpClient client)
+        {
             var content = new StringContent(ToString());
             var response = await client.PostAsync(PilotMethod.WEB_CALL, content);
             var serializedResult = await response.Content.ReadAsStringAsync();
-            var deserializedResult = JsonConvert.DeserializeObject<TResult>(serializedResult);
-            return deserializedResult;
+            return serializedResult;
         }
     }
 }

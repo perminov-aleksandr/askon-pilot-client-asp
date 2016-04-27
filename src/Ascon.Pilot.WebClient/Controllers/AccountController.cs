@@ -27,7 +27,15 @@ namespace Ascon.Pilot.WebClient.Controllers
         public IActionResult LogIn(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            var logInViewModel = new LogInViewModel()
+            {
+#if (DEBUG)
+                DatabaseName = "3d-storage_ru",
+                Login = "admin",
+                Password = "123456"
+#endif
+            };
+            return View(logInViewModel);
         }
 
         [HttpPost]
