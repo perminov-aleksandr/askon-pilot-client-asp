@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Collections.Generic;
+using Ascon.Pilot.Core;
+using Microsoft.Extensions.Configuration;
 
 namespace Ascon.Pilot.WebClient
 {
@@ -18,6 +20,14 @@ namespace Ascon.Pilot.WebClient
         public static readonly string HttpSchemeName = "http";
         public static readonly string SchemeDelimiter = "://";
         public static readonly string AppName = "Web-клиент Pilot ICE";
+
+        public static readonly string DefaultGlyphicon = "";
+        public static readonly IDictionary<string, string> TypesGlyphiconDictionary = new Dictionary<string, string>()
+        {
+            { SystemTypes.PROJECT_FOLDER, "folder-open"},
+            { SystemTypes.PROJECT_FILE, "file" },
+            { SystemTypes.SMART_FOLDER, "book" }
+        };
     }
     
     //todo: use reflection with IServerApi methods

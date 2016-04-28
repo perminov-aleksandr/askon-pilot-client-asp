@@ -4,13 +4,9 @@
 @model LogInViewModel
 @{
     ViewBag.Title = "Войти";
-    Layout = "_Layout";
 }
 
-<h2>@ViewBag.Title</h2>
-<br/>
-
-@using (Html.BeginForm("AltAltLogIn", "Account", FormMethod.Post, new {@class = "form-horizontal"}))
+@using (Html.BeginForm("LogIn", "Account", FormMethod.Post, new {@class = "form-horizontal"}))
 {
     @Html.ValidationSummary(true)
     <div class="form-group">

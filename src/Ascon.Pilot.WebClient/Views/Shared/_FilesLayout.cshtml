@@ -21,12 +21,11 @@
 <body>
 @Html.Partial("_Header")
 <div class="body-content">
-    <br />
-    @RenderSection("title", false)
+    <br/>
     @RenderBody()
     <hr/>
     <footer>
-        <p>&copy; 2016 - @ApplicationConst.AppName</p>
+        <p>&copy; @DateTime.Now.Year - @ApplicationConst.AppName</p>
     </footer>
 </div>
 

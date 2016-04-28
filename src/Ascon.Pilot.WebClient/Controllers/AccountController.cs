@@ -27,7 +27,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         public IActionResult LogIn(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            var logInViewModel = new LogInViewModel()
+            var logInViewModel = new LogInViewModel
             {
 #if (DEBUG)
                 DatabaseName = "3d-storage_ru",
@@ -58,7 +58,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                     return View("LogIn", model);
                 }
 
-                await SignInAsync(dbInfo, model.Password, "");
+                await SignInAsync(dbInfo, model.Password);
                 
                 var objects = serverApi.GetObjects(new[] { DObject.RootId });
                 if (objects != null && objects.Any())
@@ -72,7 +72,7 @@ namespace Ascon.Pilot.WebClient.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> AltAltLogIn(LogInViewModel model, string returnUrl = null)
+        public async Task<IActionResult> LogIn(LogInViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid)
@@ -84,85 +84,30 @@ namespace Ascon.Pilot.WebClient.Controllers
                 ModelState.AddModelError("", "Не удается подключиться к серверу");
                 return View("LogIn", model);
             }
-
-            var serializedData = SerializeOpenDatabaseRequestData(model);
-            var content = new StringContent(serializedData, Encoding.UTF8, "application/json");
-            var result = await client.PostAsync(PilotMethod.WEB_CALL, content);
-            var resultContent = await result.Content.ReadAsStringAsync();
-
-            try
+            
+            var request = new OpenDatabaseRequest
             {
-                var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
-                await SignInAsync(dbInfo, model.Password, "");
-
-                return RedirectToAction("Index", "Home");
-            }
-            catch (JsonReaderException)
+                database = model.DatabaseName,
+                login = model.Login,
+                protectedPassword = model.Password
+            };
+            var dbInfo = await request.SendAsync(client);
+            if (dbInfo == null)
             {
-                var databaseNotFoundMessage = $"Database [{model.DatabaseName}] not found";
-                if (resultContent == databaseNotFoundMessage)
-                {
-                    ModelState.AddModelError("", "Указанное название базы данных не существует");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Указанные имя пользователи или пароль неверны. Проверьте данные и попробуйте еще раз");
-                }
+                ModelState.AddModelError("", "Не удалось войти. Проверьте введенные данные или попробуйте позже");
                 return View("LogIn", model);
             }
+            await SignInAsync(dbInfo, model.Password);
+            return RedirectToAction("Index", "Home");
         }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> LogIn(LogInViewModel model, string returnUrl = null)
-        {
-            ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
-            {
-                var baseAddress = new Uri(ApplicationConst.PilotServerUrl);
-                var cookieContainer = new CookieContainer();
-                using (var handler = new HttpClientHandler { CookieContainer = cookieContainer })
-                using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
-                {
-                    var serializedData = SerializeOpenDatabaseRequestData(model);
-                    var content = new StringContent(serializedData, Encoding.UTF8, "application/json");
-                    var result = await client.PostAsync(PilotMethod.WEB_CALL, content);
-                    var resultContent = await result.Content.ReadAsStringAsync();
-
-                    try
-                    {
-                        var dbInfo = JsonConvert.DeserializeObject<DDatabaseInfo>(resultContent);
-                        var cookieString = cookieContainer.GetCookieHeader(baseAddress);
-                        await SignInAsync(dbInfo, model.Password, cookieString);
-
-                        return RedirectToAction("Index", "Home");
-                    }
-                    catch (JsonReaderException)
-                    {
-                        var databaseNotFoundMessage = $"Database [{model.DatabaseName}] not found";
-                        if (resultContent == databaseNotFoundMessage)
-                        {
-                            ModelState.AddModelError("", "Указанное название базы данных не существует");
-                        }
-                        else
-                        {
-                            ModelState.AddModelError("", "Указанные имя пользователи или пароль неверны. Проверьте данные и попробуйте еще раз");
-                        }
-                        return View(model);
-                    }
-                }
-            }
-            return View(model);
-        }
-
-        private async Task SignInAsync(DDatabaseInfo dbInfo, string pwd, string sid)
+        
+        private async Task SignInAsync(DDatabaseInfo dbInfo, string pwd)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, dbInfo.Person.Login),
                 new Claim(ClaimTypes.GivenName, dbInfo.Person.DisplayName),
                 new Claim(ClaimTypes.Role, dbInfo.Person.IsAdmin ? Roles.Admin : Roles.User),
-                new Claim(ClaimTypes.Sid, sid),
                 new Claim("PWD", pwd),
                 new Claim("DatabaseId", dbInfo.DatabaseId.ToString())
             };
@@ -202,28 +147,6 @@ namespace Ascon.Pilot.WebClient.Controllers
             HttpContext.Session.GetClient().Dispose();
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
-        }
-
-        [AllowAnonymous]
-        public IActionResult Forbidden()
-        {
-            return View();
-        }
-
-        private static string SerializeOpenDatabaseRequestData(LogInViewModel model)
-        {
-            var openDatabaseRequest = new OpenDatabaseRequest
-            {
-                licenseType = 100,
-                api = ApplicationConst.PilotServerApiName,
-                method = ApiMethod.OpenDatabase,
-                useWindowsAuth = false,
-                database = model.DatabaseName,
-                login = model.Login,
-                protectedPassword = model.Password
-            };
-            var serializedRequest = JsonConvert.SerializeObject(openDatabaseRequest);
-            return serializedRequest;
         }
     }
 }

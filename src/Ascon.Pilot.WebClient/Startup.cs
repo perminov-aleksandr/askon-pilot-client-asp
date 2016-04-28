@@ -45,7 +45,6 @@ namespace Ascon.Pilot.WebClient
             {
                 options.AuthenticationScheme = ApplicationConst.PilotMiddlewareInstanceName;
                 options.LoginPath = new PathString("/Account/LogIn/");
-                options.AccessDeniedPath = new PathString("/Account/Forbidden/");
                 options.AutomaticAuthenticate = true;
                 options.AutomaticChallenge = true;
             });
@@ -88,7 +87,7 @@ namespace Ascon.Pilot.WebClient
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller:required=Home}/{action:required=Index}/{id?}");
             });
         }
 

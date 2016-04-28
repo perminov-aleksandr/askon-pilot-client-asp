@@ -19,16 +19,26 @@ namespace Ascon.Pilot.WebClient.Models.Requests
 
         public new async Task<DObject[]> SendAsync(HttpClient client)
         {
+            if (ids == null || ids.Length == 0)
+                return null;
+
             var stringResult = await PostAsync(client);
-            var dObjectArray = JsonConvert.DeserializeObject<DObject[]>(stringResult);
-            var jObjectArray = JsonConvert.DeserializeObject<JObject[]>(stringResult);
-            for (var i = 0; i < jObjectArray.Length; i++)
+            try
             {
-                var dAttributes = dObjectArray[i].Attributes;
-                var jAttributes = jObjectArray[i]["Attributes"];
-                dObjectArray[i].Attributes = ExtractNonParsedAttributes(dAttributes, jAttributes);
+                var dObjectArray = JsonConvert.DeserializeObject<DObject[]>(stringResult);
+                var jObjectArray = JsonConvert.DeserializeObject<JObject[]>(stringResult);
+                for (var i = 0; i < jObjectArray.Length; i++)
+                {
+                    var dAttributes = dObjectArray[i].Attributes;
+                    var jAttributes = jObjectArray[i]["Attributes"];
+                    dObjectArray[i].Attributes = ExtractNonParsedAttributes(dAttributes, jAttributes);
+                }
+                return dObjectArray;
             }
-            return dObjectArray;
+            catch (JsonReaderException ex)
+            {
+                return null;
+            }
         }
 
         private static SortedList<string, DValue> ExtractNonParsedAttributes(SortedList<string, DValue> dAttributes, JToken jAttributes)
@@ -45,7 +55,7 @@ namespace Ascon.Pilot.WebClient.Models.Requests
                 var isArr = jAttributes[attribute.Key].SelectToken("IsArray")?.Value<bool>();
                 var dblVal = jAttributes[attribute.Key].SelectToken("DoubleValue")?.Value<double?>();
 
-                DValue dValue = new DValue();
+                var dValue = new DValue();
 
                 if (!string.IsNullOrEmpty(strVal))
                     dValue.StrValue = strVal;
@@ -60,29 +70,6 @@ namespace Ascon.Pilot.WebClient.Models.Requests
                 else if (arrVal != null && isArr.HasValue && isArr.Value)
                     dValue.ArrayValue = arrVal;
                 
-                /*if (string.IsNullOrEmpty(strVal))
-                    dValue = DValue.GetDValue(strVal);
-                else if (intVal.HasValue)
-                    dValue = DValue.GetDValue(intVal.Value);
-                else if (dateVal.HasValue)
-                    dValue = DValue.GetDValue(dateVal.Value);
-                else if (decVal.HasValue)
-                    dValue = DValue.GetDValue(decVal.Value);
-                else if (dblVal.HasValue)
-                    dValue = DValue.GetDValue(dblVal.Value);
-                else 
-                    dValue = DValue.GetDValue(null);*/
-
-                /*dValue = new DValue
-                {
-                    Value = val,
-                    StrValue = strVal,
-                    DateValue = dateVal,
-                    DecimalValue = decVal,
-                    IntValue = intVal,
-                    DoubleValue = dblVal,
-                    ArrayValue = arrVal
-                };*/
                 newAttributes.Add(attribute.Key, dValue);
             }
             return newAttributes;

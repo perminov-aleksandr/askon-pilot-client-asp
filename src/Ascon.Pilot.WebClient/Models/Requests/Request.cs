@@ -23,8 +23,15 @@ namespace Ascon.Pilot.WebClient.Models.Requests
         public async Task<TResult> SendAsync(HttpClient client)
         {
             var serializedResult = await PostAsync(client);
-            var deserializedResult = JsonConvert.DeserializeObject<TResult>(serializedResult);
-            return deserializedResult;
+            try
+            {
+                var deserializedResult = JsonConvert.DeserializeObject<TResult>(serializedResult);
+                return deserializedResult;
+            }
+            catch (JsonReaderException ex)
+            {
+                return default(TResult);
+            }
         }
 
         protected async Task<string> PostAsync(HttpClient client)

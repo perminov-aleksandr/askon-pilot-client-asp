@@ -1,12 +1,11 @@
-﻿@using Ascon.Pilot.Core
-@using Microsoft.AspNet.Mvc.Rendering
+﻿@using Microsoft.AspNet.Mvc.Rendering
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - @ApplicationConst.AppName</title>
+    <title>@ViewBag.Title - @ApplicationConst.AppName</title>
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css"/>
@@ -23,7 +22,15 @@
 @Html.Partial("_Header")
 <div class="container body-content">
     <br/>
-    @RenderSection("title", false)
+    @if (IsSectionDefined("title"))
+    {
+        @RenderSection("title", false)
+    }
+    else
+    {
+        <h2>@ViewBag.Title</h2>
+        <br />
+    }
     @RenderBody()
     <hr/>
     <footer>

@@ -1,0 +1,157 @@
+﻿@using System.Threading.Tasks
+@using Ascon.Pilot.Core
+@model Ascon.Pilot.WebClient.ViewModels.UserPositionViewModel
+@{
+    ViewBag.Title = "Файлы";
+    Layout = "_FilesLayout";
+}
+
+<div class="row">
+    <div class="col-md-3" id="sidePanel">
+        @await Component.InvokeAsync("SidePanel", Model.SidePanel.ObjectId)
+    </div>
+    <div class="col-md-9">
+        <div>
+            @Html.Partial("_Breadcrumbs", Model.Path)
+        </div>
+        <div id="filesPanel">
+            @await Component.InvokeAsync("FilesPanel", Model.SidePanel.ObjectId)
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        var baseFilesUrl = '/Files/Index/';
+        var getFilesUrl = '@Html.Raw(Url.Action("GetObject", "Files"))';
+        var getChildsUrl = '@Html.Raw(Url.Action("GetNodeChilds", "Files"))';
+        var getSidePanelUrl = '@Html.Raw(Url.Action("SidePanel", "Files"))';
+        var ROOT_ID = '@DObject.RootId';
+
+        var treeControl;
+        var treeData;
+
+        var recursiveFind = function(keyObj, tData) {
+            var p, key, val, tRet;
+            for (p in keyObj) {
+                if (keyObj.hasOwnProperty(p)) {
+                    key = p;
+                    val = keyObj[p];
+                }
+            }
+            for (p in tData) {
+                if (tData.hasOwnProperty(p)) {
+                    if (p === key) {
+                        if (tData[p] === val) {
+                            return tData;
+                        }
+                    } else if (tData[p] instanceof Object) {
+                        if (tData.hasOwnProperty(p)) {
+                            tRet = recursiveFind(keyObj, tData[p]);
+                            if (tRet) {
+                                return tRet;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        };
+
+        $(document).ready(function() {
+            treeControl = createTreeView(treeData);
+        });
+
+        function pushHistory(id) {
+            history.pushState(null, '', baseFilesUrl + id);
+            document.title = $('#breadcrumbs li:last-child').text();
+        }
+
+        function createTreeView(data) {
+            var tree = $('#tree');
+            tree.treeview({
+                data: data,
+                showIcon: true,
+                onNodeSelected: function(event, node) {
+                    window.recieveFiles(node);
+                },
+                onNodeExpanded: function (event, node) {
+                    var childNodes = node['nodes'];
+                    if (childNodes.length === 0)
+                        window.getChilds(node);
+                }
+            });
+            return tree.treeview(true);
+        }
+        
+        function getChilds(node) {
+            var idWithChilds = node['id'];
+            $.ajax(getChildsUrl, {
+                data: {
+                    id: idWithChilds
+                },
+                success: function(data) {
+                    var nodeToAppendChilds = recursiveFind({ id: idWithChilds }, treeData);
+                    nodeToAppendChilds['nodes'] = data;
+
+                    var expandedNodes = treeControl.getExpanded();
+                    var selectedNode = treeControl.getSelected()[0];
+                    treeControl.remove();
+                    treeControl = createTreeView(treeData);
+
+                    //var nodeId = node['nodeId'];
+                    //treeControl.revealNode(nodeId, { silent: true });
+                    $.each(expandedNodes, function(i, e) {
+                        treeControl.expandNode(e.nodeId, { silent: true });
+                    });
+                    //treeControl.unselectNode(treeControl.getSelected());
+                    //treeControl.selectNode(selectedNode);
+                }
+            });
+        }
+
+        function recieveFiles(node) {
+            var folderId = node['id'];
+            
+            $.ajax(getFilesUrl, {
+                data: {
+                    id: folderId
+                },
+                success: function(data) {
+                    $('#filesPanel').html(data);
+                    pushHistory(folderId);
+                    $('#breadcrumbs').html(createHtmlForBreadcrumbs());
+                },
+                error: function(data) {
+                    $('#filesPanel').html('<div class="alert alert-danger"><p>при запросе файлов произошла ошибка</p></div>');
+                }
+            });
+        }
+
+        function createHtmlForBreadcrumbs() {
+            function getBreadcrumbs(childNode, lBreadcrumbs) {
+                var parent = treeControl.getParent(childNode);
+                if (typeof parent != "undefined" && parent != null) {
+                    lBreadcrumbs.push(parent.text);
+                    return getBreadcrumbs(parent, lBreadcrumbs);
+                } else {
+                    return lBreadcrumbs;
+                }
+            }
+
+            var selectedNode = treeControl.getSelected()[0];
+            var breadcrumbs = [selectedNode.text];
+            breadcrumbs = getBreadcrumbs(selectedNode, breadcrumbs);
+            var html = '';
+            for (var i = breadcrumbs.length - 1; i >= 0; i--) {
+                html += (i === 0 ? '<li>' : '<li class="active">' )+ breadcrumbs[i] + '</li>';
+            }
+            return html;
+        }
+
+        function processFileCardClick(id) {
+
+        }
+    </script>
+}

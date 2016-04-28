@@ -1,9 +1,9 @@
 ﻿@model IEnumerable<Ascon.Pilot.Core.MType>
+@{
+    ViewBag.Title = "Типы файлов";
+}
 
-<h2>Типы файлов</h2>
-<br/>
-
-<table class="table"> 
+<table class="table table-hover"> 
     <thead>
     <tr>
         <th>Id</th>
@@ -12,6 +12,7 @@
         <th>Kind</th>
         <th>HasFiles</th>
         <th>IsDeleted</th>
+        <th>Icon</th>
     </tr>
     </thead>
     <tbody>
@@ -24,6 +25,9 @@
             <td>@type.Kind</td>
             <td>@type.HasFiles</td>
             <td>@type.IsDeleted</td>
+            <td>
+                <i class="glyphicon glyphicon-@(ApplicationConst.TypesGlyphiconDictionary.ContainsKey(type.Name) ? ApplicationConst.TypesGlyphiconDictionary[type.Name] : ApplicationConst.DefaultGlyphicon)"></i>
+            </td>
         </tr>
     }
     </tbody>

@@ -1,150 +1,16 @@
-﻿@using System.Threading.Tasks
-@using Ascon.Pilot.Core
-@model Ascon.Pilot.WebClient.ViewModels.UserPositionViewModel
-@{
-    ViewBag.Title = Model.Path.Last();
+﻿@{
+    ViewBag.Title = "Главная";
 }
-
-<div class="row">
-    <div class="col-md-3" id="sidePanel">
-        @await Component.InvokeAsync("SidePanel", Model.SidePanel.ObjectId)
-    </div>
-    <div class="col-md-9">
-        <div>
-            @Html.Partial("_Breadcrumbs", Model.Path)
-        </div>
-        <div id="filesPanel">
-            @await Component.InvokeAsync("FilesPanel", Model.SidePanel.ObjectId)
-        </div>
-    </div>
+    
+<div class="list-group">
+    <a href="@Url.Action("Index", "Files")" class="list-group-item">
+        <h2 class="list-group-item-heading">
+            <i class="glyphicon glyphicon-file"></i>&nbsp;Файлы
+        </h2>
+    </a>
+    <a href="#" class="list-group-item disabled">
+        <h2 class="list-group-item-heading">
+            <i class="glyphicon glyphicon-tasks"></i>&nbsp;Задания
+        </h2>
+    </a>
 </div>
-
-@section scripts
-{
-    <script type="text/javascript">
-        var getFilesUrl = '@Html.Raw(Url.Action("GetObject", "Home"))';
-        var getChildsUrl = '@Html.Raw(Url.Action("GetNodeChilds", "Home"))';
-        var getSidePanelUrl = '@Html.Raw(Url.Action("SidePanel", "Home"))';
-        var ROOT_ID = '@DObject.RootId';
-
-        var treeControl;
-        var treeData;
-
-        var recursiveFind = function(keyObj, tData) {
-            var p, key, val, tRet;
-            for (p in keyObj) {
-                if (keyObj.hasOwnProperty(p)) {
-                    key = p;
-                    val = keyObj[p];
-                }
-            }
-            for (p in tData) {
-                if (tData.hasOwnProperty(p)) {
-                    if (p === key) {
-                        if (tData[p] === val) {
-                            return tData;
-                        }
-                    } else if (tData[p] instanceof Object) {
-                        if (tData.hasOwnProperty(p)) {
-                            tRet = recursiveFind(keyObj, tData[p]);
-                            if (tRet) {
-                                return tRet;
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        };
-
-        $(document).ready(function() {
-            treeControl = createTreeView(treeData);
-        });
-
-        function pushHistory(id) {
-            history.pushState(null, '', '/Home/Index/' + id);
-        }
-
-        function createTreeView(data) {
-            var tree = $('#tree');
-            tree.treeview({
-                data: data,
-                showIcon: true,
-                onNodeSelected: function(event, node) {
-                    window.recieveFiles(node);
-                },
-                onNodeExpanded: function(event, node) {
-                    window.getChilds(node);
-                }
-            });
-            return tree.treeview(true);
-        }
-
-        /*function recieveSidePanel(id) {
-            $.ajax(getSidePanelUrl, {
-                data: {
-                    id: id
-                },
-                success: function(data) {
-                    $('#sidePanel').html(data);
-                },
-                error: function(data) {
-
-                }
-            });
-        }*/
-
-        function getChilds(node) {
-            var idWithChilds = node['id'];
-            $.ajax(getChildsUrl, {
-                data: {
-                    id: idWithChilds
-                },
-                success: function (data) {
-                    var nodeToAppendChilds = recursiveFind({ id: idWithChilds }, treeData);
-                    nodeToAppendChilds['nodes'] = data;
-
-                    var expandedNodes = treeControl.getExpanded();
-                    var selectedNode = treeControl.getSelected()[0];
-                    treeControl.remove();
-                    treeControl = createTreeView(treeData);
-
-                    //var nodeId = node['nodeId'];
-                    //treeControl.revealNode(nodeId, { silent: true });
-                    $.each(expandedNodes, function (i, e) {
-                        treeControl.expandNode(e.nodeId, { silent: true });
-                    });
-                    //treeControl.unselectNode(treeControl.getSelected());
-                    //treeControl.selectNode(selectedNode);
-                }
-            });
-        }
-
-        function recieveFiles(node) {
-            var folderId = node['id'];
-
-            /*var parentId;
-            var parent = treeControl.getParent(node);
-            if (typeof parent === "undefined")
-                parentId = ROOT_ID;
-            else
-                parentId = parent['id'];*/
-
-            $.ajax(getFilesUrl, {
-                data: {
-                    id: folderId
-                },
-                success: function(data) {
-                    $('#filesPanel').html(data);
-                    pushHistory(folderId);
-                },
-                error: function(data) {
-                }
-            });
-        }
-
-        function processFileCardClick(id) {
-            
-        }
-    </script>
-}

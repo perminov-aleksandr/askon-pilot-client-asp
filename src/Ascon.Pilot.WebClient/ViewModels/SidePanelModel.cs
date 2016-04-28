@@ -24,6 +24,14 @@ namespace Ascon.Pilot.WebClient.ViewModels
 
     public class SidePanelItem
     {
+        public string Name {
+            get
+            {
+                if (Type == null || DObject == null)
+                    return string.Empty;
+                return DObject.GetTitle(Type);
+            }
+        }
         public MType Type { get; set; }
         public DObject DObject { get; set; }
         public List<SidePanelItem> SubItems { get; set; }
@@ -40,8 +48,10 @@ namespace Ascon.Pilot.WebClient.ViewModels
             return new
             {
                 id = DObject.Id,
-                text = DObject.GetTitle(mType),
-                icon = mType.IsProjectFolder() ? "glyphicon glyphicon-folder-open" : "glyphicon glyphicon-file",
+                text = Name,
+                icon = ApplicationConst.TypesGlyphiconDictionary.ContainsKey(mType.Name) ?
+                    $"glyphicon glyphicon-{ApplicationConst.TypesGlyphiconDictionary[mType.Name]}"
+                    : "",
                 state = new {
                     selected = DObject.Id == id
                 },
