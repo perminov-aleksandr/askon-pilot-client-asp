@@ -37,41 +37,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             };
             return View(logInViewModel);
         }
-
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> AltLogIn(LogInViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View("LogIn");
-            
-            var serverUrl = ApplicationConst.PilotServerUrl;
-            var connectionCredentials = ConnectionCredentials.GetConnectionCredentials(serverUrl, model.Login, model.Password.ConvertToSecureString());
-            using (var client = new HttpPilotClient(connectionCredentials, new MarshallingFactory()))
-            {
-                var serviceCallbackProxy = new Castle.DynamicProxy.ProxyGenerator().CreateInterfaceProxyWithoutTarget<IServerCallback>();
-                var serverApi = client.GetServerApi(serviceCallbackProxy);
-                var dbInfo = serverApi.OpenDatabase(model.DatabaseName, model.Login, model.Password.EncryptAes(), false);
-                if (dbInfo == null)
-                {
-                    ModelState.AddModelError("", "Авторизация не удалась, проверьте данные и повторите вход");
-                    return View("LogIn", model);
-                }
-
-                await SignInAsync(dbInfo, model.Password);
-                DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
-                SetSessionValues(SessionKeys.MetaTypes, dMetadata.Types.ToDictionary(x => x.Id, y => y));
-
-                var objects = serverApi.GetObjects(new[] { DObject.RootId });
-                if (objects != null && objects.Any())
-                {
-                    var childrenCount = objects[0].Children.Count;
-                }
-
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
+        
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel model, string returnUrl = null)
