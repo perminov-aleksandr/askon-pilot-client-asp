@@ -87,7 +87,7 @@ namespace Ascon.Pilot.WebClient
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller:required=Home}/{action:required=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
 

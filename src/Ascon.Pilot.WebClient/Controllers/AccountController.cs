@@ -47,7 +47,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             
             var serverUrl = ApplicationConst.PilotServerUrl;
             var connectionCredentials = ConnectionCredentials.GetConnectionCredentials(serverUrl, model.Login, model.Password.ConvertToSecureString());
-            using (var client = new HttpPilotClient(connectionCredentials, new JsonMarshallingFactory()))
+            using (var client = new HttpPilotClient(connectionCredentials, new MarshallingFactory()))
             {
                 var serviceCallbackProxy = new Castle.DynamicProxy.ProxyGenerator().CreateInterfaceProxyWithoutTarget<IServerCallback>();
                 var serverApi = client.GetServerApi(serviceCallbackProxy);
@@ -59,7 +59,9 @@ namespace Ascon.Pilot.WebClient.Controllers
                 }
 
                 await SignInAsync(dbInfo, model.Password);
-                
+                DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
+                SetSessionValues(SessionKeys.MetaTypes, dMetadata.Types.ToDictionary(x => x.Id, y => y));
+
                 var objects = serverApi.GetObjects(new[] { DObject.RootId });
                 if (objects != null && objects.Any())
                 {
@@ -98,6 +100,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                 return View("LogIn", model);
             }
             await SignInAsync(dbInfo, model.Password);
+            RecieveAndSetMetatypes(client, dbInfo.MetadataVersion);
             return RedirectToAction("Index", "Home");
         }
         
@@ -113,10 +116,10 @@ namespace Ascon.Pilot.WebClient.Controllers
             };
 
             var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, ApplicationConst.PilotMiddlewareInstanceName));
+            
             await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
 
             SetSessionValues(SessionKeys.DBInfo, dbInfo);
-            RecieveAndSetMetatypes(dbInfo.MetadataVersion);
         }
 
         /// <summary>
@@ -134,7 +137,13 @@ namespace Ascon.Pilot.WebClient.Controllers
             }
         }
 
-        private void RecieveAndSetMetatypes(long metadataVersion)
+        private void RecieveAndSetMetatypes(HttpClient client, long metadataVersion)
+        {
+            var response = new GetMetadataRequest { localVersion = metadataVersion }.SendAsync(client).Result;
+            SetSessionValues(SessionKeys.MetaTypes, response.Types.ToDictionary(x => x.Id, y => y));
+        }
+
+        private void AltRecieveAndSetMetatypes(long metadataVersion)
         {
             var client = HttpContext.Session.GetClient();
             var response = new GetMetadataRequest { localVersion = metadataVersion }.SendAsync(client).Result;

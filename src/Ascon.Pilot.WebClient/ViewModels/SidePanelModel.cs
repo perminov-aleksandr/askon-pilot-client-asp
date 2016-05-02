@@ -28,7 +28,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
             get
             {
                 if (Type == null || DObject == null)
-                    return string.Empty;
+                    return "не определено";
                 return DObject.GetTitle(Type);
             }
         }
@@ -45,13 +45,12 @@ namespace Ascon.Pilot.WebClient.ViewModels
                     nodes.Add(sidePanelItem.GetDynamic(id, types));
                 }
             var mType = types[DObject.TypeId];
+            string icon;
             return new
             {
                 id = DObject.Id,
                 text = Name,
-                icon = ApplicationConst.TypesGlyphiconDictionary.ContainsKey(mType.Name) ?
-                    $"glyphicon glyphicon-{ApplicationConst.TypesGlyphiconDictionary[mType.Name]}"
-                    : "",
+                icon = ApplicationConst.TypesGlyphiconDictionary.TryGetValue(mType.Name, out icon) ? $"glyphicon glyphicon-{icon}" : "",
                 state = new {
                     selected = DObject.Id == id
                 },

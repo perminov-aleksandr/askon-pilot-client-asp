@@ -49,12 +49,15 @@ namespace Ascon.Pilot.WebClient.Controllers
                 .Select(x =>
                 {
                     var mType = types[x.TypeId];
+                    var icon = ApplicationConst.TypesGlyphiconDictionary.ContainsKey(mType.Name)
+                        ? $"glyphicon glyphicon-{ApplicationConst.TypesGlyphiconDictionary}"
+                        : "";
                     return new
                     {
                         id = x.Id,
                         text = x.GetTitle(mType),
-                        icon = mType.IsProjectFile() ? "glyphicon glyphicon-file" : "glyphicon glyphicon-folder-open",
-                        nodes = x.Children.Any(y => types[y.TypeId].IsProjectFolder()) ? new dynamic[] { } : null
+                        icon,
+                        nodes = x.Children.Any(y => types[y.TypeId].IsProjectFolder()) ? new dynamic[]{} : null
                     };
                 })
                 .ToArray();

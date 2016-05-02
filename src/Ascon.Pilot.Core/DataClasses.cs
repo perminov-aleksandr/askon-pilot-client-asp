@@ -715,9 +715,15 @@ namespace Ascon.Pilot.Core
     public struct Access
     {
         private DateTime _validThrough;
-        
-        [ProtoMember(1)]
+
         public AccessLevel AccessLevel { get; set; }
+
+        [ProtoMember(1)]
+        private byte AccessLevelWire
+        {
+            get { return (byte)AccessLevel; }
+            set { AccessLevel = (AccessLevel)value; }
+        }
 
         [ProtoMember(2)]
         public DateTime ValidThrough
