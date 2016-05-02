@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using Ascon.Pilot.Core;
+using Ascon.Pilot.Server.Api;
+using Ascon.Pilot.Server.Api.Contracts;
 using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Features;
+using ISession = Microsoft.AspNet.Http.Features.ISession;
 
 namespace Ascon.Pilot.WebClient.Extensions
 {
@@ -19,13 +18,29 @@ namespace Ascon.Pilot.WebClient.Extensions
                 return ProtoBuf.Serializer.Deserialize<IDictionary<int, MType>>(ms);
             }
         }
+
+        /// <summary>
+        /// Set value of type <typeparam name="T">T</typeparam> at session dictionary using protobuf-net
+        /// </summary>
+        /// <typeparam name="T">type of value to set. Must be proto-serializable</typeparam>
+        /// <param name="session">session to add values</param>
+        /// <param name="key">key of value</param>
+        /// <param name="value">value to set</param>
+        public static void SetSessionValues<T>(this ISession session, string key, T value)
+        {
+            using (var bs = new MemoryStream())
+            {
+                ProtoBuf.Serializer.Serialize(bs, value);
+                session.Set(key, bs.ToArray());
+            }
+        }
     }
 
     public static class ClientsStorage
     {
-        private static readonly Dictionary<Guid, HttpClient>  ClientsDictionary = new Dictionary<Guid, HttpClient>();
+        private static readonly Dictionary<Guid, HttpPilotClient>  ClientsDictionary = new Dictionary<Guid, HttpPilotClient>();
 
-        public static HttpClient GetClient(this ISession session)
+        public static HttpPilotClient GetClient(this ISession session)
         {
             var clientIdString = session.GetString(SessionKeys.ClientId);
             if (string.IsNullOrEmpty(clientIdString))
@@ -38,32 +53,17 @@ namespace Ascon.Pilot.WebClient.Extensions
                 return client;
             }
 
-            var httpClient = CreateHttpClient();
-
-            try
-            {
-                var result = httpClient.PostAsync(PilotMethod.WEB_CONNECT, new StringContent(string.Empty)).Result;
-                if (!result.IsSuccessStatusCode)
-                    throw new Exception($"Server connection failed with status: {result.StatusCode}");
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            ClientsDictionary.Add(clientId, httpClient);
-            return httpClient;
+            var newClient = new HttpPilotClient();
+            ClientsDictionary.Add(clientId, newClient);
+            return newClient;
         }
 
-        public static HttpClient CreateHttpClient()
+        public static IServerApi GetServerApi(this ISession session, IServerCallback callback = null)
         {
-            var cookieContainer = new CookieContainer();
-            var handler = new HttpClientHandler {CookieContainer = cookieContainer};
-            var client = new HttpClient(handler, true)
-            {
-                BaseAddress = new Uri(ApplicationConst.PilotServerUrl)
-            };
-            return client;
+            if (callback == null)
+                callback = CallbackFactory.Get<IServerCallback>();
+            var client = session.GetClient();
+            return client.GetServerApi(callback);
         }
     }
 }

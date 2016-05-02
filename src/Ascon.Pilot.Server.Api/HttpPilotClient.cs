@@ -31,6 +31,11 @@ namespace Ascon.Pilot.Server.Api
             _transportCallback = new CallbackReceiverAdapter(_unmarshaller, CallbackError);
         }
 
+        /// <summary>
+        /// Init new HttpPilotClient instance with Marshalling factory as default.
+        /// Connect with specified credentials to server
+        /// </summary>
+        /// <param name="credentials"></param>
         public HttpPilotClient(ConnectionCredentials credentials)
             : this(credentials, new MarshallingFactory())
         {
@@ -92,7 +97,7 @@ namespace Ascon.Pilot.Server.Api
         {
             _client.Disconnect();
         }
-
+        
         public IServerApi GetServerApi(IServerCallback callback)
         {
             _serverCallback = callback;

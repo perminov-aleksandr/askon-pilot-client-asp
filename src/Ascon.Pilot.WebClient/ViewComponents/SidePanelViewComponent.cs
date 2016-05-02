@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
+using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.WebClient.Extensions;
-using Ascon.Pilot.WebClient.Models.Requests;
 using Ascon.Pilot.WebClient.ViewModels;
-using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
-using ProtoBuf;
 
 namespace Ascon.Pilot.WebClient.ViewComponents
 {
@@ -18,22 +14,18 @@ namespace Ascon.Pilot.WebClient.ViewComponents
     {
         public async Task<IViewComponentResult> InvokeAsync(Guid? id)
         {
-            return await GetSidePanelAsync(id);
+            return await Task.Run(() => GetSidePanel(id)) ;
         }
 
-        public async Task<IViewComponentResult> GetSidePanelAsync(Guid? id)
+        public IViewComponentResult GetSidePanel(Guid? id)
         {
             id = id ?? DObject.RootId;
-            var client = HttpContext.Session.GetClient();
 
-            var metadataVersion = GetMetadataVersion();
-            var metadata = await new GetMetadataRequest
-            {
-                localVersion = metadataVersion
-            }.SendAsync(client);
-            var mTypes = metadata?.Types.ToDictionary(x => x.Id, y => y);
+            var serverApi = HttpContext.Session.GetServerApi();
+            var rootObject = serverApi.GetObjects(new[] { id.Value }).First();
 
-            List<SidePanelItem> sidePanelItems = new List<SidePanelItem>();
+            var mTypes = HttpContext.Session.GetMetatypes();
+            var sidePanelItems = new List<SidePanelItem>();
             var model = new SidePanelViewModel
             {
                 ObjectId = id.Value,
@@ -41,8 +33,8 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 Items = sidePanelItems
             };
 
-            var objects = await GetObjectsAsync(client, new[] {id.Value});
-            var childrens = await GetObjectsAsync(client, objects[0].Children.Select(x => x.ObjectId).ToArray());
+            var rootChildrenIds = rootObject.Children.Select(x => x.ObjectId).ToArray();
+            var childrens = serverApi.GetObjects(rootChildrenIds);
             if (childrens == null)
                 return View(model);
 
@@ -58,11 +50,11 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 if (children.Children != null && children.Children.Any())
                 {
                     var childIds = children.Children?.Select(y => y.ObjectId).ToArray();
-                    var childs = await GetObjectsAsync(client, childIds);
+                    var childs = serverApi.GetObjects(childIds);
 
                     foreach (var child in childs)
                     {
-                        var panelItem = await GetItemsWithChilds(child, mTypes, client);
+                        var panelItem = GetItemsWithChilds(child, mTypes, serverApi);
                         sidePanelItem.SubItems.Add(panelItem);
                     }
                 }
@@ -73,12 +65,12 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 return View(model);
 
             var prevId = id.Value;
-            var parentId = objects[0].ParentId;
+            var parentId = rootObject.ParentId;
             while (parentId != Guid.Empty)
             {
-                var parentObject = await GetObjectsAsync(client, new[] {parentId});
-                var parentChilds = await GetObjectsAsync(client, parentObject[0].Children.Select(x => x.ObjectId).ToArray());
-                if (parentChilds.Length != 0)
+                var parentObject = serverApi.GetObjects(new[] { parentId }).First();
+                var parentChilds = serverApi.GetObjects(parentObject.Children.Select(x => x.ObjectId).ToArray());
+                if (parentChilds.Count != 0)
                 {
                     var subtree = model.Items;
                     model.Items = parentChilds
@@ -91,25 +83,15 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                         }).ToList();
                 }
                 prevId = parentId;
-                parentId = parentObject[0].ParentId;
+                parentId = parentObject.ParentId;
             }
             return View(model);
         }
-
-        private long GetMetadataVersion()
+        
+        private static SidePanelItem GetItemsWithChilds(DObject obj, IDictionary<int, MType> types, IServerApi serverApi)
         {
-            long metadataVersion;
-            using (var ms = new MemoryStream(HttpContext.Session.Get(SessionKeys.DBInfo)))
+            var sidePanelItem = new SidePanelItem
             {
-                var dbInfo = Serializer.Deserialize<DDatabaseInfo>(ms);
-                metadataVersion = dbInfo.MetadataVersion;
-            }
-            return metadataVersion;
-        }
-
-        private static async Task<SidePanelItem> GetItemsWithChilds(DObject obj, Dictionary<int, MType> types, HttpClient client)
-        {
-            var sidePanelItem = new SidePanelItem {
                 DObject = obj,
                 Type = types[obj.TypeId]
             };
@@ -118,8 +100,8 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 return sidePanelItem;
 
             var childrenIds = obj.Children.Select(x => x.ObjectId).ToArray();
-            var childrens = await GetObjectsAsync(client, childrenIds);
-            
+            var childrens = serverApi.GetObjects(childrenIds);
+
             sidePanelItem.SubItems = childrens?.Select(x => new SidePanelItem
             {
                 DObject = x,
@@ -127,12 +109,6 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 SubItems = x.Children.Any(y => types[y.TypeId].IsProjectFolder()) ? new List<SidePanelItem>() : null
             }).ToList();
             return sidePanelItem;
-        }
-
-        private static async Task<DObject[]> GetObjectsAsync(HttpClient client, Guid[] ids)
-        {
-            var getObjectsRequest = new GetObjectsRequest {ids = ids};
-            return await getObjectsRequest.SendAsync(client);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
 {
     public class SidePanelViewModel
     {
-        public IReadOnlyDictionary<int, MType> Types { get; set; }
+        public IDictionary<int, MType> Types { get; set; }
         public Guid ObjectId { get; set; }
         public List<SidePanelItem> Items { get; set; }
 
@@ -36,7 +36,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
         public DObject DObject { get; set; }
         public List<SidePanelItem> SubItems { get; set; }
 
-        public dynamic GetDynamic(Guid id, IReadOnlyDictionary<int, MType> types)
+        public dynamic GetDynamic(Guid id, IDictionary<int, MType> types)
         {
             var nodes = new List<dynamic>();
             if (SubItems != null)
