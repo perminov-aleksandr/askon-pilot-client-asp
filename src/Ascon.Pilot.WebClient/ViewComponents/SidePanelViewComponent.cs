@@ -19,37 +19,43 @@ namespace Ascon.Pilot.WebClient.ViewComponents
 
         public IViewComponentResult GetSidePanel(Guid? id)
         {
-            id = id ?? DObject.RootId;
+            //id = id ?? DObject.RootId;
+
+            id = DObject.RootId;
 
             var serverApi = HttpContext.Session.GetServerApi();
             var rootObject = serverApi.GetObjects(new[] { id.Value }).First();
 
             var mTypes = HttpContext.Session.GetMetatypes();
-            var sidePanelItems = new List<SidePanelItem>();
             var model = new SidePanelViewModel
             {
                 ObjectId = id.Value,
                 Types = mTypes,
-                Items = sidePanelItems
+                Items = new List<SidePanelItem>()
             };
 
-            var rootChildrenIds = rootObject.Children.Select(x => x.ObjectId).ToArray();
-            var childrens = serverApi.GetObjects(rootChildrenIds);
-            if (childrens == null)
+            var rootChildrenIds = rootObject.Children?
+                //.Where(x => mTypes[x.TypeId].Children?.Any() == true)
+                .Select(x => x.ObjectId).ToArray();
+            var rootChildrens = serverApi.GetObjects(rootChildrenIds);
+            if (rootChildrens == null)
                 return View(model);
 
-            foreach (var children in childrens)
+            foreach (var rootChildren in rootChildrens)
             {
+                var hasChildrens = rootChildren.Children?.Any(/*x => mTypes[x.TypeId].Children?.Any() == true*/) == true;
                 var sidePanelItem = new SidePanelItem
                 {
-                    DObject = children,
-                    Type = mTypes[children.TypeId],
-                    SubItems = children.Children != null && children.Children.Any() ? new List<SidePanelItem>() : null
+                    DObject = rootChildren,
+                    Type = mTypes[rootChildren.TypeId],
+                    SubItems = hasChildrens ? new List<SidePanelItem>() : null
                 };
 
-                if (children.Children != null && children.Children.Any())
+                /*if (hasChildrens)
                 {
-                    var childIds = children.Children?.Select(y => y.ObjectId).ToArray();
+                    var childIds = rootChildren.Children
+                        //.Where(x => mTypes[x.TypeId].Children?.Any() == true)
+                        .Select(y => y.ObjectId).ToArray();
                     var childs = serverApi.GetObjects(childIds);
 
                     foreach (var child in childs)
@@ -57,11 +63,11 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                         var panelItem = GetItemsWithChilds(child, mTypes, serverApi);
                         sidePanelItem.SubItems.Add(panelItem);
                     }
-                }
-                sidePanelItems.Add(sidePanelItem);
+                }*/
+                model.Items.Add(sidePanelItem);
             }
 
-            if (id.Value == DObject.RootId)
+            /*if (id.Value == DObject.RootId)
                 return View(model);
 
             var prevId = id.Value;
@@ -74,7 +80,6 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 {
                     var subtree = model.Items;
                     model.Items = parentChilds
-                        //.Where(x => mTypes[x.TypeId].IsProjectFolder())
                         .Select(x => new SidePanelItem
                         {
                             Type = mTypes[x.TypeId],
@@ -84,31 +89,8 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 }
                 prevId = parentId;
                 parentId = parentObject.ParentId;
-            }
+            }*/
             return View(model);
-        }
-        
-        private static SidePanelItem GetItemsWithChilds(DObject obj, IDictionary<int, MType> types, IServerApi serverApi)
-        {
-            var sidePanelItem = new SidePanelItem
-            {
-                DObject = obj,
-                Type = types[obj.TypeId]
-            };
-
-            if (obj.Children == null || obj.Children.Any())
-                return sidePanelItem;
-
-            var childrenIds = obj.Children.Select(x => x.ObjectId).ToArray();
-            var childrens = serverApi.GetObjects(childrenIds);
-
-            sidePanelItem.SubItems = childrens?.Select(x => new SidePanelItem
-            {
-                DObject = x,
-                Type = types[x.TypeId],
-                SubItems = x.Children.Any(y => types[y.TypeId].IsProjectFolder()) ? new List<SidePanelItem>() : null
-            }).ToList();
-            return sidePanelItem;
         }
     }
 }

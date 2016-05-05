@@ -15,31 +15,28 @@ namespace Ascon.Pilot.WebClient.ViewComponents
             return await Task.Run(() =>
             {
                 {
+                    var types = HttpContext.Session.GetMetatypes();
                     var serverApi = HttpContext.Session.GetServerApi();
                     var folder = serverApi.GetObjects(new[] { folderId }).First();
 
-                    if (folder.Children == null || !folder.Children.Any())
+                    if (folder.Children?.Any(x => types[x.TypeId].Children?.Any() == false) != true)
                         return View(new FileViewModel[] { });
 
-                    var childrenIds = folder.Children.Select(x => x.ObjectId).ToArray();
+                    var childrenIds = folder.Children
+                        .Where(x => types[x.TypeId].Children?.Any() == false)
+                        .Select(x => x.ObjectId).ToArray();
                     var childrens = serverApi.GetObjects(childrenIds);
-                    var types = HttpContext.Session.GetMetatypes();
                     var model = childrens
-                        .Where(x =>
-                        {
-                            var mType = types[x.TypeId];
-                            return mType.IsProjectFile();
-                        })
+                        .Where(x => x.Files?.Any() == true)
                         .Select(dFile =>
                         {
-                            var file = dFile.Files.FirstOrDefault();
-                            if (file == null) return null;
+                            var file = dFile.Files.First();
                             return new FileViewModel
                             {
                                 Id = file.Body.Id,
-                                LastModifiedDate = file.Body.Modified,
                                 Name = dFile.GetTitle(types[dFile.TypeId]),
-                                Size = file.Body.Size
+                                Size = file.Body.Size,
+                                LastModifiedDate = file.Body.Modified
                             };
                         });
                     return View(model); 

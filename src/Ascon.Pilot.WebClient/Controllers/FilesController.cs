@@ -36,28 +36,26 @@ namespace Ascon.Pilot.WebClient.Controllers
             return await Task.Run(() =>
             {
                 var serverApi = HttpContext.Session.GetServerApi();
-                var node = serverApi.GetObjects(new[] {id});
-
-                var childIds = node.First().Children.Select(child => child.ObjectId).ToArray();
-                var nodeChilds = serverApi.GetObjects(childIds);
+                var node = serverApi.GetObjects(new[] {id}).First();
 
                 var types = HttpContext.Session.GetMetatypes();
 
+                var childIds = node.Children?
+                                    .Where(x => types[x.TypeId].Children?.Any() == true)
+                                    .Select(child => child.ObjectId).ToArray();
+                var nodeChilds = serverApi.GetObjects(childIds);
+                
                 var childNodes = nodeChilds
-                    .Where(x => types[x.TypeId].IsProjectFolder())
                     .Select(x =>
                     {
                         var mType = types[x.TypeId];
-                        var icon = ApplicationConst.TypesGlyphiconDictionary.ContainsKey(mType.Name)
-                            ? $"glyphicon glyphicon-{ApplicationConst.TypesGlyphiconDictionary}"
-                            : "";
-                        return new
+                        var sidePanelItem = new SidePanelItem
                         {
-                            id = x.Id,
-                            text = x.GetTitle(mType),
-                            icon,
-                            nodes = x.Children.Any(y => types[y.TypeId].IsProjectFolder()) ? new dynamic[] {} : null
+                            DObject = x,
+                            Type = mType,
+                            SubItems = x.Children?.Any(y => types[y.TypeId].Children?.Any() == true) == true ? new List<SidePanelItem>() : null
                         };
+                        return sidePanelItem.GetDynamic(id, types);
                     })
                     .ToArray();
                 return Json(childNodes);
