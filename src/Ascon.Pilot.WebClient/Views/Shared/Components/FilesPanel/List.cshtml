@@ -1,0 +1,37 @@
+﻿@using System.Threading.Tasks
+@model IEnumerable<Ascon.Pilot.WebClient.ViewModels.FileViewModel>
+
+<div class="file-list">
+    @if (Model == null || !Model.Any())
+    {
+        <p>файлы в папке отсутствуют</p>
+    }
+    else
+    {
+        foreach (var fileModel in Model)
+        {
+            var name = fileModel.Name;
+            <div class="file-card" data-id="@fileModel.Id" onclick="processFileCardClick(this)">
+                <div class="file-card-icon">
+                    <img src="@Url.Action("Thumbnail", "Files", new { id = fileModel.Id })" width="50" height="50" alt="@name" />
+                </div>
+                <div class="file-card-name">
+                    <span>@name</span>
+                </div>
+                <div class="file-card-info">
+                    <span class="pull-right text-right">
+                        Создан: @fileModel.CreatedDate.ToString("g")<br />
+                        Изменен: @fileModel.LastModifiedDate.ToString("g")
+                    </span>
+                </div>
+                <div class="file-card-buttons">
+                    <div>
+                        <a title="Скачать файл" href="@Url.Action("Download", "Files", new {id = fileModel.Id, size = fileModel.Size, name})" class="btn btn-default">
+                            Скачать <span class="glyphicon glyphicon-download-alt"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

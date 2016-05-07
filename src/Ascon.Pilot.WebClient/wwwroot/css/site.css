@@ -41,27 +41,76 @@ textarea {
     color: red;
 }
 
-.file-card {
+.file-grid > .file.card > .file-card {
     border: 1px solid white;
 }
 
-.file-card:hover {
+.file-grid > .file.card > .file-card:hover {
     border: 1px solid #eeeeee;
     border-radius: 5px;
 }
 
-.file-card-icon {
+.file-grid > .file.card > .file-card-icon {
     padding: 5px;
 }
 
-.file-card-icon img {
+.file-grid > .file.card > .file-card-icon img {
     display: block;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
 
-.file-card-name a
- {
+.file-grid > .file.card > .file-card-name a
+{
     display: block;
+}
+
+/*-------------file-card for list-------------------*/
+
+.file-list > .file-card > .file-card {
+    border: 1px solid white;
+}
+
+.file-list > .file-card > .file-card:hover {
+    border: 1px solid #eeeeee;
+    border-radius: 5px;
+}
+
+.file-list > .file-card > .file-card-icon,
+.file-list > .file-card > .file-card-name,
+.file-list > .file-card > .file-card-info,
+.file-list > .file-card > .file-card-buttons
+{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.file-list > .file-card > .file-card-icon {
+    padding: 5px;
+    width: 5%;
+}
+
+.file-list > .file-card > .file-card-name {
+    width: 85%;
+}
+
+.file-list > .file-card > .file-card-info {
+    white-space: nowrap;
+    width: 5%;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.file-list > .file-card > .file-card-buttons {
+    width: 5%;
+    padding-right: 10px;
+    padding-left: 5px;
+}
+
+.file-list > .file-card > .file-card-icon img {
+    display: inline-block;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }

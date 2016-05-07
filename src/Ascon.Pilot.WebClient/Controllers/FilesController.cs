@@ -10,6 +10,12 @@ using Microsoft.AspNet.Mvc;
 
 namespace Ascon.Pilot.WebClient.Controllers
 {
+    public enum FilesPanelType
+    {
+        Grid,
+        List
+    }
+
     public class FilesController : Controller
     {
         public IActionResult Index(Guid? id)
@@ -28,7 +34,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         private List<string> GetPath(Guid id)
         {
             //todo: finish
-            return new List<string> {"Root"};
+            return new List<string> {"..."};
         }
 
         public async Task<IActionResult> GetNodeChilds(Guid id)
@@ -53,7 +59,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                         {
                             DObject = x,
                             Type = mType,
-                            SubItems = x.Children?.Any(y => types[y.TypeId].Children?.Any() == true) == true ? new List<SidePanelItem>() : null
+                            SubItems = x.Children.Any(y => types[y.TypeId].Children.Any()) ? new List<SidePanelItem>() : null
                         };
                         return sidePanelItem.GetDynamic(id, types);
                     })
@@ -67,9 +73,9 @@ namespace Ascon.Pilot.WebClient.Controllers
             return ViewComponent(typeof (SidePanelViewComponent), id);
         }
 
-        public IActionResult GetObject(Guid? id)
+        public IActionResult GetObject(Guid id, FilesPanelType panelType = FilesPanelType.List)
         {
-            return ViewComponent(typeof (FilesPanelViewComponent), id);
+            return ViewComponent(typeof (FilesPanelViewComponent), id, panelType);
         }
 
         public async Task<IActionResult> Download(Guid id, int size, string name)
@@ -85,6 +91,13 @@ namespace Ascon.Pilot.WebClient.Controllers
                     };
                 }
             });
+        }
+
+        public IActionResult Thumbnail(Guid id)
+        {
+            //todo: generate thumbnail and send it
+            var virtualFileResult = File(Url.Content("~/images/file.png"), "image/png");
+            return virtualFileResult;
         }
     }
 }

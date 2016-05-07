@@ -43,7 +43,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
 
             foreach (var rootChildren in rootChildrens)
             {
-                var hasChildrens = rootChildren.Children?.Any(/*x => mTypes[x.TypeId].Children?.Any() == true*/) == true;
+                var hasChildrens = rootChildren.Children?.Any(x => mTypes[x.TypeId].Children?.Any() == true) == true;
                 var sidePanelItem = new SidePanelItem
                 {
                     DObject = rootChildren,

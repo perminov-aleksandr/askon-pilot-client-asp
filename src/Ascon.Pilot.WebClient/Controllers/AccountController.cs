@@ -21,9 +21,12 @@ namespace Ascon.Pilot.WebClient.Controllers
             var logInViewModel = new LogInViewModel
             {
 #if (DEBUG)
-                DatabaseName = "3d-storage_ru",
-                Login = "admin",
-                Password = "123456"
+                //DatabaseName = "3d-storage_ru",
+                //Login = "admin",
+                //Password = "123456"
+                DatabaseName = "pilot-ice_ru",
+                Login = "sedov",
+                Password = "GM9d3Lqw"
 #endif
             };
             return View(logInViewModel);

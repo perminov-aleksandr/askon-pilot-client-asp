@@ -1,11 +1,9 @@
 ﻿@model List<string>
 
-<ol class="breadcrumb" id="breadcrumbs">
-    @if (Model != null && Model.Any())
+@if (Model != null && Model.Any())
+{
+    foreach (var crumb in Model)
     {
-        foreach (var crumb in Model)
-        {
-            <li>@crumb</li>
-        }
+        <li>@crumb</li>
     }
-</ol>
+}

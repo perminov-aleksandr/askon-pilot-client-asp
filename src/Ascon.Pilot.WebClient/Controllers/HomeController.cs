@@ -16,7 +16,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         {
             return View(HttpContext.Session.GetMetatypes().Values);
         }
-
+        
         [AllowAnonymous]
         public IActionResult Error(string message)
         {

@@ -49,12 +49,12 @@ namespace Ascon.Pilot.WebClient.ViewModels
             return new
             {
                 id = DObject.Id,
-                text = $"[{Type.Id}] {Name}",
+                text = Name,
                 icon = ApplicationConst.TypesGlyphiconDictionary.TryGetValue(mType.Name, out icon) ? icon : "",
                 state = new {
                     selected = DObject.Id == id
                 },
-                nodes = nodes.Any() || DObject.Children.Any(/*y => types[y.TypeId].Children.Any()*/) ? nodes.ToArray() : null
+                nodes = nodes.Any() || DObject.Children.Any(y => types[y.TypeId].Children.Any()) ? nodes.ToArray() : null
             };
         }
     }
