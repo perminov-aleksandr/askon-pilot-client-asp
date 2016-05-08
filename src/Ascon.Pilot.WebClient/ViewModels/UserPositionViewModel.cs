@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Ascon.Pilot.WebClient.Controllers;
 
 namespace Ascon.Pilot.WebClient.ViewModels
 {
     public class UserPositionViewModel
     {
-        public List<string> Path { get; set; }
+        public Guid CurrentFolderId { get; set; }
+
+        public FilesPanelType FilesPanelType { get; set; }
 
         public SidePanelViewModel SidePanel { get; set; }
 

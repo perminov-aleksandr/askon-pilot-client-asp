@@ -41,11 +41,11 @@ textarea {
     color: red;
 }
 
-.file-grid > .file.card > .file-card {
+.file-card {
     border: 1px solid white;
 }
 
-.file-grid > .file.card > .file-card:hover {
+.file-card:hover {
     border: 1px solid #eeeeee;
     border-radius: 5px;
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Ascon.Pilot.Core;
+using Ascon.Pilot.WebClient.Controllers;
 using Microsoft.Extensions.Configuration;
 
 namespace Ascon.Pilot.WebClient
@@ -27,6 +28,8 @@ namespace Ascon.Pilot.WebClient
             { SystemTypes.PROJECT_FILE, "glyphicon glyphicon-file" },
             { SystemTypes.SMART_FOLDER, "glyphicon glyphicon-book" }
         };
+
+        public const FilesPanelType DefaultFilesPanelType = FilesPanelType.List;
     }
     
     public static class Roles

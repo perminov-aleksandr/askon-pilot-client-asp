@@ -2,17 +2,28 @@
     ViewBag.Title = "Главная";
 }
 
+<style>
+    a:hover {
+        text-decoration: none;
+    }
+</style>
+
 <div style="display: table; width: 100%; height: 400px;">
     <div style="display: table-cell; vertical-align: middle;">
-        <div class="list-group" style="width: 200px; margin: auto">
-            <a href="@Url.Action("Index", "Files")" class="list-group-item">
-                <h2 class="list-group-item-heading">
+        <div style="width: 200px; margin: auto">
+            <a href="@Url.Action("Index", "Files")">
+                <h2>
                     <i class="glyphicon glyphicon-file"></i>&nbsp;Файлы
                 </h2>
             </a>
-            <a href="#" class="list-group-item disabled">
-                <h2 class="list-group-item-heading">
+            <a href="#">
+                <h2>
                     <i class="glyphicon glyphicon-tasks"></i>&nbsp;Задания
+                </h2>
+            </a>
+            <a href="#">
+                <h2>
+                    <i class="glyphicon glyphicon-list-alt"></i>&nbsp;Отчеты
                 </h2>
             </a>
         </div>

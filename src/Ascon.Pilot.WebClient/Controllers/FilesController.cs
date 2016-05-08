@@ -6,6 +6,7 @@ using Ascon.Pilot.Core;
 using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.ViewComponents;
 using Ascon.Pilot.WebClient.ViewModels;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 
 namespace Ascon.Pilot.WebClient.Controllers
@@ -16,25 +17,17 @@ namespace Ascon.Pilot.WebClient.Controllers
         List
     }
 
+    [Authorize]
     public class FilesController : Controller
     {
         public IActionResult Index(Guid? id)
         {
             var model = new UserPositionViewModel
             {
-                Path = id.HasValue ? GetPath(id.Value) : new List<string>(),
-                SidePanel = new SidePanelViewModel
-                {
-                    ObjectId = id ?? DObject.RootId
-                }
+                CurrentFolderId = id ?? DObject.RootId,
+                FilesPanelType = ApplicationConst.DefaultFilesPanelType
             };
             return View(model);
-        }
-
-        private List<string> GetPath(Guid id)
-        {
-            //todo: finish
-            return new List<string> {"..."};
         }
 
         public async Task<IActionResult> GetNodeChilds(Guid id)
@@ -73,7 +66,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             return ViewComponent(typeof (SidePanelViewComponent), id);
         }
 
-        public IActionResult GetObject(Guid id, FilesPanelType panelType = FilesPanelType.List)
+        public IActionResult GetObject(Guid id, FilesPanelType panelType = ApplicationConst.DefaultFilesPanelType)
         {
             return ViewComponent(typeof (FilesPanelViewComponent), id, panelType);
         }

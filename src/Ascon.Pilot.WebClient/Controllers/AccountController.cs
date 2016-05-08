@@ -46,35 +46,37 @@ namespace Ascon.Pilot.WebClient.Controllers
             var serviceCallbackProxy = CallbackFactory.Get<IServerCallback>();
             var serverApi = client.GetServerApi(serviceCallbackProxy);
 
-            var dbInfo = serverApi.OpenDatabase(model.DatabaseName, model.Login, model.Password.EncryptAes(), false);
+            var protectedPassword = model.Password.EncryptAes();
+            var dbInfo = serverApi.OpenDatabase(model.DatabaseName, model.Login, protectedPassword, false);
             if (dbInfo == null)
             {
                 ModelState.AddModelError("", "Авторизация не удалась, проверьте данные и повторите вход");
                 return View("LogIn", model);
             }
-            await SignInAsync(dbInfo, model.Password);
+            await SignInAsync(dbInfo);
 
             DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
+            //HttpContext.Session.SetSessionValues(SessionKeys.DBInfo, dbInfo);
+            HttpContext.Session.SetSessionValues(SessionKeys.DatabaseName, model.DatabaseName);
+            HttpContext.Session.SetSessionValues(SessionKeys.Login, model.Login);
+            HttpContext.Session.SetSessionValues(SessionKeys.ProtectedPassword, protectedPassword);
             HttpContext.Session.SetSessionValues(SessionKeys.MetaTypes, dMetadata.Types.ToDictionary(x => x.Id, y => y));
-            
+
             return RedirectToAction("Index", "Home");
         }
         
-        private async Task SignInAsync(DDatabaseInfo dbInfo, string pwd)
+        private async Task SignInAsync(DDatabaseInfo dbInfo)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, dbInfo.Person.Login),
                 new Claim(ClaimTypes.GivenName, dbInfo.Person.DisplayName),
                 new Claim(ClaimTypes.Role, dbInfo.Person.IsAdmin ? Roles.Admin : Roles.User),
-                new Claim("PWD", pwd)
             };
 
             var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, ApplicationConst.PilotMiddlewareInstanceName));
             
             await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
-
-            HttpContext.Session.SetSessionValues(SessionKeys.DBInfo, dbInfo);
         }
         
         public async Task<IActionResult> LogOff()

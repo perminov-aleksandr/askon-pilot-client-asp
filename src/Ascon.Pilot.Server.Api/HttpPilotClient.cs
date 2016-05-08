@@ -80,6 +80,11 @@ namespace Ascon.Pilot.Server.Api
                 throw new TransportException("Connection is not available");
         }
 
+        public bool IsClientActive()
+        {
+            return _client.Active;
+        }
+
         public void Connect(string url, IWebProxy proxy = null)
         {
             CheckBroken();

@@ -44,12 +44,27 @@ namespace Ascon.Pilot.WebClient.Extensions
         {
             var clientIdString = session.GetString(SessionKeys.ClientId);
             if (string.IsNullOrEmpty(clientIdString))
-                return null;
+            {
+                clientIdString = Guid.NewGuid().ToString();
+                session.SetString(SessionKeys.ClientId, clientIdString);
+            }
 
             var clientId = Guid.Parse(clientIdString);
             if (ClientsDictionary.ContainsKey(clientId))
             {
                 var client = ClientsDictionary[clientId];
+                if (!client.IsClientActive())
+                {
+                    return null;
+                    /*client.Connect(ApplicationConst.PilotServerUrl);
+                    var serverApi = session.GetServerApi();
+                    var dbInfo = serverApi.OpenDatabase(
+                        session.GetString(SessionKeys.DatabaseName), 
+                        session.GetString(SessionKeys.Login),
+                        session.GetString(SessionKeys.ProtectedPassword), false);
+                    if (dbInfo == null)
+                        return null;*/
+                }
                 return client;
             }
 

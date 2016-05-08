@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNet.Authorization;
+﻿using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
@@ -7,6 +6,7 @@ using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.WebEncoders;
 using NLog.Extensions.Logging;
 
 namespace Ascon.Pilot.WebClient
@@ -44,7 +44,7 @@ namespace Ascon.Pilot.WebClient
             app.UseCookieAuthentication(options =>
             {
                 options.AuthenticationScheme = ApplicationConst.PilotMiddlewareInstanceName;
-                options.LoginPath = new PathString("/Account/LogIn/");
+                options.LoginPath = new PathString("/Account/LogIn");
                 options.AutomaticAuthenticate = true;
                 options.AutomaticChallenge = true;
             });
@@ -53,7 +53,7 @@ namespace Ascon.Pilot.WebClient
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            env.ConfigureNLog("../../nlog.config");
+            env.ConfigureNLog("nlog.config");
 
             if (env.IsDevelopment())
             {
@@ -73,8 +73,15 @@ namespace Ascon.Pilot.WebClient
                 if (visits == 0)
                 {
                     // New session, do any initial setup and then mark the session as ready
-                    context.Session.SetInt32(SessionKeys.VisitsCount, 1);
-                    context.Session.SetString(SessionKeys.ClientId, Guid.NewGuid().ToString());
+                    if (context.User?.Identity?.IsAuthenticated == true)
+                    {
+                        await context.Authentication.SignOutAsync(ApplicationConst.PilotMiddlewareInstanceName);
+                        context.Response.Redirect("/Account/LogIn");
+                    }
+                    else
+                    {
+                        context.Session.SetInt32(SessionKeys.VisitsCount, 1);
+                    }
                 }
                 await next();
             });
