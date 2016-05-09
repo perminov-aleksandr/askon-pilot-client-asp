@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using ProtoBuf;
 
 namespace Ascon.Pilot.Core
@@ -96,6 +93,9 @@ namespace Ascon.Pilot.Core
 
         [ProtoMember(2)]
         public DObject RootObject { get; set; }
+
+        [ProtoMember(3)]
+        public DObject TasksRootObject { get; set; }
     }
 
     [ProtoContract]
@@ -369,13 +369,16 @@ namespace Ascon.Pilot.Core
         public int CreatorId { get; set; }
 
         [ProtoMember(9)]
-        public SortedList<string, DValue> Attributes { get; set; }
+        public SortedList<string, DValue> Attributes { get; private set; }
 
+#pragma warning disable 618
         [ProtoMember(10)]
+        [Obsolete("Use the ActualFileSnapshot property instead")]
         public List<DFile> Files { get; private set; }
+#pragma warning restore 618
 
         [ProtoMember(11)]
-        public List<DFilesSnapshot> FilesSnapshots { get; private set; }
+        public List<DFilesSnapshot> PreviousFileSnapshots { get; private set; }
 
         [ProtoMember(12)]
         public DateTime Created { get; set; }
@@ -407,23 +410,32 @@ namespace Ascon.Pilot.Core
         [ProtoMember(21)]
         public List<DChild> Children { get; private set; }
 
+        [ProtoMember(22)]
+        public DLockInfo LockInfo { get; private set; }
+
+        [ProtoMember(23)]
+        public DFilesSnapshot ActualFileSnapshot { get; private set; }
+
+
         public DObject()
         {
             Id = Guid.Empty;
             ParentId = Guid.Empty;
             Attributes = new SortedList<string, DValue>();
-            Files = new List<DFile>();
-            FilesSnapshots = new List<DFilesSnapshot>();
+            ActualFileSnapshot = new DFilesSnapshot();
+            PreviousFileSnapshots = new List<DFilesSnapshot>();
             Access = new Dictionary<int, Access>();
             IsSecret = false;
             IsDeleted = false;
             IsInRecycleBin = false;
 #pragma warning disable 618
+            Files = new List<DFile>();
             OldChildren = new ChildrenCollection();
 #pragma warning restore 618
             Relations = new RelationsCollection();
             Subscribers = new HashSet<int>();
             Children = new List<DChild>();
+            LockInfo = new DLockInfo();
         }
 
         public void AssignTo(DObject other)
@@ -446,15 +458,18 @@ namespace Ascon.Pilot.Core
             foreach (var item in Attributes)
                 other.Attributes.Add(item.Key, item.Value.Clone());
 
-            other.Files.Clear();
-            foreach (var file in Files)
-                other.Files.Add(file.Clone());
+            ActualFileSnapshot.AssignTo(other.ActualFileSnapshot);
 
-            other.FilesSnapshots.Clear();
-            foreach (var item in FilesSnapshots)
-                other.FilesSnapshots.Add(item.Clone());
+            other.PreviousFileSnapshots.Clear();
+            foreach (var item in PreviousFileSnapshots)
+                other.PreviousFileSnapshots.Add(item.Clone());
 
 #pragma warning disable 618
+            other.Files.Clear();
+            foreach (var dFile in Files)
+            {
+                other.Files.Add(dFile.Clone());
+            }
             OldChildren.AssignTo(other.OldChildren);
 #pragma warning restore 618
 
@@ -467,6 +482,8 @@ namespace Ascon.Pilot.Core
             other.Children.Clear();
             foreach (var child in Children)
                 other.Children.Add(child.Clone());
+
+            LockInfo.AssignTo(other.LockInfo);
         }
 
         public DObject Clone()
@@ -715,7 +732,7 @@ namespace Ascon.Pilot.Core
     public struct Access
     {
         private DateTime _validThrough;
-
+        
         public AccessLevel AccessLevel { get; set; }
 
         [ProtoMember(1)]
@@ -815,6 +832,15 @@ namespace Ascon.Pilot.Core
         [ProtoMember(4)]
         public List<DFile> Files { get; private set; }
 
+        public bool IsEmpty
+        {
+            get
+            {
+                // ориентируемся на дату из-за наличия такого кода: newObject.ActualFileSnapshot.Files.Clear();
+                return (Created == DateTime.MinValue);
+            }
+        }
+
         public DFilesSnapshot()
         {
             Reason = String.Empty;
@@ -877,7 +903,7 @@ namespace Ascon.Pilot.Core
             return result;
         }
 
-        private void AssignTo(DFilesSnapshot other)
+        public void AssignTo(DFilesSnapshot other)
         {
             other.Created = Created;
             other.CreatorId = CreatorId;
@@ -885,6 +911,27 @@ namespace Ascon.Pilot.Core
 
             foreach (var file in Files)
                 other.Files.Add(file.Clone());
+        }
+
+        public void AddFile(DFile file, int personId)
+        {
+            Init(personId);
+            Files.Add(file);
+        }
+
+        public void AddFiles(IEnumerable<DFile> files, int personId)
+        {
+            Init(personId);
+            Files.AddRange(files);
+        }
+
+        private void Init(int personId)
+        {
+            if (IsEmpty)
+            {
+                CreatorId = personId;
+                Created = DateTime.UtcNow;
+            }
         }
     }
 
@@ -1270,6 +1317,9 @@ namespace Ascon.Pilot.Core
     }
 
     [ProtoContract]
+#if DEBUG
+    [DebuggerDisplay("{DebugView}")]
+#endif
     public class DChange
     {
         [ProtoMember(1)]
@@ -1277,6 +1327,14 @@ namespace Ascon.Pilot.Core
 
         [ProtoMember(2)]
         public DObject New { get; set; }
+
+#if DEBUG
+        //[ProtoIgnore]
+        //public ChangeDebug DebugView
+        //{
+        //    get { return new ChangeDebug(this); }
+        //}
+#endif
     }
 
     [ProtoContract]
@@ -1418,6 +1476,7 @@ namespace Ascon.Pilot.Core
     }
 
     [ProtoContract]
+    [DebuggerDisplay("{Body.Id}")]
     public class DFile
     {
         public DFile()
@@ -1448,11 +1507,25 @@ namespace Ascon.Pilot.Core
             }
         }
 
+        public bool EqualsWithoutSignatures(DFile other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            if (!string.Equals(Name, other.Name))
+                return false;
+            return Body.Equals(other.Body);
+        }
+
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (ReferenceEquals(null, obj)) 
+                return false;
+            if (ReferenceEquals(this, obj)) 
+                return true;
+            if (obj.GetType() != GetType()) 
+                return false;
             return Equals((DFile)obj);
         }
 
@@ -1824,7 +1897,7 @@ namespace Ascon.Pilot.Core
         public string Title { get; set; }
 
         [ProtoMember(3)]
-        public int? UserId { get; set; }
+        public int? InitiatedByPersonId { get; set; }
 
         [ProtoMember(4)]
         public DateTime DateTime { get; set; }
@@ -1917,7 +1990,6 @@ namespace Ascon.Pilot.Core
     {
         public DCounter()
         {
-            
         }
 
         public DCounter(string name)
@@ -1936,5 +2008,71 @@ namespace Ascon.Pilot.Core
 
         [ProtoMember(4)]
         public string Name { get; set; }
+    }
+
+    public enum LockState
+    {
+        None,
+        Requested,
+        Accepted
+    }
+
+    [ProtoContract]
+    [DebuggerDisplay("State: {State} PersonId: {PersonId} Date: {Date}")]
+    public class DLockInfo
+    {
+        [ProtoMember(1)]
+        public LockState State { get; set; }
+
+        [ProtoMember(2)]
+        public DateTime Date { get; set; }
+        
+        [ProtoMember(3)]
+        public int PersonId { get; set; }
+
+        protected bool Equals(DLockInfo other)
+        {
+            return State == other.State && Date.Equals(other.Date) && PersonId == other.PersonId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((DLockInfo) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = State.GetHashCode();
+                hashCode = (hashCode*397) ^ Date.GetHashCode();
+                hashCode = (hashCode*397) ^ PersonId;
+                return hashCode;
+            }
+        }
+
+        public void AssignTo(DLockInfo lockInfo)
+        {
+            lockInfo.State = State;
+            lockInfo.Date = Date;
+            lockInfo.PersonId = PersonId;
+        }
+
+        public void Lock(int personId, DateTime date)
+        {
+            State = LockState.Requested;
+            PersonId = personId;
+            Date = date;
+        }
+
+        public void Unlock()
+        {
+            State = LockState.None;
+            Date = default(DateTime);
+            PersonId = default(int);
+        }
     }
 }

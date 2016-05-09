@@ -31,10 +31,10 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                         .Select(x => x.ObjectId).ToArray();
                     var childrens = serverApi.GetObjects(childrenIds);
                     var model = childrens
-                        .Where(x => x.Files?.Any() == true)
+                        .Where(x => x.ActualFileSnapshot.Files.Any())
                         .Select(dObject =>
                         {
-                            var file = dObject.Files.First();
+                            var file = dObject.ActualFileSnapshot.Files.First();
                             return new FileViewModel
                             {
                                 Id = file.Body.Id,
