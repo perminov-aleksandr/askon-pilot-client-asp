@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ActiveDebugProfile>IIS Express</ActiveDebugProfile>
     <DebugCLRTypeOverride>NETCore</DebugCLRTypeOverride>
-    <NameOfLastUsedPublishProfile>DeployFS</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>askon-pilot-webclient - Web Deploy</NameOfLastUsedPublishProfile>
     <ShowAllFiles>false</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -53,7 +53,7 @@ namespace Ascon.Pilot.WebClient
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            env.ConfigureNLog("nlog.config");
+            //env.ConfigureNLog("nlog.config");
 
             if (env.IsDevelopment())
             {
