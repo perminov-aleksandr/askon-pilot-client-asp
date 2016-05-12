@@ -5,18 +5,18 @@
                 <span class="sr-only">Переключить навигацию</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </button>
             <a asp-controller="Home" asp-action="Index" class="navbar-brand">
                 <span title="Статус сервера" class="serverStatusIndicator connecting"></span> АСКОН Pilot-ICE
             </a>
         </div>
         <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
+            <ul class="nav navbar-nav navbar-right" style="margin-right: 0;">
                 <li></li>
-                <li><a asp-controller="Home" asp-action="Index">Главная</a></li>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li><a><b>@User.Identity.Name</b></a></li>
+                    <li><a>Вы в системе, <b>@User.Identity.Name</b></a></li>
                     <li><a asp-controller="Account" asp-action="LogOff">Выйти</a></li>
                 }
                 else

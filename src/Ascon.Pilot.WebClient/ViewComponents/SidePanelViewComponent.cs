@@ -34,7 +34,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
             };
 
             var rootChildrenIds = rootObject.Children?
-                //.Where(x => mTypes[x.TypeId].Children?.Any() == true)
+                .Where(x => mTypes[x.TypeId].Children?.Any() == true)
                 .Select(x => x.ObjectId).ToArray();
             var rootChildrens = serverApi.GetObjects(rootChildrenIds);
             if (rootChildrens == null)
