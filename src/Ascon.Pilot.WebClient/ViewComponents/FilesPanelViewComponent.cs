@@ -43,7 +43,8 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                                 ObjectName = dObject.GetTitle(mType),
                                 FileName = dObject.GetTitle(mType),
                                 CreatedDate = dObject.Created,
-                                LastModifiedDate = dObject.Created
+                                LastModifiedDate = dObject.Created,
+                                ChildrenCount = dObject.Children.Count
                             });
                         else if (dObject.ActualFileSnapshot?.Files?.Any() == true)
                         {

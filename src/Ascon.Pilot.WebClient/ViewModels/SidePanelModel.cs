@@ -54,6 +54,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
                 state = new {
                     selected = DObject.Id == id
                 },
+                tags = new [] {DObject.Children.Count.ToString()},
                 nodes = nodes.Any() || DObject.Children.Any(y => types[y.TypeId].Children.Any()) ? nodes.ToArray() : null
             };
         }

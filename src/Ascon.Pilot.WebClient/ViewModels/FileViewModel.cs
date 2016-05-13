@@ -20,6 +20,8 @@ namespace Ascon.Pilot.WebClient.ViewModels
         public long Size { get; set; }
         public DateTime LastModifiedDate { get; set; }
         public DateTime CreatedDate { get; set; }
+        public int ChildrenCount { get; set; }
+
         //public string Icon { get; set; } 
     }
 }

@@ -1,0 +1,27 @@
+﻿@using System.Globalization
+@using System.Threading.Tasks
+@model Ascon.Pilot.WebClient.ViewModels.FileViewModel
+@{
+    var name = Model.Name;
+}
+
+<div class="file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
+    <div class="file-card-icon">
+        <img src="@Url.Action("Thumbnail", "Files", new {id = Model.Id})" width="50" height="50" alt="@name" />
+    </div>
+    <div class="file-card-name">
+        <span>@name</span>
+    </div>
+    <div class="file-card-info">
+        <span class="pull-right text-right hidden-xs hidden-sm">
+            Изменен: @Model.LastModifiedDate.ToString("g", new CultureInfo("ru-RU"))
+        </span>
+    </div>
+    <div class="file-card-buttons">
+        <div>
+            <a title="Скачать файл" href="@Url.Action("Download", "Files", new {id = Model.Id, size = Model.Size, name})" class="btn btn-default">
+                Скачать <span class="glyphicon glyphicon-download-alt"></span>
+            </a>
+        </div>
+    </div>
+</div>

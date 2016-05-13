@@ -1,0 +1,18 @@
+﻿@using System.Threading.Tasks
+@model Ascon.Pilot.WebClient.ViewModels.FileViewModel
+@{
+    var name = Model.Name;
+}
+
+<div class="file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
+    <div class="file-card-icon">
+        <i class="glyphicon glyphicon-folder-close" style="font-size: 3em"></i>
+        @*<span class="badge badge-notify">@Model.ChildrenCount</span>*@
+    </div>
+    <div class="file-card-name" style="width: 100%">
+        <a href="@Url.Action("Index", new {id = Model.Id})">@name</a>
+    </div>
+    <div class="file-card-info">
+        <span title="Количество элементов в папке">@Model.ChildrenCount</span>
+    </div>
+</div>
