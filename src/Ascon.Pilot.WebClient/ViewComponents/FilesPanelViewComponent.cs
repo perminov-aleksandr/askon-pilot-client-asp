@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,28 +24,42 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                     var serverApi = HttpContext.Session.GetServerApi();
                     var folder = serverApi.GetObjects(new[] { folderId }).First();
                     
-                    if (folder.Children?.Any(x => types[x.TypeId].Children?.Any() == false) != true)
+                    if (folder.Children?.Any(/*x => types[x.TypeId].Children?.Any() == false*/) != true)
                         return View(viewName, new FileViewModel[] { });
 
                     var childrenIds = folder.Children
-                        .Where(x => types[x.TypeId].Children?.Any() == false)
+                        //.Where(x => types[x.TypeId].Children?.Any() == false)
                         .Select(x => x.ObjectId).ToArray();
                     var childrens = serverApi.GetObjects(childrenIds);
-                    var model = childrens
-                        .Where(x => x.ActualFileSnapshot.Files.Any())
-                        .Select(dObject =>
+                    var model = new List<FileViewModel>(childrens.Count);
+                    foreach (var dObject in childrens/*.Where(x => x.ActualFileSnapshot.Files.Any())*/)
+                    {
+                        var mType = types[dObject.TypeId];
+                        if (mType.Children.Any())
+                            model.Add(new FileViewModel
+                            {
+                                Id = dObject.Id,
+                                IsFolder = true,
+                                ObjectName = dObject.GetTitle(mType),
+                                FileName = dObject.GetTitle(mType),
+                                CreatedDate = dObject.Created,
+                                LastModifiedDate = dObject.Created
+                            });
+                        else if (dObject.ActualFileSnapshot?.Files?.Any() == true)
                         {
                             var file = dObject.ActualFileSnapshot.Files.First();
-                            return new FileViewModel
+                            model.Add(new FileViewModel
                             {
                                 Id = file.Body.Id,
-                                ObjectName = dObject.GetTitle(types[dObject.TypeId]),
+                                IsFolder = false,
+                                ObjectName = dObject.GetTitle(mType),
                                 FileName = file.Name,
                                 Size = file.Body.Size,
                                 LastModifiedDate = file.Body.Modified,
                                 CreatedDate = file.Body.Created
-                            };
-                        });
+                            });
+                        }
+                    };
                     return View(viewName, model); 
                 }
             });

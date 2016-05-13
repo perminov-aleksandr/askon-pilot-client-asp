@@ -14,22 +14,42 @@
             var name = fileModel.Name;
             <div class="file-card" data-id="@fileModel.Id" onclick="processFileCardClick(this)">
                 <div class="file-card-icon">
-                    <img src="@Url.Action("Thumbnail", "Files", new { id = fileModel.Id })" width="50" height="50" alt="@name" />
+                    @if (fileModel.IsFolder)
+                    {
+                        <i class="glyphicon glyphicon-folder-close" style="font-size: 3em"></i>
+                    }
+                    else
+                    {
+                        <img src="@Url.Action("Thumbnail", "Files", new {id = fileModel.Id})" width="50" height="50" alt="@name" />
+                    }
                 </div>
                 <div class="file-card-name">
-                    <span>@name</span>
+                    @if (fileModel.IsFolder)
+                    {
+                        <a href="@Url.Action("Index", new { id = fileModel.Id })">@name</a>
+                    }
+                    else
+                    {
+                        <span>@name</span>
+                    }
                 </div>
                 <div class="file-card-info">
-                    <span class="pull-right text-right hidden-sm">
-                        Изменен: @fileModel.LastModifiedDate.ToString("g", new CultureInfo("ru-RU"))
-                    </span>
+                    @if (!fileModel.IsFolder)
+                    {
+                        <span class="pull-right text-right hidden-sm">
+                            Изменен: @fileModel.LastModifiedDate.ToString("g", new CultureInfo("ru-RU"))
+                        </span>
+                    }
                 </div>
                 <div class="file-card-buttons">
-                    <div>
-                        <a title="Скачать файл" href="@Url.Action("Download", "Files", new {id = fileModel.Id, size = fileModel.Size, name})" class="btn btn-default">
-                            Скачать <span class="glyphicon glyphicon-download-alt"></span>
-                        </a>
-                    </div>
+                    @if (!fileModel.IsFolder)
+                    {
+                        <div>
+                            <a title="Скачать файл" href="@Url.Action("Download", "Files", new {id = fileModel.Id, size = fileModel.Size, name})" class="btn btn-default">
+                                Скачать <span class="glyphicon glyphicon-download-alt"></span>
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
         }
