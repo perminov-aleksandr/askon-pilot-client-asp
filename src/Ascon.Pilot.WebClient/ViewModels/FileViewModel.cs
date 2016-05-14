@@ -7,6 +7,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
     {
         public Guid Id { get; set; }
         public bool IsFolder { get; set; }
+        public Guid ObjectId { get; set; }
         public string ObjectName { get; set; }
         public string Name {
             get

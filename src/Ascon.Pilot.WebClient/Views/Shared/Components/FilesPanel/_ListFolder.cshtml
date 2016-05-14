@@ -7,7 +7,6 @@
 <div class="file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
     <div class="file-card-icon">
         <i class="glyphicon glyphicon-folder-close" style="font-size: 3em"></i>
-        @*<span class="badge badge-notify">@Model.ChildrenCount</span>*@
     </div>
     <div class="file-card-name" style="width: 100%">
         <a href="@Url.Action("Index", new {id = Model.Id})">@name</a>

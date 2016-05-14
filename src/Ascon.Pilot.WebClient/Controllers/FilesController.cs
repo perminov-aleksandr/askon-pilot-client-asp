@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
@@ -84,6 +86,41 @@ namespace Ascon.Pilot.WebClient.Controllers
                     };
                 }
             });
+        }
+
+        public async Task<IActionResult> DownloadArchive(Guid[] objectsIds)
+        {
+            if (objectsIds.Length == 0)
+                return HttpNotFound();
+
+            var serverApi = HttpContext.Session.GetServerApi();
+            var objects = serverApi.GetObjects(objectsIds);
+
+            using (var compressedFileStream = new MemoryStream())
+            {
+                using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Update, true))
+                {
+                    foreach (var obj in objects)
+                    {
+                        var dFile = obj.ActualFileSnapshot.Files.First();
+                        var fileId = dFile.Body.Id;
+                        var fileSize = dFile.Body.Size;
+                        var fileBody = serverApi.GetFileChunk(fileId, 0, (int)fileSize);
+
+                        var zipEntry = zipArchive.CreateEntry(dFile.Name);
+
+                        //Get the stream of the attachment
+                        using (var originalFileStream = new MemoryStream(fileBody))
+                        using (var zipEntryStream = zipEntry.Open())
+                        {
+                            //Copy the attachment stream to the zip entry stream
+                            await originalFileStream.CopyToAsync(zipEntryStream);
+                        }
+                    }
+                }
+
+                return new FileContentResult(compressedFileStream.ToArray(), "application/zip") { FileDownloadName = "archive.zip" };
+            }
         }
 
         public IActionResult Thumbnail(Guid id)

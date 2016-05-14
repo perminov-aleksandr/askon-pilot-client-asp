@@ -44,7 +44,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                                 FileName = dObject.GetTitle(mType),
                                 CreatedDate = dObject.Created,
                                 LastModifiedDate = dObject.Created,
-                                ChildrenCount = dObject.Children.Count
+                                ChildrenCount = dObject.Children.Count(x => types[x.TypeId].Children.Any())
                             });
                         else if (dObject.ActualFileSnapshot?.Files?.Any() == true)
                         {
@@ -53,6 +53,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                             {
                                 Id = file.Body.Id,
                                 IsFolder = false,
+                                ObjectId = dObject.Id,
                                 ObjectName = dObject.GetTitle(mType),
                                 FileName = file.Name,
                                 Size = file.Body.Size,

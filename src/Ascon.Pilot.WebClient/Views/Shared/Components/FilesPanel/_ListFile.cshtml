@@ -7,7 +7,10 @@
 
 <div class="file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
     <div class="file-card-icon">
-        <img src="@Url.Action("Thumbnail", "Files", new {id = Model.Id})" width="50" height="50" alt="@name" />
+        <div style="position: relative">
+            <img src="@Url.Action("Thumbnail", "Files", new {id = Model.Id})" width="50" height="50" alt="@name" />
+            <input name="objectsIds" type="checkbox" value="@Model.ObjectId"/>
+        </div>
     </div>
     <div class="file-card-name">
         <span>@name</span>

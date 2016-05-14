@@ -7,10 +7,10 @@
 }
 
 <div class="row">
-    <div class="col-md-3" id="sidePanel">
+    <div class="col-md-4 hidden-xs hidden-sm" id="sidePanel">
         @await Component.InvokeAsync("SidePanel", Model.CurrentFolderId)
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8 col-sm-12">
         <div>
             <ol class="breadcrumb" id="breadcrumbs"></ol>
         </div>

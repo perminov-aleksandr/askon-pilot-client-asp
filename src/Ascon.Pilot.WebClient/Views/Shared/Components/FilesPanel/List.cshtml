@@ -1,32 +1,41 @@
 ﻿@using System.Threading.Tasks
 @model IEnumerable<Ascon.Pilot.WebClient.ViewModels.FileViewModel>
 
-<style type="text/css">
-    .badge-notify{
-       background: #428bca;
-       position:relative;
-       top: -2.3em;
-       left: 0.3em;
-    }
-</style>
-
-<div class="file-list">
-    @if (Model == null || !Model.Any())
-    {
-        <p>файлы в папке отсутствуют</p>
-    }
-    else
-    {
-        foreach (var fileModel in Model)
+<form action="@Url.Action("DownloadArchive")" id="downloadArchiveForm">
+    <div class="file-list">
+        @if (Model == null || !Model.Any())
         {
-            if (fileModel.IsFolder)
+            <p>файлы в папке отсутствуют</p>
+        }
+        else
+        {
+            foreach (var fileModel in Model)
             {
-                @await Html.PartialAsync("Components/FilesPanel/_ListFolder", fileModel)
-            }
-            else
-            {
-                @await Html.PartialAsync("Components/FilesPanel/_ListFile", fileModel)
+                if (fileModel.IsFolder)
+                {
+                    @await Html.PartialAsync("Components/FilesPanel/_ListFolder", fileModel)
+                }
+                else
+                {
+                    @await Html.PartialAsync("Components/FilesPanel/_ListFile", fileModel)
+                }
             }
         }
+    </div>
+</form>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function (event) {
+        $('input[name="objectsIds"]').on('click', function () {
+            var btn = $('#downloadArchiveButton');
+            if ($('input[name="objectsIds"]:checked').length === 0)
+                btn.hide();
+            else
+                btn.show();
+        });
+    });
+
+    function downloadArchive() {
+        $('form#downloadArchiveForm').submit();
     }
-</div>
+</script>

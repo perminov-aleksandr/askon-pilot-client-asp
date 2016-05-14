@@ -47,7 +47,8 @@ namespace Ascon.Pilot.WebClient.Controllers
             var serverApi = client.GetServerApi(serviceCallbackProxy);
 
             var protectedPassword = model.Password.EncryptAes();
-            var dbInfo = serverApi.OpenDatabase(model.DatabaseName, model.Login, protectedPassword, false);
+            var useWindowsAuth = model.Login.Contains('\\') || model.Login.Contains('/');
+            var dbInfo = serverApi.OpenDatabase(model.DatabaseName, model.Login, protectedPassword, useWindowsAuth);
             if (dbInfo == null)
             {
                 ModelState.AddModelError("", "Авторизация не удалась, проверьте данные и повторите вход");
