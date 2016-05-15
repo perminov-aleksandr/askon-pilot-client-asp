@@ -13,5 +13,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
         public SidePanelViewModel SidePanel { get; set; }
 
         public List<FileViewModel> Files { get; set; }
+
+        public Queue<KeyValuePair<Guid, string>> BreadCrumbs { get; set; }
     }
 }

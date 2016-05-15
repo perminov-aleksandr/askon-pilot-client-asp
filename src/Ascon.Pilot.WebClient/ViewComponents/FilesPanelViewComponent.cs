@@ -24,15 +24,14 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                     var serverApi = HttpContext.Session.GetServerApi();
                     var folder = serverApi.GetObjects(new[] { folderId }).First();
                     
-                    if (folder.Children?.Any(/*x => types[x.TypeId].Children?.Any() == false*/) != true)
+                    if (folder.Children?.Any() != true)
                         return View(viewName, new FileViewModel[] { });
 
                     var childrenIds = folder.Children
-                        //.Where(x => types[x.TypeId].Children?.Any() == false)
                         .Select(x => x.ObjectId).ToArray();
                     var childrens = serverApi.GetObjects(childrenIds);
                     var model = new List<FileViewModel>(childrens.Count);
-                    foreach (var dObject in childrens/*.Where(x => x.ActualFileSnapshot.Files.Any())*/)
+                    foreach (var dObject in childrens)
                     {
                         var mType = types[dObject.TypeId];
                         if (mType.Children.Any())

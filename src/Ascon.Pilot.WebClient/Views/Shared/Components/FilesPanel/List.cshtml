@@ -1,41 +1,23 @@
 ﻿@using System.Threading.Tasks
 @model IEnumerable<Ascon.Pilot.WebClient.ViewModels.FileViewModel>
 
-<form action="@Url.Action("DownloadArchive")" id="downloadArchiveForm">
-    <div class="file-list">
-        @if (Model == null || !Model.Any())
+<div class="file-list">
+    @if (Model == null || !Model.Any())
+    {
+        <p>файлы в папке отсутствуют</p>
+    }
+    else
+    {
+        foreach (var fileModel in Model)
         {
-            <p>файлы в папке отсутствуют</p>
-        }
-        else
-        {
-            foreach (var fileModel in Model)
+            if (fileModel.IsFolder)
             {
-                if (fileModel.IsFolder)
-                {
-                    @await Html.PartialAsync("Components/FilesPanel/_ListFolder", fileModel)
-                }
-                else
-                {
-                    @await Html.PartialAsync("Components/FilesPanel/_ListFile", fileModel)
-                }
+                @await Html.PartialAsync("Components/FilesPanel/_ListFolder", fileModel)
+            }
+            else
+            {
+                @await Html.PartialAsync("Components/FilesPanel/_ListFile", fileModel)
             }
         }
-    </div>
-</form>
-
-<script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function (event) {
-        $('input[name="objectsIds"]').on('click', function () {
-            var btn = $('#downloadArchiveButton');
-            if ($('input[name="objectsIds"]:checked').length === 0)
-                btn.hide();
-            else
-                btn.show();
-        });
-    });
-
-    function downloadArchive() {
-        $('form#downloadArchiveForm').submit();
     }
-</script>
+</div>

@@ -18,10 +18,8 @@ namespace Ascon.Pilot.WebClient.ViewComponents
 
         public IViewComponentResult GetSidePanel(Guid? id)
         {
-            //id = id ?? DObject.RootId;
-
-            id = DObject.RootId;
-
+            id = id ?? DObject.RootId;
+            
             var serverApi = HttpContext.Session.GetServerApi();
             var rootObject = serverApi.GetObjects(new[] { id.Value }).First();
 
@@ -32,63 +30,35 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                 Types = mTypes,
                 Items = new List<SidePanelItem>()
             };
-
-            var rootChildrenIds = rootObject.Children?
-                .Where(x => mTypes[x.TypeId].Children?.Any() == true)
-                .Select(x => x.ObjectId).ToArray();
-            var rootChildrens = serverApi.GetObjects(rootChildrenIds);
-            if (rootChildrens == null)
-                return View(model);
-
-            foreach (var rootChildren in rootChildrens)
+            
+            var prevId = rootObject.Id;
+            var parentId = rootObject.Id;
+            do
             {
-                var hasChildrens = rootChildren.Children?.Any(x => mTypes[x.TypeId].Children?.Any() == true) == true;
-                var sidePanelItem = new SidePanelItem
+                var parentObject = serverApi.GetObjects(new[] {parentId}).First();
+                var parentChildsIds = parentObject.Children
+                                        .Where(x => mTypes[x.TypeId].Children.Any())
+                                        .Select(x => x.ObjectId).ToArray();
+                if (parentChildsIds.Length != 0)
                 {
-                    DObject = rootChildren,
-                    Type = mTypes[rootChildren.TypeId],
-                    SubItems = hasChildrens ? new List<SidePanelItem>() : null
-                };
-
-                /*if (hasChildrens)
-                {
-                    var childIds = rootChildren.Children
-                        //.Where(x => mTypes[x.TypeId].Children?.Any() == true)
-                        .Select(y => y.ObjectId).ToArray();
-                    var childs = serverApi.GetObjects(childIds);
-
-                    foreach (var child in childs)
-                    {
-                        var panelItem = GetItemsWithChilds(child, mTypes, serverApi);
-                        sidePanelItem.SubItems.Add(panelItem);
-                    }
-                }*/
-                model.Items.Add(sidePanelItem);
-            }
-
-            /*if (id.Value == DObject.RootId)
-                return View(model);
-
-            var prevId = id.Value;
-            var parentId = rootObject.ParentId;
-            while (parentId != Guid.Empty)
-            {
-                var parentObject = serverApi.GetObjects(new[] { parentId }).First();
-                var parentChilds = serverApi.GetObjects(parentObject.Children.Select(x => x.ObjectId).ToArray());
-                if (parentChilds.Count != 0)
-                {
+                    var parentChilds = serverApi.GetObjects(parentChildsIds);
                     var subtree = model.Items;
-                    model.Items = parentChilds
-                        .Select(x => new SidePanelItem
+                    model.Items = new List<SidePanelItem>(parentChilds.Count);
+                    foreach (var parentChild in parentChilds)
+                    {
+                        model.Items.Add(new SidePanelItem
                         {
-                            Type = mTypes[x.TypeId],
-                            DObject = x,
-                            SubItems = x.Id == prevId ? subtree : null
-                        }).ToList();
+                            Type = mTypes[parentChild.TypeId],
+                            DObject = parentChild,
+                            SubItems = parentChild.Id == prevId ? subtree : null,
+                            Selected = parentChild.Id == id
+                        });
+                    }
                 }
+                
                 prevId = parentId;
                 parentId = parentObject.ParentId;
-            }*/
+            } while (parentId != Guid.Empty);
             return View(model);
         }
     }

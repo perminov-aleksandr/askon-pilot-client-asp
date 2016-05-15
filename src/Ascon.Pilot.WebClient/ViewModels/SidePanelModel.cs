@@ -10,7 +10,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
         public IDictionary<int, MType> Types { get; set; }
         public Guid ObjectId { get; set; }
         public List<SidePanelItem> Items { get; set; }
-
+        
         public dynamic[] ToDynamic()
         {
             var result = new List<dynamic>(Items.Count);
@@ -35,6 +35,11 @@ namespace Ascon.Pilot.WebClient.ViewModels
         public MType Type { get; set; }
         public DObject DObject { get; set; }
         public List<SidePanelItem> SubItems { get; set; }
+        public bool Selected { get; set; }
+
+        private bool Expanded {
+            get { return Selected || SubItems?.Any(x => x.Expanded) == true; }
+        }
 
         public dynamic GetDynamic(Guid id, IDictionary<int, MType> types)
         {
@@ -52,7 +57,8 @@ namespace Ascon.Pilot.WebClient.ViewModels
                 text = Name,
                 icon = ApplicationConst.TypesGlyphiconDictionary.TryGetValue(mType.Name, out icon) ? icon : "",
                 state = new {
-                    selected = DObject.Id == id
+                    selected = Selected,
+                    expanded = Expanded
                 },
                 tags = new [] {DObject.Children.Count.ToString()},
                 nodes = nodes.Any() || DObject.Children.Any(y => types[y.TypeId].Children.Any()) ? nodes.ToArray() : null

@@ -10,28 +10,28 @@
 {
     @Html.ValidationSummary(true)
     <div class="form-group">
-        @Html.LabelFor(x => x.DatabaseName, new {@class = "control-label col-sm-2"})
-        <div class="col-sm-10">
+        @Html.LabelFor(x => x.DatabaseName, new {@class = "control-label col-sm-3"})
+        <div class="col-sm-9">
             @Html.TextBoxFor(x => x.DatabaseName, new {@class = "form-control"})
             <p class="help-block">@Html.ValidationMessageFor(x => x.DatabaseName)</p>
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(x => x.Login, new {@class = "control-label col-sm-2"})
-        <div class="col-sm-10">
+        @Html.LabelFor(x => x.Login, new {@class = "control-label col-sm-3"})
+        <div class="col-sm-9">
             @Html.TextBoxFor(x => x.Login, new {@class = "form-control"})
             <p class="help-block">@Html.ValidationMessageFor(x => x.Login)</p>
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(x => x.Password, new {@class = "control-label col-sm-2"})
-        <div class="col-sm-10">
+        @Html.LabelFor(x => x.Password, new {@class = "control-label col-sm-3"})
+        <div class="col-sm-9">
             @Html.PasswordFor(x => x.Password, new {@class = "form-control"})
             <p class="help-block">@Html.ValidationMessageFor(x => x.Password)</p>
         </div>
     </div>
     <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
             <button type="submit" onclick="processLogin(this)" class="btn btn-primary">
                 <i id="loginProgress" style="display: none;" class="glyphicon glyphicon-spin glyphicon-refresh"></i>&nbsp;Войти
             </button>

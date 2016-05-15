@@ -24,14 +24,15 @@ namespace Ascon.Pilot.WebClient.Controllers
     {
         public IActionResult Index(Guid? id)
         {
+            id = id ?? DObject.RootId;
             var model = new UserPositionViewModel
             {
-                CurrentFolderId = id ?? DObject.RootId,
+                CurrentFolderId = id.Value,
                 FilesPanelType = ApplicationConst.DefaultFilesPanelType
             };
             return View(model);
         }
-
+        
         public async Task<IActionResult> GetNodeChilds(Guid id)
         {
             return await Task.Run(() =>

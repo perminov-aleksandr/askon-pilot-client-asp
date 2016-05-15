@@ -1,9 +1,12 @@
-﻿@model List<string>
+﻿@model Queue<KeyValuePair<Guid, string>>
 
 @if (Model != null && Model.Any())
 {
-    foreach (var crumb in Model)
+    while (Model.Any())
     {
-        <li>@crumb</li>
+        var crumb = Model.Dequeue();
+        <li>
+            <a href="@Url.Action("Index", new { id = crumb.Key })">@crumb.Value</a>
+        </li>
     }
 }
