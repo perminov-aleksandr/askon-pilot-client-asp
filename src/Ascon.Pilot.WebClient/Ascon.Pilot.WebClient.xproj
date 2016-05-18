@@ -21,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Askon.Pilot.Transport.Core\Ascon.Pilot.Server.Api\Ascon.Pilot.Server.Api.csproj" />
+    <ProjectReference Include="..\MuPDF\MuPDF.csproj" />
   </ItemGroup>
   <ItemGroup>
     <DnxInvisibleFolder Include="Ascon.Pilot\" />

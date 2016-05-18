@@ -39,11 +39,12 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                             {
                                 Id = dObject.Id,
                                 IsFolder = true,
+                                ObjectId = dObject.Id,
                                 ObjectName = dObject.GetTitle(mType),
                                 FileName = dObject.GetTitle(mType),
                                 CreatedDate = dObject.Created,
                                 LastModifiedDate = dObject.Created,
-                                ChildrenCount = dObject.Children.Count(x => types[x.TypeId].Children.Any())
+                                ChildrenCount = dObject.Children.Count
                             });
                         else if (dObject.ActualFileSnapshot?.Files?.Any() == true)
                         {

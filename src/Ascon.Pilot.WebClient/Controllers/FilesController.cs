@@ -8,8 +8,15 @@ using Ascon.Pilot.Core;
 using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.ViewComponents;
 using Ascon.Pilot.WebClient.ViewModels;
+using Castle.Core.Logging;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Extensions.Logging;
+#if DNX451
+using MuPDFLib;
+using System.Drawing;
+using System.Drawing.Imaging;
+#endif
 
 namespace Ascon.Pilot.WebClient.Controllers
 {
@@ -22,6 +29,13 @@ namespace Ascon.Pilot.WebClient.Controllers
     [Authorize]
     public class FilesController : Controller
     {
+        private ILogger<FilesController> _logger;
+
+        public FilesController(ILogger<FilesController> logger)
+        {
+            _logger = logger;
+        }
+
         public IActionResult Index(Guid? id)
         {
             id = id ?? DObject.RootId;
@@ -108,7 +122,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                         var fileSize = dFile.Body.Size;
                         var fileBody = serverApi.GetFileChunk(fileId, 0, (int)fileSize);
 
-                        var zipEntry = zipArchive.CreateEntry(dFile.Name);
+                        var zipEntry = zipArchive.CreateEntry(dFile.Name, CompressionLevel.NoCompression);
 
                         //Get the stream of the attachment
                         using (var originalFileStream = new MemoryStream(fileBody))
@@ -126,9 +140,70 @@ namespace Ascon.Pilot.WebClient.Controllers
 
         public IActionResult Thumbnail(Guid id)
         {
-            //todo: generate thumbnail and send it
-            var virtualFileResult = File(Url.Content("~/images/file.png"), "image/png");
-            return virtualFileResult;
+            const string pngContentType = "image/png";
+            const string svgContentType = "image/svg+xml";
+#if DNX451
+            try
+            {
+                //byte[] file = GetFileFromObject(id);
+                //if (file != null)
+                //{
+                //    var fileName = id.ToString();
+                //    using (var fileStream = System.IO.File.Create(fileName))
+                //        fileStream.Write(file, 0, file.Length);
+
+                //    int page = 1;
+                //    int dpi = 50;
+                //    RenderType RenderType = RenderType.RGB;
+                //    bool rotateAuto = true;
+                //    string password = "";
+
+                //    using (MuPDF pdfDoc = new MuPDF(fileName, password))
+                //    {
+                //        pdfDoc.Page = page;
+                //        Bitmap bm = pdfDoc.GetBitmap(0, 0, dpi, dpi, 0, RenderType, rotateAuto, false, 0);
+                //        HttpContext.Response.ContentType = pngContentType;
+                //        using (var ms = new MemoryStream())
+                //        {
+                //            bm.Save(ms, ImageFormat.Png);
+                //            return File(ms.ToArray(), pngContentType);
+                //        }
+                //    }
+                //}
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(1 ,"Unable to generate thumbnail for file", ex);
+            }
+#endif
+            var mTypes = HttpContext.Session.GetMetatypes();
+            var serverApi = HttpContext.Session.GetServerApi();
+            var obj = serverApi.GetObjects(new[] {id})[0];
+            if (mTypes.ContainsKey(obj.TypeId))
+            {
+                var mType = mTypes[obj.TypeId];
+                if (mType.Icon != null)
+                    return File(mType.Icon, svgContentType);
+            }
+            return File(Url.Content("~/images/file.svg"), svgContentType);
+        }
+
+        private byte[] GetFileFromObject(Guid id)
+        {
+            var serverApi = HttpContext.Session.GetServerApi();
+            var dObjects = serverApi.GetObjects(new [] {id});
+            var obj = dObjects.First();
+            if (obj?.ActualFileSnapshot?.Files?.Any() == false)
+                return null;
+
+            var file = obj.ActualFileSnapshot.Files.First();
+            var fileExtension = Path.GetExtension(file.Name);
+            if (fileExtension == ".pdf" || fileExtension == ".xps")
+            {
+                byte[] result = serverApi.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
+                return result;
+            }
+            return null;
         }
     }
 }

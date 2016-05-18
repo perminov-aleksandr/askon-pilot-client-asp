@@ -8,7 +8,7 @@
 <div class="file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
     <div class="file-card-icon">
         <div style="position: relative">
-            <img src="@Url.Action("Thumbnail", "Files", new {id = Model.Id})" width="50" height="50" alt="@name" />
+            <img src="@Url.Action("Thumbnail", "Files", new {id = Model.ObjectId})" width="50" height="50" alt="@name"/>
             <input name="objectsIds" type="checkbox" value="@Model.ObjectId"/>
         </div>
     </div>
@@ -23,7 +23,7 @@
     <div class="file-card-buttons">
         <div>
             <a title="Скачать файл" href="@Url.Action("Download", "Files", new {id = Model.Id, size = Model.Size, name})" class="btn btn-default">
-                Скачать <span class="glyphicon glyphicon-download-alt"></span>
+                <span class="glyphicon glyphicon-download-alt"></span>
             </a>
         </div>
     </div>

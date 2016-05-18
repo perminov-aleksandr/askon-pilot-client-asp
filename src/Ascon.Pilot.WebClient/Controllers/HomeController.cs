@@ -16,7 +16,20 @@ namespace Ascon.Pilot.WebClient.Controllers
         {
             return View(HttpContext.Session.GetMetatypes().Values);
         }
-        
+
+        public IActionResult GetTypeIcon(int id)
+        {
+            const string pngContentType = "image/png";
+            var mTypes = HttpContext.Session.GetMetatypes();
+            if (mTypes.ContainsKey(id))
+            {
+                var mType = mTypes[id];
+                if (mType.Icon != null)
+                    return File(mType.Icon, "image/svg+xml");
+            }
+            return File(Url.Content("~/images/file.png"), pngContentType);
+        }
+
         [AllowAnonymous]
         public IActionResult Error(string message)
         {

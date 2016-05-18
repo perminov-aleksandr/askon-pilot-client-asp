@@ -28,7 +28,7 @@
             <td>@type.IsDeleted</td>
             <td>@(type.Children?.Any() == true)</td>
             <td>
-                <i class="glyphicon glyphicon-@(ApplicationConst.TypesGlyphiconDictionary.ContainsKey(type.Name) ? ApplicationConst.TypesGlyphiconDictionary[type.Name] : ApplicationConst.DefaultGlyphicon)"></i>
+                <img src="@Url.Action("GetTypeIcon", new {id = type.Id})" alt="Иконка" width="32" height="32"/>
             </td>
         </tr>
     }

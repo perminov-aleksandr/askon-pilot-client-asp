@@ -7,3 +7,4 @@ src/Ascon.Pilot.WebClient/wwwroot/lib/*
 /src/Ascon.Pilot.WebClient.IdentityAuth/*
 /Askon.Pilot.Transport.Core
 /artifacts
+Debug

@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net451": {
+      "wrappedProject": "../../src/MuPDF/MuPDF.csproj",
+      "bin": {
+        "assembly": "../../src/MuPDF/obj/{configuration}/MuPDF.dll",
+        "pdb": "../../src/MuPDF/obj/{configuration}/MuPDF.pdb"
+      }
+    }
+  }
+}
