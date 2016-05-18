@@ -1,0 +1,15 @@
+﻿@model Ascon.Pilot.WebClient.ViewModels.FileViewModel
+@{
+    var name = Model.Name;
+}
+
+<div class="col-sm-2 file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
+    <div class="file-card-icon">
+        <div style="position: relative">
+            <img src="@Url.Action("GetTypeIcon", "Home", new { id = Model.ObjectTypeId })" width="50" height="50" alt="@Model.Name" />
+        </div>
+    </div>
+    <div class="file-card-name">
+        @name
+    </div>
+</div>

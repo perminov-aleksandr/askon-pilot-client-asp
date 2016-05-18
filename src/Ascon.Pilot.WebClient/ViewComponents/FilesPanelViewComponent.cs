@@ -40,6 +40,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                                 Id = dObject.Id,
                                 IsFolder = true,
                                 ObjectId = dObject.Id,
+                                ObjectTypeId = dObject.TypeId,
                                 ObjectName = dObject.GetTitle(mType),
                                 FileName = dObject.GetTitle(mType),
                                 CreatedDate = dObject.Created,
@@ -54,9 +55,10 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                                 Id = file.Body.Id,
                                 IsFolder = false,
                                 ObjectId = dObject.Id,
+                                ObjectTypeId = dObject.TypeId,
                                 ObjectName = dObject.GetTitle(mType),
                                 FileName = file.Name,
-                                Size = file.Body.Size,
+                                Size = (int)file.Body.Size,
                                 LastModifiedDate = file.Body.Modified,
                                 CreatedDate = file.Body.Created
                             });

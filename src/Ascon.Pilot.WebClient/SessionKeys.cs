@@ -8,5 +8,7 @@
         public static readonly string DatabaseName = "DbName";
         public static readonly string Login = "Login";
         public static readonly string ProtectedPassword = "ProtectedPassword";
+        public static readonly string IsSidePanelHidden = "IsSidePanelHidden";
+        public static readonly string FilesPanelType = "FilesPanelType";
     }
 }

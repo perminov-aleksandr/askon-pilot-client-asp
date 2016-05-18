@@ -19,15 +19,15 @@ namespace Ascon.Pilot.WebClient.Controllers
 
         public IActionResult GetTypeIcon(int id)
         {
-            const string pngContentType = "image/png";
+            const string svgContentType = "image/svg+xml";
             var mTypes = HttpContext.Session.GetMetatypes();
             if (mTypes.ContainsKey(id))
             {
                 var mType = mTypes[id];
                 if (mType.Icon != null)
-                    return File(mType.Icon, "image/svg+xml");
+                    return File(mType.Icon, svgContentType);
             }
-            return File(Url.Content("~/images/file.png"), pngContentType);
+            return File(Url.Content("~/images/file.svg"), svgContentType);
         }
 
         [AllowAnonymous]

@@ -8,7 +8,18 @@
 <div class="file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
     <div class="file-card-icon">
         <div style="position: relative">
-            <img src="@Url.Action("Thumbnail", "Files", new {id = Model.ObjectId})" width="50" height="50" alt="@name"/>
+            @{
+                string href;
+                if (Model.IsThumbnailAvailable)
+                {
+                    href = Url.Action("Thumbnail", "Files", new {id = Model.ObjectId, size = Model.Size, name});
+                }
+                else
+                {
+                    href = Url.Action("GetTypeIcon", "Home", new { id = Model.ObjectTypeId });
+                }
+            }
+            <img src="@href" width="50" height="50" alt="@name"/>
             <input name="objectsIds" type="checkbox" value="@Model.ObjectId"/>
         </div>
     </div>

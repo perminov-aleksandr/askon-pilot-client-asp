@@ -160,3 +160,10 @@ textarea {
 {
     display: inherit;
 }
+
+.file-grid .file-card-icon input[type="checkbox"] {
+    bottom: inherit;
+    right: inherit;
+    top: 0.5em;
+    left: 0.5em;
+}

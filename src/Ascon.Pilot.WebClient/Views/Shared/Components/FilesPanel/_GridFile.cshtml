@@ -1,0 +1,26 @@
+﻿@model Ascon.Pilot.WebClient.ViewModels.FileViewModel
+@{
+    var name = Model.Name;
+}
+
+<div class="col-sm-2 file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
+    <div class="file-card-icon">
+        @{
+            var href = Url.Action("GetTypeIcon", "Home", new { id = Model.ObjectTypeId });
+            if (Model.IsThumbnailAvailable)
+            {
+                href = Url.Action("Thumbnail", "Files", new { id = Model.Id, size = Model.Size, name });
+            }
+        }
+        <div style="position: relative">
+            <img src="@href" width="50" height="50" alt="@Model.Name" />
+            <input name="objectsIds" type="checkbox" value="@Model.ObjectId" />
+        </div>
+    </div>
+    <div class="file-card-name">
+        @Html.ActionLink(name, "Download", "Files", new {id = Model.Id, size = Model.Size, name}, new {title = "Скачать файл"})
+    </div>
+</div>
+
+
+

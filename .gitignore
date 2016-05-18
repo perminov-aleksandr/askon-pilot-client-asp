@@ -8,3 +8,6 @@ src/Ascon.Pilot.WebClient/wwwroot/lib/*
 /Askon.Pilot.Transport.Core
 /artifacts
 Debug
+/src/MuPDF/bin/Release
+/src/MuPDF/obj/Release
+/wrap/MuPDF/bin/Release/net451
