@@ -12,7 +12,7 @@
                 string href;
                 if (Model.IsThumbnailAvailable)
                 {
-                    href = Url.Action("Thumbnail", "Files", new {id = Model.ObjectId, size = Model.Size, name});
+                    href = Url.Action("Thumbnail", "Files", new {id = Model.Id, size = Model.Size, name});
                 }
                 else
                 {

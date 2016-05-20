@@ -143,39 +143,44 @@ namespace Ascon.Pilot.WebClient.Controllers
             const string pngContentType = "image/png";
             const string svgContentType = "image/svg+xml";
 #if DNX451
-            //var serverApi = HttpContext.Session.GetServerApi();
-            //var file = serverApi.GetFileChunk(id, 0, size);
-            //try
-            //{
-            //    if (file != null)
-            //    {
-            //        var fileName = id.ToString();
-            //        using (var fileStream = System.IO.File.Create(fileName))
-            //            fileStream.Write(file, 0, file.Length);
+            var serverApi = HttpContext.Session.GetServerApi();
+            var file = serverApi.GetFileChunk(id, 0, size);
+            try
+            {
+                if (file != null)
+                {
+                    var fileName = $"tmp/{id}{Path.GetExtension(name)}";
+                    using (var fileStream = System.IO.File.Create(fileName))
+                        fileStream.Write(file, 0, file.Length);
 
-            //        int page = 1;
-            //        int dpi = 50;
-            //        RenderType RenderType = RenderType.RGB;
-            //        bool rotateAuto = true;
-            //        string password = "";
+                    int page = 1;
+                    int dpi = 50;
+                    RenderType RenderType = RenderType.RGB;
+                    bool rotateAuto = false;
+                    string password = "";
 
-            //        using (MuPDF pdfDoc = new MuPDF(fileName, password))
-            //        {
-            //            pdfDoc.Page = page;
-            //            Bitmap bm = pdfDoc.GetBitmap(0, 0, dpi, dpi, 0, RenderType, rotateAuto, false, 0);
-            //            HttpContext.Response.ContentType = pngContentType;
-            //            using (var ms = new MemoryStream())
-            //            {
-            //                bm.Save(ms, ImageFormat.Png);
-            //                return File(ms.ToArray(), pngContentType, name);
-            //            }
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogWarning(1 ,"Unable to generate thumbnail for file", ex);
-            //}
+                    byte[] thumbnailContent;
+                    using (MuPDF pdfDoc = new MuPDF(fileName, password))
+                    {
+                        pdfDoc.Page = page;
+                        Bitmap bm = pdfDoc.GetBitmap(0, 0, dpi, dpi, 0, RenderType, rotateAuto, false, 0);
+                        HttpContext.Response.ContentType = pngContentType;
+                        using (var ms = new MemoryStream())
+                        {
+                            bm.Save(ms, ImageFormat.Png);
+                            thumbnailContent = ms.ToArray();
+                        }
+                    }
+
+                    System.IO.File.Delete(fileName);
+
+                    return File(thumbnailContent, pngContentType, name);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(1, "Unable to generate thumbnail for file", ex);
+            }
 #endif
             return File(Url.Content("~/images/file.svg"), svgContentType);
         }

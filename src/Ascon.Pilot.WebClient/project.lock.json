@@ -1611,7 +1611,7 @@
           "lib/dnx451/Microsoft.VisualStudio.Web.BrowserLink.Loader.dll": {}
         }
       },
-      "MuPDF.NET/1.0.1": {
+      "MuPDF.NET/1.0.2": {
         "type": "package",
         "compile": {
           "lib/net451/MuPDF.dll": {}
@@ -6502,7 +6502,7 @@
           "lib/dnx451/Microsoft.VisualStudio.Web.BrowserLink.Loader.dll": {}
         }
       },
-      "MuPDF.NET/1.0.1": {
+      "MuPDF.NET/1.0.2": {
         "type": "package",
         "compile": {
           "lib/net451/MuPDF.dll": {}
@@ -8464,7 +8464,7 @@
           "lib/dnx451/Microsoft.VisualStudio.Web.BrowserLink.Loader.dll": {}
         }
       },
-      "MuPDF.NET/1.0.1": {
+      "MuPDF.NET/1.0.2": {
         "type": "package",
         "compile": {
           "lib/net451/MuPDF.dll": {}
@@ -16847,16 +16847,16 @@
         "ref/net46/Microsoft.Win32.Registry.dll"
       ]
     },
-    "MuPDF.NET/1.0.1": {
+    "MuPDF.NET/1.0.2": {
       "type": "package",
-      "sha512": "0QRm9uxpc3ABqexj+R3tLZ79WPtnNpj0axyWyIO5TzKXjPVwkLuP1DdGGWYLqH1TggTdYze0KHmpXsgGd2B8Jg==",
+      "sha512": "DBJkAg/yanv62ADsgw1skkBVQY6asOj2feRAAd3NeW4din58VGIVCJePGxoNecjqrOmnPBcZEJA9aHzcrfz7Tg==",
       "files": [
         "lib/MuPDFLib-x64.dll",
         "lib/MuPDFLib-x86.dll",
         "lib/net451/MuPDF.dll",
         "lib/net451/MuPDF.pdb",
-        "MuPDF.NET.1.0.1.nupkg",
-        "MuPDF.NET.1.0.1.nupkg.sha512",
+        "MuPDF.NET.1.0.2.nupkg",
+        "MuPDF.NET.1.0.2.nupkg.sha512",
         "MuPDF.NET.nuspec"
       ]
     },
@@ -21315,7 +21315,7 @@
     ],
     "DNX,Version=v4.5.1": [
       "Castle.Core >= 3.3.3",
-      "MuPDF.NET >= 1.0.1",
+      "MuPDF.NET >= 1.0.2",
       "System.Drawing.Primitives >= 4.0.0-rc3-24116-00",
       "System.Runtime.InteropServices >= 4.1.0-rc3-24116-00",
       "fx/System.Net.Http >= 4.0.0"
