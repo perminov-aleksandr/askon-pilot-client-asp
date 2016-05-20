@@ -1611,9 +1611,14 @@
           "lib/dnx451/Microsoft.VisualStudio.Web.BrowserLink.Loader.dll": {}
         }
       },
-      "MuPDF/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+      "MuPDF.NET/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net451/MuPDF.dll": {}
+        },
+        "runtime": {
+          "lib/net451/MuPDF.dll": {}
+        }
       },
       "Newtonsoft.Json/6.0.6": {
         "type": "package",
@@ -6497,9 +6502,14 @@
           "lib/dnx451/Microsoft.VisualStudio.Web.BrowserLink.Loader.dll": {}
         }
       },
-      "MuPDF/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+      "MuPDF.NET/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net451/MuPDF.dll": {}
+        },
+        "runtime": {
+          "lib/net451/MuPDF.dll": {}
+        }
       },
       "Newtonsoft.Json/6.0.6": {
         "type": "package",
@@ -8454,9 +8464,14 @@
           "lib/dnx451/Microsoft.VisualStudio.Web.BrowserLink.Loader.dll": {}
         }
       },
-      "MuPDF/1.0.0": {
-        "type": "project",
-        "framework": ".NETFramework,Version=v4.5.1"
+      "MuPDF.NET/1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net451/MuPDF.dll": {}
+        },
+        "runtime": {
+          "lib/net451/MuPDF.dll": {}
+        }
       },
       "Newtonsoft.Json/6.0.6": {
         "type": "package",
@@ -15319,10 +15334,6 @@
       "type": "project",
       "path": "../Ascon.Pilot.Transport/project.json"
     },
-    "MuPDF/1.0.0": {
-      "type": "project",
-      "path": "../../wrap/MuPDF/project.json"
-    },
     "Castle.Core/3.3.3": {
       "type": "package",
       "sha512": "tvVrLbHhtAGubUUDbEkH9JlivdlJOTI25u3hlyHpPxuJdTVi/yVQKWCYvGpafGPm7G1ibdWj4brqhtSQkAmN+g==",
@@ -16836,6 +16847,19 @@
         "ref/net46/Microsoft.Win32.Registry.dll"
       ]
     },
+    "MuPDF.NET/1.0.1": {
+      "type": "package",
+      "sha512": "0QRm9uxpc3ABqexj+R3tLZ79WPtnNpj0axyWyIO5TzKXjPVwkLuP1DdGGWYLqH1TggTdYze0KHmpXsgGd2B8Jg==",
+      "files": [
+        "lib/MuPDFLib-x64.dll",
+        "lib/MuPDFLib-x86.dll",
+        "lib/net451/MuPDF.dll",
+        "lib/net451/MuPDF.pdb",
+        "MuPDF.NET.1.0.1.nupkg",
+        "MuPDF.NET.1.0.1.nupkg.sha512",
+        "MuPDF.NET.nuspec"
+      ]
+    },
     "Newtonsoft.Json/6.0.6": {
       "type": "package",
       "sha512": "w26uZNyCG5VeoKiEOJ4+9/o8koSofLKwHl7WLreIcp0U6r57L7WiRXmjp8MTKFw6dYNZ9AE0lw69WYbIhUsU9Q==",
@@ -16862,7 +16886,7 @@
     },
     "NLog/4.4.0-beta2": {
       "type": "package",
-      "sha512": "hwsr/zoePrYkb+cSNngKqqXpU8wIna6trk5Oz62rryoQJJLECT4tdJyR+q5xq/Nab3z6kktT/Gjjll78eTE2vQ==",
+      "sha512": "BLpQZ0+ukBWFEYDV3nehAEp2qzuc81Xh3fEXZcjCm1KgLa28rMGuzM6PiOvgTNqBa8DNp6l3g8UVRrgJ+7ow/w==",
       "files": [
         "lib/dotnet5.4/NLog.dll",
         "lib/dotnet5.4/NLog.xml",
@@ -21265,6 +21289,9 @@
   },
   "projectFileDependencyGroups": {
     "": [
+      "Ascon.Pilot.Core >= 0.0.1-*",
+      "Ascon.Pilot.Server.Api >= 0.0.1-*",
+      "Ascon.Pilot.Transport >= 0.0.1-*",
       "Microsoft.AspNet.Authorization >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Authentication.Cookies >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Diagnostics >= 1.0.0-rc1-final",
@@ -21283,25 +21310,18 @@
       "Microsoft.AspNet.Identity >= 3.0.0-rc1-final",
       "NLog >= 4.4.0-beta2",
       "NLog.Extensions.Logging >= 1.0.0-rc1-final-2016-03-11",
-      "System.Net.Http >= 4.0.0"
+      "System.Net.Http >= 4.0.0",
+      "protobuf-portable-net >= 2.0.0.668"
     ],
     "DNX,Version=v4.5.1": [
-      "Ascon.Pilot.Core >= 0.0.1-*",
-      "Ascon.Pilot.Server.Api >= 0.0.1-*",
-      "Ascon.Pilot.Transport >= 0.0.1-*",
       "Castle.Core >= 3.3.3",
-      "MuPDF >= 1.0.0-*",
-      "protobuf-portable-net >= 2.0.0.668",
+      "MuPDF.NET >= 1.0.1",
       "System.Drawing.Primitives >= 4.0.0-rc3-24116-00",
       "System.Runtime.InteropServices >= 4.1.0-rc3-24116-00",
       "fx/System.Net.Http >= 4.0.0"
     ],
     "DNXCore,Version=v5.0": [
-      "Ascon.Pilot.Core >= 0.0.1-*",
-      "Ascon.Pilot.Server.Api >= 0.0.1-*",
-      "Ascon.Pilot.Transport >= 0.0.1-*",
       "castle.core.netcore >= 3.3.4-beta8",
-      "protobuf-portable-net >= 2.0.0.668",
       "System.Net.Http.WinHttpHandler >= 4.0.0-beta-23516",
       "System.Net.Utilities >= 4.0.0-beta-23516"
     ]

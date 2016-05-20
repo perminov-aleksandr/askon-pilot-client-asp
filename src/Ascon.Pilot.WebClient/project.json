@@ -5,6 +5,9 @@
   },
 
   "dependencies": {
+    "Ascon.Pilot.Core": "0.0.1-*",
+    "Ascon.Pilot.Server.Api": "0.0.1-*",
+    "Ascon.Pilot.Transport": "0.0.1-*",
     "Microsoft.AspNet.Authorization": "1.0.0-rc1-final",
     "Microsoft.AspNet.Authentication.Cookies": "1.0.0-rc1-final",
     "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final",
@@ -23,7 +26,8 @@
     "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
     "NLog": "4.4.0-beta2",
     "NLog.Extensions.Logging": "1.0.0-rc1-final-2016-03-11",
-    "System.Net.Http": "4.0.0"
+    "System.Net.Http": "4.0.0",
+    "protobuf-portable-net": "2.0.0.668"
   },
 
   "commands": {
@@ -33,12 +37,8 @@
   "frameworks": {    
     "dnx451": {
       "dependencies": {
-        "Ascon.Pilot.Core": "0.0.1-*",
-        "Ascon.Pilot.Server.Api": "0.0.1-*",
-        "Ascon.Pilot.Transport": "0.0.1-*",
         "Castle.Core": "3.3.3",
-        "MuPDF": "1.0.0-*",
-        "protobuf-portable-net": "2.0.0.668",
+        "MuPDF.NET": "1.0.1",
         "System.Drawing.Primitives": "4.0.0-rc3-24116-00",
         "System.Runtime.InteropServices": "4.1.0-rc3-24116-00"
       },
@@ -48,11 +48,7 @@
     },
     "dnxcore50": {
       "dependencies": {
-        "Ascon.Pilot.Core": "0.0.1-*",
-        "Ascon.Pilot.Server.Api": "0.0.1-*",
-        "Ascon.Pilot.Transport": "0.0.1-*",
         "castle.core.netcore": "3.3.4-beta8",
-        "protobuf-portable-net": "2.0.0.668",
         "System.Net.Http.WinHttpHandler": "4.0.0-beta-23516",
         "System.Net.Utilities": "4.0.0-beta-23516"
       }

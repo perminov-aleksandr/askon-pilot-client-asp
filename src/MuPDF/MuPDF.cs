@@ -28,7 +28,7 @@ namespace MuPDFLib
 
     internal class ThirtyTwoBitApi : IApi
     {
-        private const string MuDLL = @"d:\Projects\ASKON\Pilot-ICE-WebClient\src\MuPDF\MuPDFLib-x86.dll";
+        private const string MuDLL = @"MuPDFLib-x86.dll";
 
         [DllImport(MuDLL, EntryPoint = "CreateMuPDFClass", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         static private extern IntPtr CreateMuPDFClass_EXT();

@@ -14,14 +14,13 @@
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <ProduceOutputsOnBuild>True</ProduceOutputsOnBuild>
+  </PropertyGroup>
   <ItemGroup>
     <DnxInvisibleContent Include="bower.json" />
     <DnxInvisibleContent Include=".bowerrc" />
     <DnxInvisibleContent Include="package.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Askon.Pilot.Transport.Core\Ascon.Pilot.Server.Api\Ascon.Pilot.Server.Api.csproj" />
-    <ProjectReference Include="..\MuPDF\MuPDF.csproj" />
   </ItemGroup>
   <ItemGroup>
     <DnxInvisibleFolder Include="Ascon.Pilot\" />
