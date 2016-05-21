@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>MuPDF.NET</id>
+    <version>1.0.3</version>
+    <title>MuPDF.NET</title>
+    <authors>Unknown</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>MuPDF library wrap for .NET. PDF, XPS viewer.</description>
+    <releaseNotes>Hope it fixed now.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+  </metadata>
+  <files>
+	<file src="bin\Release\*.*" target="runtimes\win7-x86\lib\net451" />
+	<file src="bin\Release\*.*" target="runtimes\win7-x64\lib\net451" />
+	<file src="MuPDFLib-x86.dll" target="runtimes\win7-x86\native" />
+	<file src="MuPDFLib-x64.dll" target="runtimes\win7-x64\native" />
+  </files>
+</package>
