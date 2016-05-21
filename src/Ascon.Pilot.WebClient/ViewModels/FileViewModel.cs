@@ -5,13 +5,17 @@ namespace Ascon.Pilot.WebClient.ViewModels
 {
     public class FileViewModel
     {
+        public string FileExtension
+        {
+            get { return Path.GetExtension(FileName); }
+        }
+        
         public Guid Id { get; set; }
         public bool IsFolder { get; set; }
         public bool IsThumbnailAvailable {
             get
             {
-                var extension = Path.GetExtension(FileName);
-                return extension == ".xps" || extension == ".pdf";
+                return FileExtension == ".xps" || FileExtension == ".pdf";
             }
         }
         public Guid ObjectId { get; set; }
@@ -20,9 +24,9 @@ namespace Ascon.Pilot.WebClient.ViewModels
         public string Name {
             get
             {
-                if (Path.HasExtension(ObjectName) && Path.GetExtension(ObjectName) == Path.GetExtension(FileName))
+                if (Path.HasExtension(ObjectName) && Path.GetExtension(ObjectName) == FileExtension)
                     return ObjectName;
-                return $"{ObjectName}{Path.GetExtension(FileName)}";
+                return $"{ObjectName}{FileExtension}";
             }
         }
         public string FileName { get; set; }

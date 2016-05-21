@@ -10,35 +10,7 @@
     {
         foreach (var fileModel in Model)
         {
-            var name = fileModel.Name;
-            <div class="col-sm-2 file-card" data-id="@fileModel.Id" onclick="processFileCardClick(this)">
-                <div class="file-card-icon">
-                    @{
-                        var href = Url.Action("GetTypeIcon", "Home", new {id = fileModel.ObjectTypeId});
-                        if (!fileModel.IsFolder && fileModel.IsThumbnailAvailable)
-                        {
-                            href = Url.Action("Thumbnail", "Files", new {id = fileModel.Id, size = fileModel.Size, name});
-                        }
-                    }
-                    <div style="position: relative">
-                        <img src="@href" width="50" height="50" alt="@fileModel.Name"/>
-                        @if (!fileModel.IsFolder)
-                        {
-                            <input name="objectsIds" type="checkbox" value="@fileModel.ObjectId"/>
-                        }
-                    </div>
-                </div>
-                <div class="file-card-name">
-                    @if (!fileModel.IsFolder)
-                    {
-                        @Html.ActionLink(name, "Download", "Files", new {id = fileModel.Id, size = fileModel.Size, name}, new {title = "Скачать файл"})
-                    }
-                    else
-                    {
-                        @name
-                    }
-                </div>
-            </div>
+            @Html.Partial("Components/FilesPanel/_GridFile", fileModel)
         }
     }
 </div>
