@@ -144,6 +144,12 @@ textarea {
     margin-right: auto;
 }
 
+.file-card.with-thumbnail > .file-card-icon img {
+    background-color: #efefef;
+    border: 1px solid white;
+    border: 1px solid rgba(128,128,128,0.5);
+}
+
 /*icon checkboxes*/
 
 .file-card-icon input[type=checkbox] {

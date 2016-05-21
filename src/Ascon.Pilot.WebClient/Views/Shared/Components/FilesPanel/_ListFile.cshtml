@@ -5,9 +5,9 @@
     var name = Model.Name;
 }
 
-<div class="file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
+<div class="file-card @(Model.IsThumbnailAvailable ? "with-thumbnail" : "")" data-id="@Model.Id" onclick="processFileCardClick(this)">
     <div class="file-card-icon">
-        <div style="position: relative">
+        <div style="position: relative;">
             @{
                 string href;
                 if (Model.IsThumbnailAvailable)
