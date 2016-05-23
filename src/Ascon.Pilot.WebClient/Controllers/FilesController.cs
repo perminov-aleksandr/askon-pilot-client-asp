@@ -172,18 +172,21 @@ namespace Ascon.Pilot.WebClient.Controllers
             {
                 if (file != null)
                 {
-                    var fileName = $"tmp/{id}{extension}";
-                    using (var fileStream = System.IO.File.Create(fileName))
-                        fileStream.Write(file, 0, file.Length);
-
                     int page = 1;
-                    int dpi = 25;
+                    int dpi = 150;
                     RenderType RenderType = RenderType.RGB;
                     bool rotateAuto = false;
                     string password = "";
 
+                    var isPdf = extension == ".pdf";
+                    var fileName = $"tmp/{id}{extension}";
+
+                    if (!isPdf)
+                        using (var fileStream = System.IO.File.Create(fileName))
+                            fileStream.Write(file, 0, file.Length);
+                    
                     byte[] thumbnailContent;
-                    using (MuPDF pdfDoc = new MuPDF(fileName, password))
+                    using (MuPDF pdfDoc = isPdf ? new MuPDF(file, password) :  new MuPDF(fileName, password))
                     {
                         pdfDoc.Page = page;
                         Bitmap bm = pdfDoc.GetBitmap(0, 0, dpi, dpi, 0, RenderType, rotateAuto, false, 0);
@@ -195,7 +198,8 @@ namespace Ascon.Pilot.WebClient.Controllers
                         }
                     }
 
-                    System.IO.File.Delete(fileName);
+                    if (!isPdf)
+                        System.IO.File.Delete(fileName);
 
                     return File(thumbnailContent, pngContentType, $"{id}.png");
                 }

@@ -87,7 +87,7 @@
                     $('<a>', { href: '/Files/Preview?' + query, "class": "btn btn-default", target: "_blank", html: '<i class="glyphicon glyphicon-eye-open"></i> Просмотр' })
                         .appendTo($('.modal-footer'));
                 }
-                var url = '/Files/Thumbnail/' + id + '?size=' + size + '&name=' + name;
+                var url = '/Files/Thumbnail/' + id + '?size=' + size + '&extension=' + ext;
                 $('#viewModalContent').html('<img src="' + url + '" alt="' + name + '"/>');
             } else {
                 $('#viewModalContent').html('<img src="/Home/GetTypeIcon/' + typeid + '"/>');

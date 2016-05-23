@@ -151,20 +151,27 @@ textarea {
 }
 
 .file-list > .file-card > .file-card-icon img {
-    display: inline-block;
+    display: block;
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-    width: 50px;
+}
+
+.file-card > .file-card-icon div {
+    display: block;
+    vertical-align: middle;
     height: 50px;
+    width: 50px;
+}
+
+.file-card:not(.with-thumbnail) > .file-card-icon img {
+    height: 50px;
+    width: 50px;
 }
 
 .file-card.with-thumbnail > .file-card-icon img {
-    background-color: #efefef;
-    border: 1px solid white;
-    border: 1px solid rgba(128,128,128,0.5);
+    border: 1px solid lightgray;
+    max-height: 50px;
+    max-width: 50px;
+    margin: auto;
 }
 
 /*icon checkboxes*/

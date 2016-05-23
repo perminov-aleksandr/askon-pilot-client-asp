@@ -83,7 +83,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         public async Task<IActionResult> LogOff()
         {
             await HttpContext.Authentication.SignOutAsync(ApplicationConst.PilotMiddlewareInstanceName);
-            HttpContext.Session.GetClient().Dispose();
+            HttpContext.Session.GetClient()?.Dispose();
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
