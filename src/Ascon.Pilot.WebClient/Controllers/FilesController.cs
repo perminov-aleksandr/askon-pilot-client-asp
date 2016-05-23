@@ -157,7 +157,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             }
         }
 
-        public IActionResult Thumbnail(Guid id, int size, string name)
+        public IActionResult Thumbnail(Guid id, int size, string extension)
         {
             const string pngContentType = "image/png";
             const string svgContentType = "image/svg+xml";
@@ -172,12 +172,12 @@ namespace Ascon.Pilot.WebClient.Controllers
             {
                 if (file != null)
                 {
-                    var fileName = $"tmp/{id}{Path.GetExtension(name)}";
+                    var fileName = $"tmp/{id}{extension}";
                     using (var fileStream = System.IO.File.Create(fileName))
                         fileStream.Write(file, 0, file.Length);
 
                     int page = 1;
-                    int dpi = 50;
+                    int dpi = 25;
                     RenderType RenderType = RenderType.RGB;
                     bool rotateAuto = false;
                     string password = "";

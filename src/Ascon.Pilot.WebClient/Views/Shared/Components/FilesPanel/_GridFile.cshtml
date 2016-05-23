@@ -9,7 +9,7 @@
             var href = Url.Action("GetTypeIcon", "Home", new { id = Model.ObjectTypeId });
             if (Model.IsThumbnailAvailable)
             {
-                href = Url.Action("Thumbnail", "Files", new { id = Model.Id, size = Model.Size, name });
+                href = Url.Action("Thumbnail", "Files", new { id = Model.Id, size = Model.Size, extension = Model.FileExtension });
             }
         }
         <div style="position: relative">

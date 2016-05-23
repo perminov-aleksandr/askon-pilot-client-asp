@@ -12,4 +12,7 @@ Debug
 /src/MuPDF/obj/Release
 /wrap/MuPDF/bin/Release/net451
 /.vs/config/applicationhost.config
+/wrap/MuPDF/project.lock.json
 /src/Ascon.Pilot.WebClient/*.user
+/src/Ascon.Pilot.WebClient/wwwroot/css/site.min.css
+/src/Ascon.Pilot.WebClient/wwwroot/js/site.min.js
