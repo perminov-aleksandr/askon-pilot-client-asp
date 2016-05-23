@@ -22,6 +22,30 @@
     </div>
 </form>
 
+<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="viewModalLabel">Просмотр</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-8" id="viewModalContent">
+                    </div>
+                    <div class="col-sm-4" id="viewModalInfo">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-default" id="modalDownloadButton">
+                    <i class="glyphicon glyphicon-download-alt"></i>&nbsp;Скачать
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts
 {
     <script type="text/javascript">
@@ -29,33 +53,81 @@
         var getFilesUrl = '@Html.Raw(Url.Action("GetObject", "Files"))';
         var getChildsUrl = '@Html.Raw(Url.Action("GetNodeChilds", "Files"))';
         var getSidePanelUrl = '@Html.Raw(Url.Action("SidePanel", "Files"))';
+        var downloadUrl = '@Html.Raw(Url.Action("Download"))';
         var ROOT_ID = '@DObject.RootId';
 
         var treeControl;
         var treeData;
 
-        $(document).ready(function() {
-            treeControl = createTreeView(treeData);
-            setObjectIdsCheckCallback();
-            var selected = treeControl.getSelected();
-            var selectedNode = {id:'',text:'Начало'};
-            if (selected.length !== 0)
-                selectedNode = selected[0];
-            $('#breadcrumbs').html(createHtmlForBreadcrumbs(selectedNode));
-        });
+        $(document)
+            .ready(function() {
+                treeControl = createTreeView(treeData);
+                setObjectIdsCheckCallback();
+                var selected = treeControl.getSelected();
+                var selectedNode = { id: '', text: 'Начало' };
+                if (selected.length !== 0)
+                    selectedNode = selected[0];
+                $('#breadcrumbs').html(createHtmlForBreadcrumbs(selectedNode));
+            });
+
+        function processFileCardClick(el) {
+            var fileCard = $(el);
+            var id = fileCard.data('id');
+            var name = fileCard.data('name');
+            var size = fileCard.data('size');
+            var ext = fileCard.data('ext');
+            var typeid = fileCard.data('typeid');
+            var query = jQuery.param({
+                id: id,
+                name: name,
+                size: size
+            });
+            if (ext === '.pdf' || ext === '.xps') {
+                if (ext === '.pdf') {
+                    $('<a>', { href: '/Files/Preview?' + query, "class": "btn btn-default", target: "_blank", html: '<i class="glyphicon glyphicon-eye-open"></i> Просмотр' })
+                        .appendTo($('.modal-footer'));
+                }
+                var url = '/Files/Thumbnail/' + id + '?size=' + size + '&name=' + name;
+                $('#viewModalContent').html('<img src="' + url + '" alt="' + name + '"/>');
+            } else {
+                $('#viewModalContent').html('<img src="/Home/GetTypeIcon/' + typeid + '"/>');
+            }
+
+            $('#viewModalInfo')
+                .html(objectToDlist({
+                    "Размер": size + " байт",
+                    "Название": name
+                }));
+
+            $('#modalDownloadButton').prop('href', downloadUrl + '?' + query);
+            $('#viewModalLabel').text(name);
+            $('#viewModal').modal();
+        }
+
+        function objectToDlist(obj) {
+            var html = '<dl>';
+            $.each(obj,
+                function(propName, propValue) {
+                    html += '<dt>' + propName + '</dt>';
+                    html += '<dd>' + propValue + '</dd>';
+                });
+            return html + '</dl>';
+        }
 
         function downloadArchive() {
             $('form#downloadArchiveForm').submit();
         }
 
         function setObjectIdsCheckCallback() {
-            $('input[name="objectsIds"]').on('click', function() {
-                var btn = $('#downloadArchiveButton');
-                if ($('input[name="objectsIds"]:checked').length === 0)
-                    btn.hide();
-                else
-                    btn.show();
-            });
+            $('input[name="objectsIds"]')
+                .on('click',
+                    function() {
+                        var btn = $('#downloadArchiveButton');
+                        if ($('input[name="objectsIds"]:checked').length === 0)
+                            btn.hide();
+                        else
+                            btn.show();
+                    });
         }
 
         var recursiveFind = function(keyObj, tData) {
@@ -117,7 +189,8 @@
                     el.append('<span class="glyphicon glyphicon-refresh glyphicon-spin pull-right"></span>');
             });*/
 
-            $.ajax(getChildsUrl, {
+            $.ajax(getChildsUrl,
+            {
                 data: {
                     id: idWithChilds
                 },
@@ -135,9 +208,10 @@
 
                     //var nodeId = node['nodeId'];
                     //treeControl.revealNode(nodeId, { silent: true });
-                    $.each(expandedNodes, function(i, e) {
-                        treeControl.expandNode(e.nodeId, { silent: true });
-                    });
+                    $.each(expandedNodes,
+                        function(i, e) {
+                            treeControl.expandNode(e.nodeId, { silent: true });
+                        });
                     //treeControl.unselectNode(treeControl.getSelected());
                     //treeControl.selectNode(selectedNode);
                 },
@@ -150,13 +224,15 @@
         function recieveFiles(node) {
             var folderId = node['id'];
             var filesPanel = $('#filesPanel');
-            $.ajax(getFilesUrl, {
+            $.ajax(getFilesUrl,
+            {
                 data: {
                     id: folderId
                 },
                 beforeSend: function() {
                     $('#downloadArchiveButton').hide();
-                    filesPanel.html('<div class="text-center"><i style="font-size: 2em" class="glyphicon glyphicon-spin glyphicon-refresh"></i><br>загрузка</div>');
+                    filesPanel
+                        .html('<div class="text-center"><i style="font-size: 2em" class="glyphicon glyphicon-spin glyphicon-refresh"></i><br>загрузка</div>');
                 },
                 success: function(data) {
                     filesPanel.html(data);
@@ -185,13 +261,15 @@
             breadcrumbs = getBreadcrumbs(selectedNode, breadcrumbs);
             var html = '';
             for (var i = breadcrumbs.length - 1; i >= 0; i--) {
-                html += (i === 0 ? '<li>' : '<li class="active">') + '<a href="' + baseFilesUrl + breadcrumbs[i].id + '">' + breadcrumbs[i].text + '</a></li>';
+                html += (i === 0 ? '<li>' : '<li class="active">') +
+                    '<a href="' +
+                    baseFilesUrl +
+                    breadcrumbs[i].id +
+                    '">' +
+                    breadcrumbs[i].text +
+                    '</a></li>';
             }
             return html;
-        }
-
-        function processFileCardClick(id) {
-
         }
     </script>
 }

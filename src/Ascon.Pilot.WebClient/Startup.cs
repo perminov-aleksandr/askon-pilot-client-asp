@@ -6,7 +6,6 @@ using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.WebEncoders;
 using NLog.Extensions.Logging;
 
 namespace Ascon.Pilot.WebClient
@@ -64,7 +63,7 @@ namespace Ascon.Pilot.WebClient
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            
+
             app.UseSession();
 
             app.Use(async (context, next) =>

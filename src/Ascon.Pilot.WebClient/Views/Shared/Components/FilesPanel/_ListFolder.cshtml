@@ -4,7 +4,7 @@
     var name = Model.Name;
 }
 
-<div class="file-card" data-id="@Model.Id" onclick="processFileCardClick(this)">
+<div class="file-card">
     <div class="file-card-icon">
         <img src="@Url.Action("GetTypeIcon", "Home", new {id = Model.ObjectTypeId})" width="50" height="50" alt="@name" />
     </div>

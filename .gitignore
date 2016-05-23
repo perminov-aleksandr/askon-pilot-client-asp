@@ -12,3 +12,4 @@ Debug
 /src/MuPDF/obj/Release
 /wrap/MuPDF/bin/Release/net451
 /.vs/config/applicationhost.config
+/src/Ascon.Pilot.WebClient/*.user

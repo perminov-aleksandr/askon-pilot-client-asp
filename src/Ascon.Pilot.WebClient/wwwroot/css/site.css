@@ -1,6 +1,11 @@
-﻿body {
+﻿html, body,
+.body-content {
+    height: 100%;
+}
+
+body {
     padding-top: 50px;
-    padding-bottom: 20px;
+    /*padding-bottom: 20px;*/
 }
 
 /* Wrapping element */
@@ -32,6 +37,16 @@ body > .container {
   padding-left: 15px;
 }
 
+/*prevent buttons from wrapping*/
+.btn-group {
+    white-space: nowrap;
+}
+.btn-group > .btn {
+    float: inherit;
+}
+.btn-group > .btn + .btn {
+    margin-left: -4px;
+}
 
 /* Set widths on the form inputs since otherwise they're 100% wide */
 /*input,
@@ -39,22 +54,6 @@ select,
 textarea {
     max-width: 280px;
 }*/
-
-/* Carousel */
-.carousel-caption {
-    z-index: 10 !important;
-}
-
-    .carousel-caption p {
-        font-size: 20px;
-        line-height: 1.4;
-    }
-
-@media (min-width: 768px) {
-    .carousel-caption {
-        z-index: 10 !important;
-    }
-}
 
 .glyphicon-spin {
     -webkit-animation: spin 1000ms infinite linear;
@@ -64,6 +63,20 @@ textarea {
 @keyframes spin {
     from {transform:rotate(0deg);}
     to {transform:rotate(360deg);}
+}
+
+#viewModalContent img {
+    min-height: 100px;
+    min-width: 100px;
+    max-width: 500px;
+    display: block;
+    margin: 0 auto;
+    border: 1px solid lightgray;
+}
+
+#viewModalInfo {
+    border-left: 1px solid lightgray;
+    padding-left: 15px;
 }
 
 .field-validation-error {
@@ -142,6 +155,10 @@ textarea {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 50px;
+    height: 50px;
 }
 
 /*icon checkboxes*/

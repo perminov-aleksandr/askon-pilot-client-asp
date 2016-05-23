@@ -88,6 +88,25 @@ namespace Ascon.Pilot.WebClient.Controllers
             return ViewComponent(typeof (FilesPanelViewComponent), id, panelType);
         }
 
+        public IActionResult Preview(Guid id, int size, string name)
+        {
+            ViewBag.Url = Url.Action("DownloadPdf", new { id, size, name });
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            if (isAjax) return PartialView();
+            return View();
+        }
+
+        public IActionResult DownloadPdf(Guid id, int size, string name)
+        {
+            var serverApi = HttpContext.Session.GetServerApi();
+            var fileChunk = serverApi.GetFileChunk(id, 0, size);
+            var fileDownloadName = string.IsNullOrWhiteSpace(name) ? id.ToString() : name;
+            if (Response.Headers.ContainsKey("Content-Disposition"))
+                Response.Headers.Remove("Content-Disposition");
+            Response.Headers.Add("Content-Disposition", $"inline; filename={fileDownloadName}");
+            return new FileContentResult(fileChunk, "application/pdf");
+        }
+
         public async Task<IActionResult> Download(Guid id, int size, string name)
         {
             return await Task.Run(() =>
@@ -142,7 +161,11 @@ namespace Ascon.Pilot.WebClient.Controllers
         {
             const string pngContentType = "image/png";
             const string svgContentType = "image/svg+xml";
+            var virtualFileResult = File(Url.Content("~/images/file.svg"), svgContentType);
 #if DNX451
+            if (size >= 10*1024*1024)
+                return virtualFileResult;
+
             var serverApi = HttpContext.Session.GetServerApi();
             var file = serverApi.GetFileChunk(id, 0, size);
             try
@@ -174,7 +197,7 @@ namespace Ascon.Pilot.WebClient.Controllers
 
                     System.IO.File.Delete(fileName);
 
-                    return File(thumbnailContent, pngContentType, name);
+                    return File(thumbnailContent, pngContentType, $"{id}.png");
                 }
             }
             catch (Exception ex)
@@ -182,7 +205,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                 _logger.LogWarning(1, "Unable to generate thumbnail for file", ex);
             }
 #endif
-            return File(Url.Content("~/images/file.svg"), svgContentType);
+            return virtualFileResult;
         }
 
         private byte[] GetFileFromObject(Guid id)
