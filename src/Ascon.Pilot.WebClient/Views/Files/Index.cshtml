@@ -27,7 +27,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="viewModalLabel">Просмотр</h4>
+                <h4 class="modal-title" id="viewModalLabel">Информация</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -77,6 +77,8 @@
             var size = fileCard.data('size');
             var ext = fileCard.data('ext');
             var typeid = fileCard.data('typeid');
+            var sizestr = fileCard.data('sizestr');
+            var changedate = fileCard.data('changedate');
             var query = jQuery.param({
                 id: id,
                 name: name,
@@ -95,12 +97,12 @@
 
             $('#viewModalInfo')
                 .html(objectToDlist({
-                    "Размер": size + " байт",
-                    "Название": name
+                    "Название": name,
+                    "Размер": sizestr,
+                    "Изменен": changedate
                 }));
 
             $('#modalDownloadButton').prop('href', downloadUrl + '?' + query);
-            $('#viewModalLabel').text(name);
             $('#viewModal').modal();
         }
 

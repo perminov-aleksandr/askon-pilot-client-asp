@@ -13,6 +13,7 @@
     {
         href = Url.Action("GetTypeIcon", "Home", new { id = Model.ObjectTypeId });
     }
+    var changedDateStr = Model.LastModifiedDate.ToString("g", new CultureInfo("ru-RU"));
 }
 
 <div class="file-card @(Model.IsThumbnailAvailable ? "with-thumbnail" : "")">
@@ -23,24 +24,20 @@
         </div>
     </div>
     <div class="file-card-name">
-        <a onclick="processFileCardClick(this)" data-id="@Model.Id" data-name="@Html.Raw(name)" data-size="@Model.Size" data-ext="@Model.Extension" data-typeid="@Model.ObjectTypeId" href="#">
+        <a onclick="processFileCardClick(this)" href="#"
+           data-id="@Model.Id" data-name="@Html.Raw(name)" data-size="@Model.Size" data-ext="@Model.Extension" data-typeid="@Model.ObjectTypeId"
+           data-sizestr="@Model.SizeString" data-changedate="@changedDateStr">
             @name
         </a>
     </div>
     <div class="file-card-info">
         <span class="pull-right text-right hidden-xs hidden-sm">
-            Изменен: @Model.LastModifiedDate.ToString("g", new CultureInfo("ru-RU"))<br/>
+            Изменен: @changedDateStr<br/>
             Размер: @Model.SizeString
         </span>
     </div>
     <div class="file-card-buttons">
         <div class="btn-group">
-            @*@if (Model.Extension == ".pdf")
-            {
-                <a title="Просмотр" href="@Url.Action("Preview", "Files", fileDownloadRouteValues)" target="_blank" class="btn btn-default">
-                    <span class="glyphicon glyphicon-eye-open"></span>
-                </a>
-            }*@
             <a title="Скачать файл" href="@Url.Action("Download", "Files", fileDownloadRouteValues)" class="btn btn-default">
                 <span class="glyphicon glyphicon-download-alt"></span>
             </a>

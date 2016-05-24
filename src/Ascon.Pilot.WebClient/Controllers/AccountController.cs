@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
@@ -8,12 +10,20 @@ using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.ViewModels;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Ascon.Pilot.WebClient.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        private ILogger<FilesController> _logger;
+
+        public AccountController(ILogger<FilesController> logger)
+        {
+            _logger = logger;
+        }
+
         [AllowAnonymous]
         public IActionResult LogIn(string returnUrl = null)
         {
@@ -40,9 +50,21 @@ namespace Ascon.Pilot.WebClient.Controllers
                 return View("LogIn");
 
             var client = HttpContext.Session.GetClient();
+            if (client == null)
+                return new HttpStatusCodeResult((int)HttpStatusCode.InternalServerError);
+
             var serverUrl = ApplicationConst.PilotServerUrl;
-            client.Connect(serverUrl);
-            
+            try
+            {
+                client.Connect(serverUrl);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1, "Не удалось подключиться к серверу", ex);
+                ModelState.AddModelError("", "Сервер недоступен.");
+                return View();
+            }
+
             var serviceCallbackProxy = CallbackFactory.Get<IServerCallback>();
             var serverApi = client.GetServerApi(serviceCallbackProxy);
 
