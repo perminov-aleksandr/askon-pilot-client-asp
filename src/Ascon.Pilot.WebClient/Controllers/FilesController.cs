@@ -20,22 +20,46 @@ using System.Drawing.Imaging;
 
 namespace Ascon.Pilot.WebClient.Controllers
 {
+    /// <summary>
+    /// Перечисление типов отображения файлов на панели
+    /// </summary> 
     public enum FilesPanelType
     {
+        /// <summary>
+        /// Сеточный тип представления элементов в панели файлов
+        /// </summary>
         Grid,
+        /// <summary>
+        /// Списковый тип представления элементов в панели файлов
+        /// </summary>
         List
     }
 
+    /// <summary>
+    /// Контроллер представления файлов в панели элементов
+    /// </summary>
     [Authorize]
     public class FilesController : Controller
     {
+        /// <summary>
+        /// Логгер контроллера FilesController
+        /// </summary>
         private ILogger<FilesController> _logger;
 
+        /// <summary>
+        /// Создаёт экзепляр контроллера представления файлов в панели элементов
+        /// </summary>
+        /// <param name="logger">Задаёт логгер событий контроллера представления файлов</param>
         public FilesController(ILogger<FilesController> logger)
         {
             _logger = logger;
         }
 
+        /// <summary>
+        /// Отображение страницы Index с файлами из папки, указанной по идентификатору Id.
+        /// </summary>
+        /// <param name="id">уникальный идентификатор отображаемой папки</param>
+        /// <returns>Представление - содержимое папки, указанное по уникальному Id.</returns>
         public IActionResult Index(Guid? id)
         {
             id = id ?? DObject.RootId;
@@ -47,6 +71,11 @@ namespace Ascon.Pilot.WebClient.Controllers
             return View(model);
         }
         
+        /// <summary>
+        /// Отображение дочерних элементов папки, носящей уникальный идентификатор Id
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор папки</param>
+        /// <returns>Список дочерних элементов текцщей папки в формате JSON</returns>
         public async Task<IActionResult> GetNodeChilds(Guid id)
         {
             return await Task.Run(() =>
@@ -78,16 +107,34 @@ namespace Ascon.Pilot.WebClient.Controllers
             });
         }
 
+        /// <summary>
+        /// Отображение боковой панели
+        /// </summary>
+        /// <param name="id">Уникальные идетификатор папки</param>
+        /// <returns>Отображение боковой панели для данного каталога с уникальным идентификатором Id.</returns>
         public IActionResult SidePanel(Guid? id)
         {
             return ViewComponent(typeof (SidePanelViewComponent), id);
         }
 
+        /// <summary>
+        /// Отображение данных об объекте
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор каталога</param>
+        /// <param name="panelType"> тип боковой панели</param>
+        /// <returns>Представления боковой панели для данного каталога Id с заданным типом боковой панели.</returns>
         public IActionResult GetObject(Guid id, FilesPanelType panelType = ApplicationConst.DefaultFilesPanelType)
         {
             return ViewComponent(typeof (FilesPanelViewComponent), id, panelType);
         }
-
+        
+        /// <summary>
+        /// Загрузка данного файла
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор загружаемого объекта</param>
+        /// <param name="size">Размер загружаемого объекта</param>
+        /// <param name="name">Имя загружаемого объекта</param>
+        /// <returns>Запщенная задача на загрузку объекта</returns>
         public async Task<IActionResult> Download(Guid id, int size, string name)
         {
             return await Task.Run(() =>
@@ -103,6 +150,11 @@ namespace Ascon.Pilot.WebClient.Controllers
             });
         }
 
+        /// <summary>
+        /// Загрузка архива
+        /// </summary>
+        /// <param name="objectsIds">Массив из указанных идентификаторов.</param>
+        /// <returns>Представление совокупности указанных объектов виде Zip-архива</returns>
         public async Task<IActionResult> DownloadArchive(Guid[] objectsIds)
         {
             if (objectsIds.Length == 0)
@@ -138,6 +190,13 @@ namespace Ascon.Pilot.WebClient.Controllers
             }
         }
 
+        /// <summary>
+        /// Отображение эскиза
+        /// </summary>
+        /// <param name="id">ЦНикальный идентификатор объекта</param>
+        /// <param name="size">Размер объекта</param>
+        /// <param name="extension">расширение объекта</param>
+        /// <returns>Эскиз объекта, имеющего идентификатор Id, размер Size, и расширение extension</returns>
         public IActionResult Thumbnail(Guid id, int size, string extension)
         {
             const string pngContentType = "image/png";
@@ -185,6 +244,11 @@ namespace Ascon.Pilot.WebClient.Controllers
             return File(Url.Content("~/images/file.svg"), svgContentType);
         }
 
+        /// <summary>
+        /// Извеление байтового кода из объекта типа pdf/xps
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор объекта</param>
+        /// <returns>Двоичных код pdf/xps-объектов.</returns>
         private byte[] GetFileFromObject(Guid id)
         {
             var serverApi = HttpContext.Session.GetServerApi();

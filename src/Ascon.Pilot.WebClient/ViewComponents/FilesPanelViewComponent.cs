@@ -11,8 +11,17 @@ using Microsoft.AspNet.Mvc;
 
 namespace Ascon.Pilot.WebClient.ViewComponents
 {
+    /// <summary>
+    /// Компнент - панель управления файлом.
+    /// </summary>
     public class FilesPanelViewComponent : ViewComponent
     {
+        /// <summary>
+        /// Асинхронный вызов представления панели управления файлами
+        /// </summary>
+        /// <param name="folderId">Имя текущего каталога</param>
+        /// <param name="panelType">Тип отображения панели</param>
+        /// <returns>Представление панели управения файлом для каталога с идентификатором Id и итпом отбражения Type.</returns>
         public async Task<IViewComponentResult> InvokeAsync(Guid folderId, FilesPanelType panelType)
         {
             return await Task.Run(() =>

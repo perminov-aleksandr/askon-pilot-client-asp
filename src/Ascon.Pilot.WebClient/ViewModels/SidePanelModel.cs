@@ -5,12 +5,28 @@ using Ascon.Pilot.Core;
 
 namespace Ascon.Pilot.WebClient.ViewModels
 {
+    /// <summary>
+    /// Модель боковой панели
+    /// </summary>
     public class SidePanelViewModel
     {
+        /// <summary>
+        /// Словарь с типами файлов кнопок
+        /// </summary>
         public IDictionary<int, MType> Types { get; set; }
+        /// <summary>
+        /// Уникальный идентификатор объекта 
+        /// </summary>
         public Guid ObjectId { get; set; }
+        /// <summary>
+        /// Список кнопок панели
+        /// </summary>
         public List<SidePanelItem> Items { get; set; }
         
+        /// <summary>
+        /// Добавление кнопки в боковую панель.
+        /// </summary>
+        /// <returns>Массив кнопок боковой панели.</returns>
         public dynamic[] ToDynamic()
         {
             var result = new List<dynamic>(Items.Count);
@@ -22,8 +38,14 @@ namespace Ascon.Pilot.WebClient.ViewModels
         }
     }
 
+    /// <summary>
+    /// Модель пункта боковой панели
+    /// </summary>
     public class SidePanelItem
     {
+        /// <summary>
+        /// Отображаемое имя пункта
+        /// </summary>
         public string Name {
             get
             {
@@ -32,15 +54,36 @@ namespace Ascon.Pilot.WebClient.ViewModels
                 return DObject.GetTitle(Type);
             }
         }
+        /// <summary>
+        /// Тип пункта
+        /// </summary>
         public MType Type { get; set; }
+        /// <summary>
+        /// Объект действия пункта
+        /// </summary>
         public DObject DObject { get; set; }
+        /// <summary>
+        /// Подпункты для данного пункта
+        /// </summary>
         public List<SidePanelItem> SubItems { get; set; }
+        /// <summary>
+        /// Принимает значение true,  если пункт выбран
+        /// </summary>
         public bool Selected { get; set; }
 
+        /// <summary>
+        /// Принимает значение true, если пункт является флажком, или имеет подпункты
+        /// </summary>
         private bool Expanded {
             get { return Selected || SubItems?.Any(x => x.Expanded) == true; }
         }
-
+            
+        /// <summary>
+        /// Создание пункта боковой панели во время выполнения
+        /// </summary>
+        /// <param name="id">Уникальный идентификатор объекта, под окторый создаётся пункт</param>
+        /// <param name="types">Словарь типов, для которого будет действовать данный пункт.</param>
+        /// <returns>Представление пункта боковой панели</returns>
         public dynamic GetDynamic(Guid id, IDictionary<int, MType> types)
         {
             var nodes = new List<dynamic>();

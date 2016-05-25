@@ -11,9 +11,18 @@ using Microsoft.AspNet.Mvc;
 
 namespace Ascon.Pilot.WebClient.Controllers
 {
+    /// <summary>
+    /// Контроллер учётных записей.
+    /// </summary>
     [Authorize]
     public class AccountController : Controller
     {
+        /// <summary>
+        /// Процедура авторизации.
+        /// </summary>
+        /// <param name="returnUrl">Url, на который следует вернуться после успешного взода в систему </param>
+        /// <returns>Представление данных модели типа logInViewModel </returns>
+        /// <seealso cref="Ascon.Pilot.WebClient.ViewModels"/>
         [AllowAnonymous]
         public IActionResult LogIn(string returnUrl = null)
         {
@@ -32,6 +41,12 @@ namespace Ascon.Pilot.WebClient.Controllers
             return View(logInViewModel);
         }
 
+        /// <summary>
+        /// Процедура авторизации
+        /// </summary>
+        /// <param name="model"> Модель, описываемая классом logInViewModel</param>
+        /// <returns>Перенаправление действия на Index контроллера Home </returns>
+        /// <seealso cref="Ascon.Pilot.WebClient.ViewModels"/>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel model)
@@ -66,6 +81,11 @@ namespace Ascon.Pilot.WebClient.Controllers
             return RedirectToAction("Index", "Home");
         }
         
+        /// <summary>
+        /// Процедура входа в систему
+        /// </summary>
+        /// <param name="dbInfo">База данных о пользователях системы</param>
+        /// <returns>Удостоверение авторизованного в системе пользвоателя.</returns>
         private async Task SignInAsync(DDatabaseInfo dbInfo)
         {
             var claims = new List<Claim>
@@ -80,6 +100,10 @@ namespace Ascon.Pilot.WebClient.Controllers
             await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
         }
         
+        /// <summary>
+        /// Выход из системы
+        /// </summary>
+        /// <returns>Перенаправление на представление Index контроллера Home</returns>
         public async Task<IActionResult> LogOff()
         {
             await HttpContext.Authentication.SignOutAsync(ApplicationConst.PilotMiddlewareInstanceName);
