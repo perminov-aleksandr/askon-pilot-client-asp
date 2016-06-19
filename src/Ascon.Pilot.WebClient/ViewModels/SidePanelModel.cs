@@ -13,11 +13,26 @@ namespace Ascon.Pilot.WebClient.ViewModels
         
         public dynamic[] ToDynamic()
         {
-            var result = new List<dynamic>(Items.Count);
+            var items = new List<dynamic>(Items.Count);
             foreach (var sidePanelItem in Items)
             {
-                result.Add(sidePanelItem.GetDynamic(ObjectId, Types));
+                items.Add(sidePanelItem.GetDynamic(ObjectId, Types));
             }
+            var result = new List<dynamic>
+            {
+                new
+                {
+                    id = DObject.RootId,
+                    text = "Начало",
+                    nodes = items.ToArray(),
+                    state = new
+                    {
+                        selected = DObject.RootId == ObjectId,
+                        expanded = true
+                    },
+                    tags = new[] {items.Count.ToString()}
+                }
+            };
             return result.ToArray();
         }
     }

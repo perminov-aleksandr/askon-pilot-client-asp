@@ -104,11 +104,11 @@ textarea {
 
 #viewModalInfo {
     border-left: 1px solid lightgray;
-    padding-left: 15px;
+    height: 100%;
 }
 
 .field-validation-error {
-    color: red;
+    color: #a94442;
 }
 
 .file-card {

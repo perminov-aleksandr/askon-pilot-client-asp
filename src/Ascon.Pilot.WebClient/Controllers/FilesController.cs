@@ -11,6 +11,7 @@ using Ascon.Pilot.WebClient.ViewModels;
 using Castle.Core.Logging;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Session;
 using Microsoft.Extensions.Logging;
 #if DNX451
 using MuPDFLib;
@@ -157,7 +158,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             }
         }
 
-        public IActionResult Thumbnail(Guid id, int size, string extension)
+        public async Task<IActionResult> Thumbnail(Guid id, int size, string extension)
         {
             const string pngContentType = "image/png";
             const string svgContentType = "image/svg+xml";
@@ -178,15 +179,12 @@ namespace Ascon.Pilot.WebClient.Controllers
                     bool rotateAuto = false;
                     string password = "";
 
-                    var isPdf = extension == ".pdf";
                     var fileName = $"tmp/{id}{extension}";
+                    using (var fileStream = System.IO.File.Create(fileName))
+                        fileStream.Write(file, 0, file.Length);
 
-                    if (!isPdf)
-                        using (var fileStream = System.IO.File.Create(fileName))
-                            fileStream.Write(file, 0, file.Length);
-                    
                     byte[] thumbnailContent;
-                    using (MuPDF pdfDoc = isPdf ? new MuPDF(file, password) :  new MuPDF(fileName, password))
+                    using (MuPDF pdfDoc = new MuPDF(fileName, password))
                     {
                         pdfDoc.Page = page;
                         Bitmap bm = pdfDoc.GetBitmap(0, 0, dpi, dpi, 0, RenderType, rotateAuto, false, 0);
@@ -198,8 +196,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                         }
                     }
 
-                    if (!isPdf)
-                        System.IO.File.Delete(fileName);
+                    System.IO.File.Delete(fileName);
 
                     return File(thumbnailContent, pngContentType, $"{id}.png");
                 }
