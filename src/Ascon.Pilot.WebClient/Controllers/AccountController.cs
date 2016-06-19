@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
@@ -8,21 +10,20 @@ using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.ViewModels;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Ascon.Pilot.WebClient.Controllers
 {
-    /// <summary>
-    /// Контроллер учётных записей.
-    /// </summary>
     [Authorize]
     public class AccountController : Controller
     {
-        /// <summary>
-        /// Процедура авторизации.
-        /// </summary>
-        /// <param name="returnUrl">Url, на который следует вернуться после успешного взода в систему </param>
-        /// <returns>Представление данных модели типа logInViewModel </returns>
-        /// <seealso cref="Ascon.Pilot.WebClient.ViewModels"/>
+        private ILogger<FilesController> _logger;
+
+        public AccountController(ILogger<FilesController> logger)
+        {
+            _logger = logger;
+        }
+
         [AllowAnonymous]
         public IActionResult LogIn(string returnUrl = null)
         {
@@ -41,12 +42,6 @@ namespace Ascon.Pilot.WebClient.Controllers
             return View(logInViewModel);
         }
 
-        /// <summary>
-        /// Процедура авторизации
-        /// </summary>
-        /// <param name="model"> Модель, описываемая классом logInViewModel</param>
-        /// <returns>Перенаправление действия на Index контроллера Home </returns>
-        /// <seealso cref="Ascon.Pilot.WebClient.ViewModels"/>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> LogIn(LogInViewModel model)
@@ -55,9 +50,21 @@ namespace Ascon.Pilot.WebClient.Controllers
                 return View("LogIn");
 
             var client = HttpContext.Session.GetClient();
+            if (client == null)
+                return new HttpStatusCodeResult((int)HttpStatusCode.InternalServerError);
+
             var serverUrl = ApplicationConst.PilotServerUrl;
-            client.Connect(serverUrl);
-            
+            try
+            {
+                client.Connect(serverUrl);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(1, "Не удалось подключиться к серверу", ex);
+                ModelState.AddModelError("", "Сервер недоступен.");
+                return View();
+            }
+
             var serviceCallbackProxy = CallbackFactory.Get<IServerCallback>();
             var serverApi = client.GetServerApi(serviceCallbackProxy);
 
@@ -72,7 +79,6 @@ namespace Ascon.Pilot.WebClient.Controllers
             await SignInAsync(dbInfo);
 
             DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
-            //HttpContext.Session.SetSessionValues(SessionKeys.DBInfo, dbInfo);
             HttpContext.Session.SetSessionValues(SessionKeys.DatabaseName, model.DatabaseName);
             HttpContext.Session.SetSessionValues(SessionKeys.Login, model.Login);
             HttpContext.Session.SetSessionValues(SessionKeys.ProtectedPassword, protectedPassword);
@@ -81,11 +87,6 @@ namespace Ascon.Pilot.WebClient.Controllers
             return RedirectToAction("Index", "Home");
         }
         
-        /// <summary>
-        /// Процедура входа в систему
-        /// </summary>
-        /// <param name="dbInfo">База данных о пользователях системы</param>
-        /// <returns>Удостоверение авторизованного в системе пользвоателя.</returns>
         private async Task SignInAsync(DDatabaseInfo dbInfo)
         {
             var claims = new List<Claim>
@@ -100,14 +101,10 @@ namespace Ascon.Pilot.WebClient.Controllers
             await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
         }
         
-        /// <summary>
-        /// Выход из системы
-        /// </summary>
-        /// <returns>Перенаправление на представление Index контроллера Home</returns>
         public async Task<IActionResult> LogOff()
         {
             await HttpContext.Authentication.SignOutAsync(ApplicationConst.PilotMiddlewareInstanceName);
-            HttpContext.Session.GetClient().Dispose();
+            HttpContext.Session.GetClient()?.Dispose();
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }

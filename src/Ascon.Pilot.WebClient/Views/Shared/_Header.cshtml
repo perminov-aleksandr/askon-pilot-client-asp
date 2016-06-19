@@ -8,7 +8,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a asp-controller="Home" asp-action="Index" class="navbar-brand">
-                АСКОН Pilot-ICE
+                <img src="@Url.Content("~/images/ascon_logo.png")" height="25" alt="АСКОН"/>
             </a>
         </div>
         <div class="navbar-collapse collapse">
@@ -17,18 +17,47 @@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li>
-                        <a id="downloadArchiveButton" onclick="downloadArchive(this)" style="display: none; cursor: pointer">
-                            <span class="glyphicon glyphicon-download-alt"></span>&nbsp;Скачать&nbsp;файлы&nbsp;архивом
-                        </a>
+                        <a>Вы в системе, <b>@User.Identity.Name</b></a>
                     </li>
-                    <li><a>Вы в системе, <b>@User.Identity.Name</b></a></li>
-                    <li><a asp-controller="Account" asp-action="LogOff">Выйти</a></li>
+                    <li>
+                        <a asp-controller="Account" asp-action="LogOff">Выйти</a>
+                    </li>
                 }
                 else
                 {
-                    <li><a asp-controller="Account" asp-action="LogIn">Авторизоваться</a></li>
+                    <li>
+                        <a asp-controller="Account" asp-action="LogIn">Авторизоваться</a>
+                    </li>
                 }
             </ul>
         </div>
     </div>
 </div>
+
+@if (User.Identity.IsAuthenticated && ViewContext.RouteData.Values["controller"].ToString() == "Files")
+{
+    <div class="navbar navbar-inverse toolbar">
+        <div>
+            <div class="navbar-header pull-right">
+                <div class="navbar-brand">
+                    <a id="downloadArchiveButton" role="button" onclick="downloadArchive(this)" title="Скачать архивом" style="display: none;">
+                        <span class="glyphicon glyphicon-download-alt"></span>&nbsp;
+                        <span class="hidden-xs">Скачать&nbsp;архивом</span>
+                    </a>
+                    <a id="renameButton" role="button" data-toggle="modal" href="#renameModal" title="Переименовать" style="display: none;">
+                        <span class="glyphicon glyphicon-pencil"></span>&nbsp;
+                        <span class="hidden-xs">Переименовать</span>
+                    </a>
+                    <a id="removeButton" role="button" data-toggle="modal" href="#removeModal" title="Удалить" style="display: none;">
+                        <span class="glyphicon glyphicon-remove"></span>&nbsp;
+                        <span class="hidden-xs">Удалить</span>
+                    </a>
+                    <a id="uploadButton" role="button" data-toggle="modal" href="#uploadModal" title="Загрузить">
+                        <span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;
+                        <span class="hidden-xs">Загрузить</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

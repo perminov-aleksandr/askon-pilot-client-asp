@@ -3,78 +3,61 @@ using System.IO;
 
 namespace Ascon.Pilot.WebClient.ViewModels
 {
-    /// <summary>
-    /// Модель файла
-    /// </summary>
     public class FileViewModel
     {
-        /// <summary>
-        /// Расширение файла.
-        /// </summary>
-        public string FileExtension
-        {
-            get { return Path.GetExtension(FileName); }
-        }
-        /// <summary>
-        /// Уникальный идентификатор файла.
-        /// </summary>
         public Guid Id { get; set; }
-        /// <summary>
-        /// Возвращает true ли задданый объект папкой.
-        /// </summary>
         public bool IsFolder { get; set; }
-        /// <summary>
-        /// Возвращает true, если для данного объекта доступен эскиз
-        /// </summary>
+        public string Extension {
+            get { return Path.GetExtension(FileName); }
+        }  
         public bool IsThumbnailAvailable {
             get
             {
-                return FileExtension == ".xps" || FileExtension == ".pdf";
+                var extension = Extension;
+                return extension == ".xps" || extension == ".pdf";
             }
         }
 
-        /// <summary>
-        /// Уникальный идентификатор класса-объекта, экземпляром которого является данный файл
-        /// </summary>
-        public Guid ObjectId { get; set; }
-        /// <summary>
-        /// Идентификатор класса-объекта, экземпляром является данный файл
-        /// </summary>
         public int ObjectTypeId { get; set; }
-        /// <summary>
-        /// Называние класса-объекта, экземпляром является данный файл
-        /// </summary>
+        public string ObjectTypeName { get; set; }
+
+        public Guid ObjectId { get; set; }
         public string ObjectName { get; set; }
-        /// <summary>
-        /// Имя класса-объекта, экземпляром является данный файл и его расширение. 
-        /// </summary>
         public string Name {
             get
             {
-                if (Path.HasExtension(ObjectName) && Path.GetExtension(ObjectName) == FileExtension)
+                var extension = Extension;
+                if (Path.HasExtension(ObjectName) && Path.GetExtension(ObjectName) == extension)
                     return ObjectName;
-                return $"{ObjectName}{FileExtension}";
+                return $"{ObjectName}{extension}";
             }
         }
-        /// <summary>
-        /// Имя данного файла
-        /// </summary>
         public string FileName { get; set; }
-        /// <summary>
-        /// Размер данного файла
-        /// </summary>
+
         public int Size { get; set; }
-        /// <summary>
-        /// Дата последнего изменения файла.
-        /// </summary>
+        private string _sizeStr = string.Empty;
+        public string SizeString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_sizeStr))
+                {
+                    string[] sizes = { "b", "Kb", "Mb", "Gb" };
+                    double len = Size;
+                    int order = 0;
+                    while (len >= 1024 && order + 1 < sizes.Length)
+                    {
+                        order++;
+                        len = len / 1024;
+                    }
+                    _sizeStr = $"{len:0.##} {sizes[order]}";
+                }
+                return _sizeStr;
+            }
+        }
+
         public DateTime LastModifiedDate { get; set; }
-        /// <summary>
-        /// Дата создания файла
-        /// </summary>
         public DateTime CreatedDate { get; set; }
-        /// <summary>
-        /// Количество дочерних элементов.
-        /// </summary>
         public int ChildrenCount { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
+using Ascon.Pilot.Transport;
 using Microsoft.AspNet.Http;
 using ISession = Microsoft.AspNet.Http.Features.ISession;
 
@@ -78,7 +79,29 @@ namespace Ascon.Pilot.WebClient.Extensions
             if (callback == null)
                 callback = CallbackFactory.Get<IServerCallback>();
             var client = session.GetClient();
+            if (client == null)
+                client = Reconnect(session, callback);
             return client.GetServerApi(callback);
+        }
+
+        private static HttpPilotClient Reconnect(ISession session, IServerCallback callback)
+        {
+            var clientIdString = session.GetString(SessionKeys.ClientId);
+            var client = new HttpPilotClient();
+
+            client.Connect(ApplicationConst.PilotServerUrl);
+
+            var serverApi = client.GetServerApi(callback);
+
+            var dbName = session.GetString(SessionKeys.DatabaseName);
+            var login = session.GetString(SessionKeys.Login);
+            var password = session.GetString(SessionKeys.ProtectedPassword);
+            var useWindowsAuth = login.Contains("/") || login.Contains("\\");
+            var dbInfo = serverApi.OpenDatabase(dbName, login, password, useWindowsAuth);
+            if (dbInfo == null)
+                throw new TransportException();
+            ClientsDictionary[Guid.Parse(clientIdString)] = client;
+            return client;
         }
     }
 }

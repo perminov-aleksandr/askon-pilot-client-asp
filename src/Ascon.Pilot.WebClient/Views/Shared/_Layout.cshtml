@@ -21,16 +21,7 @@
 <body>
 @Html.Partial("_Header")
 <div class="container body-content">
-    <br/>
-    @if (IsSectionDefined("title"))
-    {
-        @RenderSection("title", false)
-    }
-    else
-    {
-        <h2>@ViewBag.Title</h2>
-        <br />
-    }
+    @RenderSection("title", false)
     @RenderBody()
 </div>
 

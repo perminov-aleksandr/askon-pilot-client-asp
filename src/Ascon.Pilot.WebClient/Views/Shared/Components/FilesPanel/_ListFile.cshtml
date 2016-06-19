@@ -3,37 +3,40 @@
 @model Ascon.Pilot.WebClient.ViewModels.FileViewModel
 @{
     var name = Model.Name;
+    var fileDownloadRouteValues = new { id = Model.Id, size = Model.Size, name };
+    string href;
+    if (Model.IsThumbnailAvailable)
+    {
+        href = Url.Action("Thumbnail", "Files", new { id = Model.Id, size = Model.Size, extension = Model.Extension });
+    }
+    else
+    {
+        href = Url.Action("GetTypeIcon", "Home", new { id = Model.ObjectTypeId });
+    }
 }
 
-<div class="file-card @(Model.IsThumbnailAvailable ? "with-thumbnail" : "")" data-id="@Model.Id" onclick="processFileCardClick(this)">
+<div class="file-card @(Model.IsThumbnailAvailable ? "with-thumbnail" : "")" onclick="processCardClick(this)" 
+     data-id="@Model.Id" data-name="@Html.Raw(name)" data-size="@Model.Size" data-ext="@Model.Extension" data-typeid="@Model.ObjectTypeId">
     <div class="file-card-icon">
-        <div style="position: relative;">
-            @{
-                string href;
-                if (Model.IsThumbnailAvailable)
-                {
-                    href = Url.Action("Thumbnail", "Files", new {id = Model.Id, size = Model.Size, extension = Model.FileExtension});
-                }
-                else
-                {
-                    href = Url.Action("GetTypeIcon", "Home", new { id = Model.ObjectTypeId });
-                }
-            }
-            <img src="@href" width="50" height="50" alt="@name"/>
+        <div style="position: relative">
+            <img src="@href" alt="@name"/>
             <input name="objectsIds" type="checkbox" value="@Model.ObjectId"/>
         </div>
     </div>
     <div class="file-card-name">
-        <span>@name</span>
+        <a onclick="processFileCardClick(this)" role="button">
+            @name
+        </a>
     </div>
     <div class="file-card-info">
         <span class="pull-right text-right hidden-xs hidden-sm">
-            Изменен: @Model.LastModifiedDate.ToString("g", new CultureInfo("ru-RU"))
+            Изменен: @Model.LastModifiedDate.ToString("g", new CultureInfo("ru-RU"))<br/>
+            Размер: @Model.SizeString
         </span>
     </div>
     <div class="file-card-buttons">
-        <div>
-            <a title="Скачать файл" href="@Url.Action("Download", "Files", new {id = Model.Id, size = Model.Size, name})" class="btn btn-default">
+        <div class="btn-group">
+            <a title="Скачать файл" href="@Url.Action("Download", "Files", fileDownloadRouteValues)" class="btn btn-default">
                 <span class="glyphicon glyphicon-download-alt"></span>
             </a>
         </div>

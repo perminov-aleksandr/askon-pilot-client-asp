@@ -1,6 +1,39 @@
-﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+﻿html, body,
+.body-content {
+    height: 100%;
+}
+
+body {
+    padding-top: 100px;
+    /*padding-bottom: 20px;*/
+}
+
+.toolbar {
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    top: 50px;
+    height: 50px;
+    background-color: #2f2f2f;
+    border-radius: 0;
+    z-index: 1030;
+}
+
+.toolbar a {
+    color: #9d9d9d;
+    text-decoration: none;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.toolbar a:hover {
+    color: #fff;
+}
+
+@media(max-width: 767px) {
+    .toolbar span.glyphicon {
+        font-size: 20px;
+    }
 }
 
 /* Wrapping element */
@@ -32,6 +65,16 @@ body > .container {
   padding-left: 15px;
 }
 
+/*prevent buttons from wrapping*/
+.btn-group {
+    white-space: nowrap;
+}
+.btn-group > .btn {
+    float: inherit;
+}
+.btn-group > .btn + .btn {
+    margin-left: -4px;
+}
 
 /* Set widths on the form inputs since otherwise they're 100% wide */
 /*input,
@@ -39,22 +82,6 @@ select,
 textarea {
     max-width: 280px;
 }*/
-
-/* Carousel */
-.carousel-caption {
-    z-index: 10 !important;
-}
-
-    .carousel-caption p {
-        font-size: 20px;
-        line-height: 1.4;
-    }
-
-@media (min-width: 768px) {
-    .carousel-caption {
-        z-index: 10 !important;
-    }
-}
 
 .glyphicon-spin {
     -webkit-animation: spin 1000ms infinite linear;
@@ -66,8 +93,22 @@ textarea {
     to {transform:rotate(360deg);}
 }
 
+#viewModalContent img {
+    min-height: 100px;
+    min-width: 100px;
+    max-width: 500px;
+    display: block;
+    margin: 0 auto;
+    border: 1px solid lightgray;
+}
+
+#viewModalInfo {
+    border-left: 1px solid lightgray;
+    height: 100%;
+}
+
 .field-validation-error {
-    color: red;
+    color: #a94442;
 }
 
 .file-card {
@@ -77,6 +118,12 @@ textarea {
 .file-card:hover {
     border: 1px solid #eeeeee;
     border-radius: 5px;
+}
+
+.file-card.active {
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background-color: #eee;
 }
 
 .file-grid > .file.card > .file-card-icon {
@@ -138,16 +185,27 @@ textarea {
 }
 
 .file-list > .file-card > .file-card-icon img {
-    display: inline-block;
+    display: block;
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+}
+
+.file-card > .file-card-icon div {
+    display: block;
+    vertical-align: middle;
+    height: 50px;
+    width: 50px;
+}
+
+.file-card:not(.with-thumbnail) > .file-card-icon img {
+    height: 50px;
+    width: 50px;
 }
 
 .file-card.with-thumbnail > .file-card-icon img {
-    background-color: #efefef;
-    border: 1px solid white;
-    border: 1px solid rgba(128,128,128,0.5);
+    border: 1px solid lightgray;
+    max-height: 50px;
+    max-width: 50px;
+    margin: auto;
 }
 
 /*icon checkboxes*/
