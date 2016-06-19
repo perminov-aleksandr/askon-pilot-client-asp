@@ -229,5 +229,17 @@ namespace Ascon.Pilot.WebClient.Controllers
             }
             return null;
         }
+
+        [HttpPost]
+        public ActionResult Rename(Guid idToRename, string newName, Guid renameRootId)
+        {
+            return RedirectToAction("Index", new {id = renameRootId });
+        }
+
+        [HttpPost]
+        public ActionResult Remove(Guid idToRemove, Guid removeRootId)
+        {
+            return RedirectToAction("Index", new { id = removeRootId });
+        }
     }
 }

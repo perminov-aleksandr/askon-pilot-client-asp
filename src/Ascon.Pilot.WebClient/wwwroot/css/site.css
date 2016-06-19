@@ -4,8 +4,36 @@
 }
 
 body {
-    padding-top: 50px;
+    padding-top: 100px;
     /*padding-bottom: 20px;*/
+}
+
+.toolbar {
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    top: 50px;
+    height: 50px;
+    background-color: #2f2f2f;
+    border-radius: 0;
+    z-index: 1030;
+}
+
+.toolbar a {
+    color: #9d9d9d;
+    text-decoration: none;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.toolbar a:hover {
+    color: #fff;
+}
+
+@media(max-width: 767px) {
+    .toolbar span.glyphicon {
+        font-size: 20px;
+    }
 }
 
 /* Wrapping element */
@@ -90,6 +118,12 @@ textarea {
 .file-card:hover {
     border: 1px solid #eeeeee;
     border-radius: 5px;
+}
+
+.file-card.active {
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background-color: #eee;
 }
 
 .file-grid > .file.card > .file-card-icon {

@@ -17,8 +17,11 @@ namespace Ascon.Pilot.WebClient.ViewModels
                 return extension == ".xps" || extension == ".pdf";
             }
         }
-        public Guid ObjectId { get; set; }
+
         public int ObjectTypeId { get; set; }
+        public string ObjectTypeName { get; set; }
+
+        public Guid ObjectId { get; set; }
         public string ObjectName { get; set; }
         public string Name {
             get
@@ -30,8 +33,8 @@ namespace Ascon.Pilot.WebClient.ViewModels
             }
         }
         public string FileName { get; set; }
-        public int Size { get; set; }
 
+        public int Size { get; set; }
         private string _sizeStr = string.Empty;
         public string SizeString
         {

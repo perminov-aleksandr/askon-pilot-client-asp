@@ -57,7 +57,6 @@ namespace Ascon.Pilot.WebClient.Controllers
             await SignInAsync(dbInfo);
 
             DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
-            //HttpContext.Session.SetSessionValues(SessionKeys.DBInfo, dbInfo);
             HttpContext.Session.SetSessionValues(SessionKeys.DatabaseName, model.DatabaseName);
             HttpContext.Session.SetSessionValues(SessionKeys.Login, model.Login);
             HttpContext.Session.SetSessionValues(SessionKeys.ProtectedPassword, protectedPassword);

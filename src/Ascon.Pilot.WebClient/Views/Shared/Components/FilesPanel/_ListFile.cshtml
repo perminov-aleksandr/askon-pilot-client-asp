@@ -15,7 +15,8 @@
     }
 }
 
-<div class="file-card @(Model.IsThumbnailAvailable ? "with-thumbnail" : "")">
+<div class="file-card @(Model.IsThumbnailAvailable ? "with-thumbnail" : "")" onclick="processCardClick(this)" 
+     data-id="@Model.Id" data-name="@Html.Raw(name)" data-size="@Model.Size" data-ext="@Model.Extension" data-typeid="@Model.ObjectTypeId">
     <div class="file-card-icon">
         <div style="position: relative">
             <img src="@href" alt="@name"/>
@@ -23,7 +24,7 @@
         </div>
     </div>
     <div class="file-card-name">
-        <a onclick="processFileCardClick(this)" data-id="@Model.Id" data-name="@Html.Raw(name)" data-size="@Model.Size" data-ext="@Model.Extension" data-typeid="@Model.ObjectTypeId" href="#">
+        <a onclick="processFileCardClick(this)" role="button">
             @name
         </a>
     </div>
@@ -35,12 +36,6 @@
     </div>
     <div class="file-card-buttons">
         <div class="btn-group">
-            @*@if (Model.Extension == ".pdf")
-            {
-                <a title="Просмотр" href="@Url.Action("Preview", "Files", fileDownloadRouteValues)" target="_blank" class="btn btn-default">
-                    <span class="glyphicon glyphicon-eye-open"></span>
-                </a>
-            }*@
             <a title="Скачать файл" href="@Url.Action("Download", "Files", fileDownloadRouteValues)" class="btn btn-default">
                 <span class="glyphicon glyphicon-download-alt"></span>
             </a>
