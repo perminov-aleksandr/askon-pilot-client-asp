@@ -17,6 +17,7 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"/>
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
     </environment>
+    @RenderSection("styles", false)
 </head>
 <body>
 @Html.Partial("_Header")
@@ -41,8 +42,6 @@
     </script>
     <script src="~/js/site.min.js" asp-append-version="true"></script>
 </environment>
-
-<script src="~/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"></script>
 
 @RenderSection("scripts", false)
 </body>

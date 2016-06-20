@@ -17,10 +17,12 @@
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"/>
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
     </environment>
+    @*<link type="text/css" rel="stylesheet" href="@Url.Content("~/css/basic.css")" />
+    <link type="text/css" rel="stylesheet" href="@Url.Content("~/css/dropzone.css")" />*@
+    @RenderSection("styles", false)
 </head>
 <body>
 @Html.Partial("_Header")
-@*@Html.Partial("_InstrumentsHeader")*@
 <div class="body-content">
     <br/>
     @RenderBody()
@@ -43,7 +45,8 @@
     <script src="~/js/site.min.js" asp-append-version="true"></script>
 </environment>
 
-<script src="~/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"></script>
+<script type="text/javascript" src="~/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"></script>
+@*<script type="text/javascript" src="~/js/dropzone.js"></script>*@
 <script type="text/javascript">
     function sidePanelToggle() {
         $('#sidePanel').toggle();

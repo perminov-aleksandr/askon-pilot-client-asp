@@ -10,9 +10,12 @@ using Ascon.Pilot.WebClient.ViewComponents;
 using Ascon.Pilot.WebClient.ViewModels;
 using Castle.Core.Logging;
 using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Session;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 #if DNX451
 using MuPDFLib;
 using System.Drawing;
@@ -31,10 +34,12 @@ namespace Ascon.Pilot.WebClient.Controllers
     public class FilesController : Controller
     {
         private ILogger<FilesController> _logger;
+        private IHostingEnvironment _environment;
 
-        public FilesController(ILogger<FilesController> logger)
+        public FilesController(ILogger<FilesController> logger, IHostingEnvironment environment)
         {
             _logger = logger;
+            _environment = environment;
         }
 
         public IActionResult Index(Guid? id)
@@ -230,6 +235,21 @@ namespace Ascon.Pilot.WebClient.Controllers
         [HttpPost]
         public ActionResult Rename(Guid idToRename, string newName, Guid renameRootId)
         {
+            var api = HttpContext.Session.GetServerApi();
+            var objectToRename = api.GetObjects(new[] {idToRename})[0];
+            var newObject = objectToRename.Clone();
+            
+            /*api.Change(new DChangesetData()
+            {
+                Changes = new List<DChange>
+                {
+                    new DChange()
+                    {
+                        New = newObject,
+                        Old = objectToRename
+                    }
+                }
+            });*/
             return RedirectToAction("Index", new {id = renameRootId });
         }
 
@@ -237,6 +257,32 @@ namespace Ascon.Pilot.WebClient.Controllers
         public ActionResult Remove(Guid idToRemove, Guid removeRootId)
         {
             return RedirectToAction("Index", new { id = removeRootId });
+        }
+        
+        [HttpPost]
+        public async Task<RedirectToActionResult> Upload(Guid folderId, IFormFile file)
+        {
+            try
+            {
+                if (file.Length == 0)
+                    throw new ArgumentNullException(nameof(file));
+
+                string fileName = GetFileName(file.ContentDisposition);
+                var pathToSave = Path.Combine(_environment.WebRootPath, fileName);
+                await file.SaveAsAsync(pathToSave);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(1, "Unable to upload file", ex);
+            }
+            return RedirectToAction("Index", new { id = folderId });
+        }
+
+        private static string GetFileName(string contentDisposition)
+        {
+            ContentDispositionHeaderValue cd;
+            ContentDispositionHeaderValue.TryParse(contentDisposition, out cd);
+            return HeaderUtilities.RemoveQuotes(cd?.FileName);
         }
     }
 }

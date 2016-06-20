@@ -31,6 +31,10 @@ $(document).ready(function () {
         $("#removeNameHolder").text(name);
         $("#removeRootId").val(currentFolderId);
     });
+    $("#uploadModal").on("show.bs.modal", function () {
+        $("#uploadRootId").val(currentFolderId);
+        $("#folderId").val(currentFolderId);
+    });
 });
 
 function processCardClick(el) {
