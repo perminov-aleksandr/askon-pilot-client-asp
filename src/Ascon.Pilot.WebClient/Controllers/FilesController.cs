@@ -269,7 +269,7 @@ namespace Ascon.Pilot.WebClient.Controllers
 
                 string fileName = GetFileName(file.ContentDisposition);
                 var pathToSave = Path.Combine(_environment.WebRootPath, fileName);
-                await file.SaveAsAsync(pathToSave);
+                //await file.SaveAsAsync(pathToSave);
             }
             catch (Exception ex)
             {
