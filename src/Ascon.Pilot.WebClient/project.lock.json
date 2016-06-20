@@ -1751,7 +1751,7 @@
           "lib/net45/_._": {}
         }
       },
-      "System.Drawing.Primitives/4.0.0-rc3-24116-00": {
+      "System.Drawing.Primitives/4.0.0-rc3-24128-00": {
         "type": "package",
         "frameworkAssemblies": [
           "mscorlib",
@@ -1900,8 +1900,12 @@
           "lib/net45/_._": {}
         }
       },
-      "System.Runtime.InteropServices/4.1.0-rc3-24116-00": {
+      "System.Runtime.InteropServices/4.1.0-rc3-24128-00": {
         "type": "package",
+        "frameworkAssemblies": [
+          "System",
+          "System.Core"
+        ],
         "compile": {
           "ref/net45/_._": {}
         },
@@ -6651,7 +6655,7 @@
           "lib/net45/_._": {}
         }
       },
-      "System.Drawing.Primitives/4.0.0-rc3-24116-00": {
+      "System.Drawing.Primitives/4.0.0-rc3-24128-00": {
         "type": "package",
         "frameworkAssemblies": [
           "mscorlib",
@@ -6800,8 +6804,12 @@
           "lib/net45/_._": {}
         }
       },
-      "System.Runtime.InteropServices/4.1.0-rc3-24116-00": {
+      "System.Runtime.InteropServices/4.1.0-rc3-24128-00": {
         "type": "package",
+        "frameworkAssemblies": [
+          "System",
+          "System.Core"
+        ],
         "compile": {
           "ref/net45/_._": {}
         },
@@ -8616,7 +8624,7 @@
           "lib/net45/_._": {}
         }
       },
-      "System.Drawing.Primitives/4.0.0-rc3-24116-00": {
+      "System.Drawing.Primitives/4.0.0-rc3-24128-00": {
         "type": "package",
         "frameworkAssemblies": [
           "mscorlib",
@@ -8765,8 +8773,12 @@
           "lib/net45/_._": {}
         }
       },
-      "System.Runtime.InteropServices/4.1.0-rc3-24116-00": {
+      "System.Runtime.InteropServices/4.1.0-rc3-24128-00": {
         "type": "package",
+        "frameworkAssemblies": [
+          "System",
+          "System.Core"
+        ],
         "compile": {
           "ref/net45/_._": {}
         },
@@ -18081,18 +18093,18 @@
         "System.Diagnostics.Tracing.nuspec"
       ]
     },
-    "System.Drawing.Primitives/4.0.0-rc3-24116-00": {
+    "System.Drawing.Primitives/4.0.0-rc3-24128-00": {
       "type": "package",
       "serviceable": true,
-      "sha512": "BIR+SNdOC26lVn6ojd4nmeoGSuqL93kuJcNzezlx0Lg7Bf0BYjdbFjVV35MPp/FfHvEFAEPQErJzMHw1M4BMaA==",
+      "sha512": "EY2J3vFVN1KSaJ6WtcrpOP1V7b1TlRVKtbvPujOusSTF4flYghbAn9ddIRXWbeikTvnwGsTaLQ/ixIFt5bz4UQ==",
       "files": [
         "dotnet_library_license.txt",
         "lib/net45/System.Drawing.Primitives.dll",
         "lib/netstandard1.1/System.Drawing.Primitives.dll",
         "ref/net45/System.Drawing.Primitives.dll",
         "ref/netstandard1.1/System.Drawing.Primitives.dll",
-        "System.Drawing.Primitives.4.0.0-rc3-24116-00.nupkg",
-        "System.Drawing.Primitives.4.0.0-rc3-24116-00.nupkg.sha512",
+        "System.Drawing.Primitives.4.0.0-rc3-24128-00.nupkg",
+        "System.Drawing.Primitives.4.0.0-rc3-24128-00.nupkg.sha512",
         "System.Drawing.Primitives.nuspec",
         "ThirdPartyNotices.txt"
       ]
@@ -19949,10 +19961,10 @@
         "System.Runtime.InteropServices.nuspec"
       ]
     },
-    "System.Runtime.InteropServices/4.1.0-rc3-24116-00": {
+    "System.Runtime.InteropServices/4.1.0-rc3-24128-00": {
       "type": "package",
       "serviceable": true,
-      "sha512": "+n5q4Hv9AyHiAvNIUEREiPQxX7CGkmPLeFfiK65lYZZtW+26KTVA/uVQNlkyFxEdqruUbP5Y6ONqjrE6Kw9BUQ==",
+      "sha512": "9fMc+E54sd6B0n1wHxLvYHOs8umv3bwVp7sP+vtpCaKou8whfLpHgtZWnLqa5PPjXI8wb86qyprDfkeVi0VskQ==",
       "files": [
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -20032,8 +20044,8 @@
         "ref/xamarinmac20/_._",
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._",
-        "System.Runtime.InteropServices.4.1.0-rc3-24116-00.nupkg",
-        "System.Runtime.InteropServices.4.1.0-rc3-24116-00.nupkg.sha512",
+        "System.Runtime.InteropServices.4.1.0-rc3-24128-00.nupkg",
+        "System.Runtime.InteropServices.4.1.0-rc3-24128-00.nupkg.sha512",
         "System.Runtime.InteropServices.nuspec",
         "ThirdPartyNotices.txt"
       ]

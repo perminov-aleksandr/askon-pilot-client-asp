@@ -9,13 +9,26 @@ using Microsoft.AspNet.Mvc;
 
 namespace Ascon.Pilot.WebClient.ViewComponents
 {
+    /// <summary>
+    /// Компонент - боковая панель.
+    /// </summary>
     public class SidePanelViewComponent : ViewComponent
     {
+        /// <summary>
+        /// Вызов боковой панели.
+        /// </summary>
+        /// <param name="id">Id папки.</param>
+        /// <returns>Боковая панель для папки с идентификатором Id.</returns>
         public async Task<IViewComponentResult> InvokeAsync(Guid? id)
         {
             return await Task.Run(() => GetSidePanel(id)) ;
         }
 
+        /// <summary>
+        /// Отображение боковой панели.
+        /// </summary>
+        /// <param name="id">Уникальный Id папки, для которой запрашивается представление.</param>
+        /// <returns>Представление боковой панели для папки с идентификатором Id.</returns>
         public IViewComponentResult GetSidePanel(Guid? id)
         {
             id = id ?? DObject.RootId;

@@ -34,7 +34,7 @@
     "web": "Microsoft.AspNet.Server.Kestrel"
   },
 
-  "frameworks": {    
+  "frameworks": {
     "dnx451": {
       "dependencies": {
         "Castle.Core": "3.3.3",
@@ -54,7 +54,7 @@
       }
     }
   },
-  
+
   "exclude": [
     "wwwroot",
     "node_modules"
