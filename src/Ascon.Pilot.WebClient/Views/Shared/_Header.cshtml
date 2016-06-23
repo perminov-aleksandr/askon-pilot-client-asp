@@ -1,4 +1,9 @@
-﻿<div class="navbar navbar-inverse navbar-fixed-top">
+﻿@using Ascon.Pilot.WebClient.Controllers
+@using Microsoft.AspNet.Http.Extensions
+@{
+    FilesPanelType currentFilesPanelType = ViewBag.FilesPanelType ?? default(FilesPanelType);
+}
+<div class="navbar navbar-inverse navbar-fixed-top">
     <div>
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -7,9 +12,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a asp-controller="Home" asp-action="Index" class="navbar-brand">
-                <img src="@Url.Content("~/images/ascon_logo.png")" height="25" alt="АСКОН"/>
-            </a>
+            <div class="navbar-brand">
+                <a id="menuToggler" role="button" title="Меню" onclick="toggleMenu(this)"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+                <a asp-controller="Home" asp-action="Index" >
+                    <img src="@Url.Content("~/images/ascon_logo.png")" height="25" alt="АСКОН"/>
+                </a>
+            </div>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right" style="margin-right: 0;">
@@ -56,8 +64,31 @@
                         <span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;
                         <span class="hidden-xs">Загрузить</span>
                     </a>
+                    <a id="filesPanelToggler" @*onclick="toggleFilesPanelMode(this)"*@ 
+                       href="@Url.Action("ChangeFilesPanelType", "Files", new { type = currentFilesPanelType == FilesPanelType.List ? FilesPanelType.Grid : FilesPanelType.List, returnUrl = Context.Request.GetDisplayUrl() })" 
+                       title="Режим отображения: @(currentFilesPanelType == FilesPanelType.List ? "список" : "плитки")">
+                        <span class="glyphicon @(currentFilesPanelType == FilesPanelType.List ? "glyphicon-th-list" : "glyphicon-th")"></span>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 }
+
+<script type="text/javascript">
+    /*function toggleFilesPanelMode(el) {
+        var button = $(el);
+        var span = button.children("span");
+        span.toggleClass("glyphicon-th glyphicon-th-list");
+        button.attr("title", "Режим отображения: " + (span.hasClass("glyphicon-th-list") ? "список" : "плитки"))        
+    }*/
+    
+    function toggleMenu(el) {        
+        var menu = $("#menu");
+        menu.toggleClass("menu-slide-in menu-slide-out");
+    }
+    
+    function hideMenu() {
+        $("#menu").removeClass("menu-slide-in").addClass("menu-slide-out");
+    }
+</script>

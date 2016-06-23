@@ -10,7 +10,15 @@
     {
         foreach (var fileModel in Model)
         {
-            @Html.Partial("Components/FilesPanel/_GridFile", fileModel)
+            if (fileModel.IsFolder)
+            {
+                @Html.Partial("Components/FilesPanel/_GridFolder", fileModel)
+            }
+            else
+            {
+                @Html.Partial("Components/FilesPanel/_GridFile", fileModel)
+            }
+
         }
     }
 </div>

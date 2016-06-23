@@ -35,7 +35,10 @@ namespace Ascon.Pilot.WebClient.Extensions
 
         public static T GetSessionValues<T>(this ISession session, string key)
         {
-            using (var bs = new MemoryStream(session.Get(key)))
+            var val = session.Get(key);
+            if (val == null)
+                return default(T);
+            using (var bs = new MemoryStream(val))
             {
                 return ProtoBuf.Serializer.Deserialize<T>(bs);
             }

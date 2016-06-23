@@ -26,8 +26,8 @@ namespace Ascon.Pilot.WebClient.Controllers
 {
     public enum FilesPanelType
     {
-        Grid,
-        List
+        List,
+        Grid
     }
 
     [Authorize]
@@ -42,14 +42,22 @@ namespace Ascon.Pilot.WebClient.Controllers
             _environment = environment;
         }
 
+        public IActionResult ChangeFilesPanelType(string returnUrl, FilesPanelType type)
+        {
+            HttpContext.Session.SetSessionValues(SessionKeys.FilesPanelType, type);
+            return Redirect(returnUrl);
+        }
+
         public IActionResult Index(Guid? id)
         {
             id = id ?? DObject.RootId;
+            FilesPanelType type = HttpContext.Session.GetSessionValues<FilesPanelType>(SessionKeys.FilesPanelType);
             var model = new UserPositionViewModel
             {
                 CurrentFolderId = id.Value,
-                FilesPanelType = ApplicationConst.DefaultFilesPanelType
+                FilesPanelType = type
             };
+            ViewBag.FilesPanelType = type;
             return View(model);
         }
         
@@ -89,9 +97,10 @@ namespace Ascon.Pilot.WebClient.Controllers
             return ViewComponent(typeof (SidePanelViewComponent), id);
         }
 
-        public IActionResult GetObject(Guid id, FilesPanelType panelType = ApplicationConst.DefaultFilesPanelType)
+        public IActionResult GetObject(Guid id)
         {
-            return ViewComponent(typeof (FilesPanelViewComponent), id, panelType);
+            var filesPanelType = HttpContext.Session.GetSessionValues<FilesPanelType>(SessionKeys.FilesPanelType);
+            return ViewComponent(typeof (FilesPanelViewComponent), id, filesPanelType);
         }
 
         public IActionResult Preview(Guid id, int size, string name)

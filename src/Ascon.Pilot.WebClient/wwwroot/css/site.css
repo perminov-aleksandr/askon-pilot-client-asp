@@ -5,7 +5,6 @@
 
 body {
     padding-top: 100px;
-    margin-bottom: 50px;
 }
 
 .breadcrumb li {
@@ -104,6 +103,74 @@ textarea {
     to {transform:rotate(360deg);}
 }
 
+/*------------Menu-------------------*/
+
+a#menuToggler {
+    color: #9d9d9d;
+    padding-right: 10px;
+}
+
+a#menuToggler:hover {
+    color: white;
+}
+
+#menu {
+    position:absolute;    
+    top: 51px;
+    bottom: 0px;
+    left: -200px;    
+    background-color: #2f2f2f;
+    color: #9d9d9d;
+    z-index: 1030;
+    width: 200px;
+    border-right: 1px solid black;
+}
+
+#menu.menu-slide-in {
+    left: 0;
+    animation: menu-slide-in 0.3s forwards;    
+}
+
+#menu.menu-slide-out {
+    left: -200px;
+    animation: menu-slide-out 0.3s forwards;    
+}
+
+@keyframes menu-slide-in {
+    0% { left: -200px; }
+    100% { left: 0; }
+}
+   
+@keyframes menu-slide-out {
+    0% { left: 0; }
+    100% { left: -200px; }
+}
+
+#menu ul {
+    display: block;
+    list-style: none;
+    margin: 0;    
+    padding: 0;
+    font-size: 1.2em;
+}
+
+#menu ul li {
+    display: block;
+    padding: 10px;
+}
+
+#menu ul li a {
+    color: #9d9d9d;
+    text-decoration: none;
+}
+
+#menu ul li:hover {    
+    background-color: #3f3f3f;
+    color: white;
+}
+
+/*--------------------------------------Modal preview---------------------------*/
+
 @media (min-width: 992px) {
   .modal-lg {
     width: 900px;
@@ -129,12 +196,61 @@ textarea {
     color: #a94442;
 }
 
-.file-card {
-    border: 1px solid #eeeeee;
-    border-bottom: none;
+/*------------FILE CARD grid-------------------*/
+
+.file-grid .file-card {
+    min-height: 120px;
+    margin: 5px;
+    padding: 5px;
 }
 
-.file-card:hover {
+.file-grid .file-card {
+    border-radius: 5px;
+    border: 1px solid #eeeeee;
+}
+
+.file-grid .file-card:hover {
+    background-color: #f5f5f5;
+}
+
+.file-grid > .file.card > .file-card-icon {
+    padding: 5px;
+}
+
+.file-grid > .file.card > .file-card-icon img {
+    display: block;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.file-grid .file-card .file-card-name {
+    /*white-space: nowrap;*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /*max-width: 200px;*/    
+    max-height: 3em;
+}
+
+.file-grid .file-card.active {
+    background-color: #428bca;
+    color: white;
+}
+
+.file-grid .file-card.active .file-card-name a {
+    color: white
+}
+
+/*-------------file-card for list-------------------*/
+
+.file-list .file-card {
+    border: 1px solid #eeeeee;
+    border-bottom: none;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.file-list .file-card:hover {
     background-color: #f5f5f5;
 }
 
@@ -149,34 +265,16 @@ textarea {
     border-bottom: 1px solid #eeeeee;
 }
 
-.file-card.active {
+.file-list .file-card.active {
     background-color: #428bca;
     color: white;
 }
 
-.file-card.active > .file-card-name > a {
+.file-list .file-card.active > .file-card-name > a {
     color: white
 }
 
-.file-grid > .file.card > .file-card-icon {
-    padding: 5px;
-}
-
-.file-grid > .file.card > .file-card-icon img {
-    display: block;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.file-grid > .file.card > .file-card-name a
-{
-    display: block;
-}
-
-/*-------------file-card for list-------------------*/
-
-.file-list > .file-card > .file-card {
+.file-list > .file-card {
     border: 1px solid white;
 }
 
@@ -221,19 +319,19 @@ textarea {
     text-align: center;
 }
 
-.file-card > .file-card-icon div {
+.file-list > .file-card > .file-card-icon div {
     display: block;
     vertical-align: middle;
     height: 50px;
     width: 50px;
 }
 
-.file-card:not(.with-thumbnail) > .file-card-icon img {
+.file-list > .file-card:not(.with-thumbnail) > .file-card-icon img {
     height: 50px;
     width: 50px;
 }
 
-.file-card.with-thumbnail > .file-card-icon img {
+.file-list > .file-card.with-thumbnail > .file-card-icon img {
     border: 1px solid lightgray;
     max-height: 50px;
     max-width: 50px;

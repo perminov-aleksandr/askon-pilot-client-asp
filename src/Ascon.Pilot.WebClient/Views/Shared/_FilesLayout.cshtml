@@ -25,7 +25,26 @@
 </head>
 <body>
 @Html.Partial("_Header")
-<div class="body-content">
+<div id="menu" class="menu-slide-out">
+    <ul>
+        <li>
+            <a href="@Url.Action("Index", "Files", new {})">
+                <i class="glyphicon glyphicon-file"></i>&nbsp;Документы
+            </a>
+        </li>
+        <li>
+            <a href="@Url.Action("Index", "Home")">
+                <i class="glyphicon glyphicon-tasks"></i>&nbsp;Задания
+            </a>
+        </li>
+        <li>
+            <a href="@Url.Action("Index", "Home")">
+                <i class="glyphicon glyphicon-list-alt"></i>&nbsp;Отчеты
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="body-content" onclick="hideMenu()">
     <br/>
     @RenderBody()
 </div>

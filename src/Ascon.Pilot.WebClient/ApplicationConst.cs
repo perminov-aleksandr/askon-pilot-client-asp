@@ -29,7 +29,8 @@ namespace Ascon.Pilot.WebClient
             { SystemTypes.SMART_FOLDER, "glyphicon glyphicon-book" }
         };
 
-        public const FilesPanelType DefaultFilesPanelType = FilesPanelType.List;
+        //implicitly default files panel type is LIST cause its index in enum is 0
+        public const FilesPanelType DefaultFilesPanelType = 0;
     }
     
     public static class Roles
