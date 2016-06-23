@@ -2,6 +2,16 @@
     ViewBag.Title = "Предпросмотр";
 }
 
+<style type="text/css">
+    .toolbar {
+        display: none;
+    }
+
+    body {
+        padding-top: 50px;
+    }
+</style>
+
 <div id="pdf">
     <object data="@Html.Raw(ViewBag.Url as string)" type="application/pdf" width="100%" height="100%">
         <div id="errorMessage">

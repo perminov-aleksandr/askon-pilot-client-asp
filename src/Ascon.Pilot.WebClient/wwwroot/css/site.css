@@ -5,14 +5,18 @@
 
 body {
     padding-top: 100px;
-    /*padding-bottom: 20px;*/
+    margin-bottom: 50px;
 }
 
-ol.breadcrumb li a {
-    max-width: 200px;
-    text-overflow: ellipsis;
+.breadcrumb li {
+    max-width: 300px;
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.breadcrumb li a {
+    display: inline;
 }
 
 .toolbar {
@@ -100,18 +104,25 @@ textarea {
     to {transform:rotate(360deg);}
 }
 
+@media (min-width: 992px) {
+  .modal-lg {
+    width: 900px;
+  }
+}
+
 #viewModalContent img {
-    min-height: 100px;
-    min-width: 100px;
+    width: auto;
+    height: auto;
+    max-height: 500px;
     max-width: 500px;
+    border: 1px solid lightgray;
+    margin-bottom: 15px;
     display: block;
     margin: 0 auto;
-    border: 1px solid lightgray;
 }
 
 #viewModalInfo {
-    border-left: 1px solid lightgray;
-    height: 100%;
+    padding-top: 15px;
 }
 
 .field-validation-error {
@@ -119,18 +130,32 @@ textarea {
 }
 
 .file-card {
-    border: 1px solid white;
+    border: 1px solid #eeeeee;
+    border-bottom: none;
 }
 
 .file-card:hover {
-    border: 1px solid #eeeeee;
-    border-radius: 5px;
+    background-color: #f5f5f5;
+}
+
+.file-list .file-card:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.file-list .file-card:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom: 1px solid #eeeeee;
 }
 
 .file-card.active {
-    border: 1px solid #aaa;
-    border-radius: 5px;
-    background-color: #eee;
+    background-color: #428bca;
+    color: white;
+}
+
+.file-card.active > .file-card-name > a {
+    color: white
 }
 
 .file-grid > .file.card > .file-card-icon {
@@ -218,7 +243,7 @@ textarea {
 /*icon checkboxes*/
 
 .file-card-icon input[type=checkbox] {
-    display: none;
+    /*display: none;*/
     margin: 0;
     padding: 0;
     position: absolute;
@@ -226,11 +251,11 @@ textarea {
     right: 0.5em;
 }
 
-.file-card:hover .file-card-icon input[type=checkbox],
+/*.file-card:hover .file-card-icon input[type=checkbox],
 .file-card       .file-card-icon input[type=checkbox]:checked
 {
     display: inherit;
-}
+}*/
 
 .file-grid .file-card-icon input[type="checkbox"] {
     bottom: inherit;

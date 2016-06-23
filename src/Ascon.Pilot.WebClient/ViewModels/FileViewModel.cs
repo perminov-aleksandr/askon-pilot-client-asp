@@ -23,15 +23,8 @@ namespace Ascon.Pilot.WebClient.ViewModels
 
         public Guid ObjectId { get; set; }
         public string ObjectName { get; set; }
-        public string Name {
-            get
-            {
-                var extension = Extension;
-                if (Path.HasExtension(ObjectName) && Path.GetExtension(ObjectName) == extension)
-                    return ObjectName;
-                return $"{ObjectName}{extension}";
-            }
-        }
+
+        public string Name => ObjectName;
         public string FileName { get; set; }
 
         public int Size { get; set; }

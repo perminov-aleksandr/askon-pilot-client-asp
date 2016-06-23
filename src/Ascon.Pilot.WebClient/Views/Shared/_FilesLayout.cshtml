@@ -9,12 +9,14 @@
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css"/>
+        <link rel="stylesheet" href="~/lib/bootstrap-treeview/src/css/bootstrap-treeview.css" />
         <link rel="stylesheet" href="~/css/site.css"/>
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"/>
+        <link rel="stylesheet" href="~/lib/bootstrap-treeview/dist/bootstrap-treeview.min.css" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true"/>
     </environment>
     @*<link type="text/css" rel="stylesheet" href="@Url.Content("~/css/basic.css")" />
@@ -31,6 +33,7 @@
 <environment names="Development">
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </environment>
 <environment names="Staging,Production">
@@ -42,18 +45,13 @@
             asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
             asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
     </script>
-    <script src="~/js/site.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-treeview/dist/bootstrap-treeview.min.js"
+            asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js">
+    </script>
+    @*<script src="~/js/site.min.js" asp-append-version="true"></script>*@
 </environment>
 
-<script type="text/javascript" src="~/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"></script>
 @*<script type="text/javascript" src="~/js/dropzone.js"></script>*@
-<script type="text/javascript">
-    function sidePanelToggle() {
-        $('#sidePanel').toggle();
-        //$('#sidePanel').toggleClass("col-md-4");
-        $('#filesPanelContainer').toggleClass("col-md-8 col-md-12");
-    }
-</script>
 @RenderSection("scripts", false)
 </body>
 </html>

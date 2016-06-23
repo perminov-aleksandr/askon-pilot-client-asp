@@ -9,6 +9,9 @@ using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.ViewModels;
 using Microsoft.AspNet.Authorization;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Http.Authentication;
+using Microsoft.AspNet.Http.Authentication.Internal;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -17,7 +20,7 @@ namespace Ascon.Pilot.WebClient.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private ILogger<FilesController> _logger;
+        private readonly ILogger<FilesController> _logger;
 
         public AccountController(ILogger<FilesController> logger)
         {
@@ -76,29 +79,34 @@ namespace Ascon.Pilot.WebClient.Controllers
                 ModelState.AddModelError("", "Авторизация не удалась, проверьте данные и повторите вход");
                 return View("LogIn", model);
             }
-            await SignInAsync(dbInfo);
+            await SignInAsync(dbInfo, model.DatabaseName, protectedPassword);
 
             DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
-            HttpContext.Session.SetSessionValues(SessionKeys.DatabaseName, model.DatabaseName);
-            HttpContext.Session.SetSessionValues(SessionKeys.Login, model.Login);
-            HttpContext.Session.SetSessionValues(SessionKeys.ProtectedPassword, protectedPassword);
+            HttpContext.Session.SetString(SessionKeys.DatabaseName, model.DatabaseName);
+            HttpContext.Session.SetString(SessionKeys.Login, model.Login);
+            HttpContext.Session.SetString(SessionKeys.ProtectedPassword, protectedPassword);
+            //HttpContext.Session.SetSessionValues(SessionKeys.DatabaseName, model.DatabaseName);
+            //HttpContext.Session.SetSessionValues(SessionKeys.Login, model.Login);
+            //HttpContext.Session.SetSessionValues(SessionKeys.ProtectedPassword, protectedPassword);
             HttpContext.Session.SetSessionValues(SessionKeys.MetaTypes, dMetadata.Types.ToDictionary(x => x.Id, y => y));
 
             return RedirectToAction("Index", "Home");
         }
         
-        private async Task SignInAsync(DDatabaseInfo dbInfo)
+        private async Task SignInAsync(DDatabaseInfo dbInfo, string dbName, string protectedPassword)
         {
             var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Surname, dbName),
                 new Claim(ClaimTypes.Name, dbInfo.Person.Login),
                 new Claim(ClaimTypes.GivenName, dbInfo.Person.DisplayName),
                 new Claim(ClaimTypes.Role, dbInfo.Person.IsAdmin ? Roles.Admin : Roles.User),
+                new Claim(ClaimTypes.UserData, protectedPassword)
             };
 
             var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, ApplicationConst.PilotMiddlewareInstanceName));
             
-            await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal);
+            await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal, new AuthenticationProperties { IsPersistent = true });
         }
         
         public async Task<IActionResult> LogOff()

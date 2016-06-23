@@ -8,14 +8,14 @@
 
 <form action="@Url.Action("DownloadArchive")" id="downloadArchiveForm">
     <div class="row">
-        <div class="col-md-4 hidden-xs hidden-sm collapse in" id="sidePanel">
+        <div class="col-md-4 hidden-xs hidden-sm collapse in" id="sidePanel" style="padding-right: 0;">
             @await Component.InvokeAsync("SidePanel", Model.CurrentFolderId)
         </div>
         <div class="col-md-8 col-sm-12" id="filesPanelContainer">
             <div>
-                <ol class="breadcrumb" id="breadcrumbs"></ol>
+                <ol class="breadcrumb" id="breadcrumbs" style="margin-bottom: 15px;"></ol>
             </div>
-            <div id="filesPanel">
+            <div id="filesPanel" style="padding-bottom: 15px;">
                 @await Component.InvokeAsync("FilesPanel", Model.CurrentFolderId, Model.FilesPanelType)
             </div>
         </div>
@@ -35,10 +35,8 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-sm-8" id="viewModalContent">
-                    </div>
-                    <div class="col-sm-4" id="viewModalInfo">
-                    </div>
+                    <div class="col-md-8 col-sm-12" id="viewModalContent"></div>
+                    <div class="col-md-4 col-sm-12" id="viewModalInfo"></div>
                 </div>
             </div>
             <div class="modal-footer">

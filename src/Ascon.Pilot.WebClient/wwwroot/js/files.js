@@ -2,6 +2,10 @@
 var treeData;
 
 $(document).ready(function () {
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
     treeControl = createTreeView(treeData);
     setObjectIdsCheckCallback();
     var selected = treeControl.getSelected();
@@ -54,7 +58,7 @@ function processFileCardClick(el) {
     var typeid = fileCard.data("typeid");
     var query = jQuery.param({
         id: id,
-        name: name,
+        name: name + ext,
         size: size
     });
     var previewButton = $("#previewButton");
@@ -82,7 +86,7 @@ function processFileCardClick(el) {
 }
 
 function objectToDlist(obj) {
-    var html = "<dl>";
+    var html = '<h4><i class="glyphicon glyphicon-exclamation-sign"></i>&nbsp;Информация</h4><dl>';
     $.each(obj,
         function (propName, propValue) {
             html += "<dt>" + propName + "</dt>";
@@ -239,8 +243,10 @@ function createHtmlForBreadcrumbs(selectedNode) {
     breadcrumbs = getBreadcrumbs(selectedNode, breadcrumbs);
     var html = "";
     for (var i = breadcrumbs.length - 1; i >= 0; i--) {
-        html += (i === 0 ? "<li>" : '<li class="active">')
-             + '<a href="' + baseFilesUrl + breadcrumbs[i].id + '">' + breadcrumbs[i].text + "</a></li>";
+        if (i === 0)
+            html += "<li>" + breadcrumbs[i].text + "</li>";
+        else
+            html += '<li class="active"><a data-toggle="tooltip" data-placement="auto left" title="' + breadcrumbs[i].text + '" href="' + baseFilesUrl + breadcrumbs[i].id + '">' + breadcrumbs[i].text + "</a></li>";
     }
     return html;
 }

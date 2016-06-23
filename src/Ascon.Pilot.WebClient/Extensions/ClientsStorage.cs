@@ -14,10 +14,7 @@ namespace Ascon.Pilot.WebClient.Extensions
     {
         public static IDictionary<int, MType> GetMetatypes(this ISession session)
         {
-            using (var ms = new MemoryStream(session.Get(SessionKeys.MetaTypes)))
-            {
-                return ProtoBuf.Serializer.Deserialize<IDictionary<int, MType>>(ms);
-            }
+            return session.GetSessionValues<IDictionary<int, MType>>(SessionKeys.MetaTypes);
         }
 
         /// <summary>
@@ -33,6 +30,14 @@ namespace Ascon.Pilot.WebClient.Extensions
             {
                 ProtoBuf.Serializer.Serialize(bs, value);
                 session.Set(key, bs.ToArray());
+            }
+        }
+
+        public static T GetSessionValues<T>(this ISession session, string key)
+        {
+            using (var bs = new MemoryStream(session.Get(key)))
+            {
+                return ProtoBuf.Serializer.Deserialize<T>(bs);
             }
         }
     }
@@ -92,7 +97,7 @@ namespace Ascon.Pilot.WebClient.Extensions
             client.Connect(ApplicationConst.PilotServerUrl);
 
             var serverApi = client.GetServerApi(callback);
-
+            
             var dbName = session.GetString(SessionKeys.DatabaseName);
             var login = session.GetString(SessionKeys.Login);
             var password = session.GetString(SessionKeys.ProtectedPassword);
