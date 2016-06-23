@@ -48,8 +48,12 @@
         <div>
             <div class="navbar-header pull-right">
                 <div class="navbar-brand">
-                    <a id="downloadArchiveButton" role="button" onclick="downloadArchive(this)" title="Скачать архивом" style="display: none;">
+                    <a id="downloadButton" role="button" title="Скачать" style="display: none;">
                         <span class="glyphicon glyphicon-download-alt"></span>&nbsp;
+                        <span class="hidden-xs">Скачать</span>
+                    </a>
+                    <a id="downloadArchiveButton" role="button" onclick="downloadArchive(this)" title="Скачать архивом" style="display: none;">
+                        <span class="glyphicon glyphicon-folder-close"></span>&nbsp;
                         <span class="hidden-xs">Скачать&nbsp;архивом</span>
                     </a>
                     <a id="renameButton" role="button" data-toggle="modal" href="#renameModal" title="Переименовать" style="display: none;">
@@ -64,8 +68,8 @@
                         <span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;
                         <span class="hidden-xs">Загрузить</span>
                     </a>
-                    <a id="filesPanelToggler" @*onclick="toggleFilesPanelMode(this)"*@ 
-                       href="@Url.Action("ChangeFilesPanelType", "Files", new { type = currentFilesPanelType == FilesPanelType.List ? FilesPanelType.Grid : FilesPanelType.List, returnUrl = Context.Request.GetDisplayUrl() })" 
+                    <a id="filesPanelToggler" @*onclick="toggleFilesPanelMode(this)"*@
+                       href="@Url.Action("ChangeFilesPanelType", "Files", new {type = currentFilesPanelType == FilesPanelType.List ? FilesPanelType.Grid : FilesPanelType.List, returnUrl = Context.Request.GetDisplayUrl()})"
                        title="Режим отображения: @(currentFilesPanelType == FilesPanelType.List ? "список" : "плитки")">
                         <span class="glyphicon @(currentFilesPanelType == FilesPanelType.List ? "glyphicon-th-list" : "glyphicon-th")"></span>
                     </a>
@@ -85,7 +89,13 @@
     
     function toggleMenu(el) {        
         var menu = $("#menu");
-        menu.toggleClass("menu-slide-in menu-slide-out");
+        if (menu.hasClass("menu-slide-in")) {
+            menu.toggleClass("menu-slide-in menu-slide-out");
+            menu.show();
+        } else if (menu.hasClass("menu-slide-out")) {
+            menu.show();
+            menu.toggleClass("menu-slide-in menu-slide-out");
+        }
     }
     
     function hideMenu() {

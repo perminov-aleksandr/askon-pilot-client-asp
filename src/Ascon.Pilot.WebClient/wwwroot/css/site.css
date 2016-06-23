@@ -178,14 +178,10 @@ a#menuToggler:hover {
 }
 
 #viewModalContent img {
-    width: auto;
-    height: auto;
-    max-height: 500px;
-    max-width: 500px;
     border: 1px solid lightgray;
     margin-bottom: 15px;
-    display: block;
-    margin: 0 auto;
+    min-width: 200px;
+    min-height: 200px;
 }
 
 #viewModalInfo {
@@ -199,7 +195,7 @@ a#menuToggler:hover {
 /*------------FILE CARD grid-------------------*/
 
 .file-grid .file-card {
-    min-height: 120px;
+    height: 150px;
     margin: 5px;
     padding: 5px;
 }
@@ -213,23 +209,37 @@ a#menuToggler:hover {
     background-color: #f5f5f5;
 }
 
-.file-grid > .file.card > .file-card-icon {
+.file-grid .file-card .file-card-icon {
     padding: 5px;
+    position: relative;
 }
 
-.file-grid > .file.card > .file-card-icon img {
+.file-grid .file-card .file-card-icon div {
+    position: relative;
+    height: 70px;
+    width: 70px;
+}
+
+.file-grid .file-card.with-thumbnail .file-card-icon img {
+    border: 1px solid #eeeeee;
+    max-height: 70px;
+    max-width: 70px;
     display: block;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    margin: auto;
+}
+
+.file-grid .file-card:not(.with-thumbnail) .file-card-icon img {
+    height: 70px;
+    width: 70px;
+    display: block;
+    margin: auto;
 }
 
 .file-grid .file-card .file-card-name {
-    /*white-space: nowrap;*/
     overflow: hidden;
     text-overflow: ellipsis;
-    /*max-width: 200px;*/    
     max-height: 3em;
+    text-align: center;
 }
 
 .file-grid .file-card.active {
@@ -270,68 +280,65 @@ a#menuToggler:hover {
     color: white;
 }
 
-.file-list .file-card.active > .file-card-name > a {
+.file-list .file-card.active .file-card-name a {
     color: white
 }
 
-.file-list > .file-card {
-    border: 1px solid white;
-}
-
-.file-list > .file-card > .file-card:hover {
+.file-list .file-card .file-card:hover {
     border: 1px solid #eeeeee;
     border-radius: 5px;
 }
 
-.file-list > .file-card > .file-card-icon,
-.file-list > .file-card > .file-card-name,
-.file-list > .file-card > .file-card-info,
-.file-list > .file-card > .file-card-buttons
+.file-list .file-card .file-card-icon,
+.file-list .file-card .file-card-name,
+.file-list .file-card .file-card-info,
+.file-list .file-card .file-card-buttons
 {
     display: table-cell;
     vertical-align: middle;
 }
 
-.file-list > .file-card > .file-card-icon {
+.file-list .file-card .file-card-icon {
     padding: 5px;
     width: 5%;
+    position: relative;
 }
 
-.file-list > .file-card > .file-card-name {
+.file-list .file-card .file-card-name {
     width: 85%;
 }
 
-.file-list > .file-card > .file-card-info {
+.file-list .file-card .file-card-info {
     white-space: nowrap;
     width: 5%;
     padding-right: 5px;
     padding-left: 5px;
 }
 
-.file-list > .file-card > .file-card-buttons {
+.file-list .file-card .file-card-buttons {
     width: 5%;
     padding-right: 10px;
     padding-left: 5px;
 }
 
-.file-list > .file-card > .file-card-icon img {
+.file-list .file-card .file-card-icon img {
     display: block;
     text-align: center;
 }
 
-.file-list > .file-card > .file-card-icon div {
+.file-list .file-card .file-card-icon div {
     display: block;
     vertical-align: middle;
     height: 50px;
     width: 50px;
 }
 
-.file-list > .file-card:not(.with-thumbnail) > .file-card-icon img {
+.file-list .file-card:not(.with-thumbnail) .file-card-icon img {
     height: 50px;
     width: 50px;
 }
 
-.file-list > .file-card.with-thumbnail > .file-card-icon img {
+.file-list .file-card.with-thumbnail .file-card-icon img {
     border: 1px solid lightgray;
     max-height: 50px;
     max-width: 50px;
@@ -340,24 +347,18 @@ a#menuToggler:hover {
 
 /*icon checkboxes*/
 
-.file-card-icon input[type=checkbox] {
-    /*display: none;*/
+.file-card-icon div {
+    position: relative;
+}
+
+.file-card-icon input[type="checkbox"] {
     margin: 0;
     padding: 0;
     position: absolute;
-    bottom: 0.5em;
-    right: 0.5em;
+    top: 0px;
+    left: 0px;
 }
 
-/*.file-card:hover .file-card-icon input[type=checkbox],
-.file-card       .file-card-icon input[type=checkbox]:checked
-{
-    display: inherit;
-}*/
-
-.file-grid .file-card-icon input[type="checkbox"] {
-    bottom: inherit;
-    right: inherit;
-    top: 0.5em;
-    left: 0.5em;
+.file-list .file-card-icon input[type="checkbox"] {
+    top: 5px;
 }

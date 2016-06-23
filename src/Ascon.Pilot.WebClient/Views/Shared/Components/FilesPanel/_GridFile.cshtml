@@ -3,7 +3,7 @@
     var name = Model.Name;
 }
 
-<div class="col-lg-2 col-md-3 col-sm-4 col-xs-6 file-card" onclick="processCardClick(this)"
+<div class="col-lg-2 col-md-3 col-sm-4 col-xs-12 file-card @(Model.IsThumbnailAvailable ? "with-thumbnail" : "")" onclick="processCardClick(this)"
      data-id="@Model.Id" data-name="@Html.Raw(name)" data-size="@Model.Size" data-ext="@Model.Extension" data-typeid="@Model.ObjectTypeId">
     <div class="file-card-icon">
         @{
@@ -13,21 +13,21 @@
                 href = Url.Action("Thumbnail", "Files", new { id = Model.Id, size = Model.Size, extension = Model.Extension });
             }
         }
-        <div style="position: relative;">
-            <img class="img-responsive center-block" src="@href" width="70" height="70" alt="@Model.Name" />
-            <input name="objectsIds" type="checkbox" value="@Model.ObjectId" />
+        <div class="center-block">
+            <img src="@href" alt="@Model.Name"/>
         </div>
+        <input name="objectsIds" type="checkbox" value="@Model.ObjectId" />
     </div>
     <div class="file-card-name">
         <a onclick="processFileCardClick(this)" role="button">
             @name
         </a>
     </div>
-    <div class="file-card-buttons">
+    @*<div class="file-card-buttons">
         <a class="btn btn-default btn-xs" href="@Url.Action("Download", "Files", new { id = Model.Id, size = Model.Size, name = $"{name}{Model.Extension}"})" title="Скачать файл">
             <i class="glyphicon glyphicon-download-alt"></i>
         </a>
-    </div>
+    </div>*@
 </div>
 
 

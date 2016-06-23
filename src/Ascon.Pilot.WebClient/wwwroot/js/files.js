@@ -47,6 +47,21 @@ function processCardClick(el) {
     card.addClass("active");
     $("#renameButton").show();
     $("#removeButton").show();
+
+    var id = card.data("id");
+    var name = card.data("name");
+    var size = card.data("size");
+    var ext = card.data("ext");
+    if (size === undefined)
+        return;
+
+    var query = jQuery.param({
+        id: id,
+        name: name.endsWith(ext) ? name : name + ext,
+        size: size
+    });
+    $("#downloadButton").prop("href", downloadUrl + "?" + query);
+    $("#downloadButton").show();
 }
 
 function processFileCardClick(el) {
@@ -68,25 +83,24 @@ function processFileCardClick(el) {
             previewButton.show();
         }
         var url = "/Files/Thumbnail/" + id + "?size=" + size + "&extension=" + ext;
-        $("#viewModalContent").html('<img src="' + url + '" alt="' + name + '"/>');
+        $("#viewModalContent").html('<img class="img-responsive center-block" src="' + url + '" alt="' + name + '"/>');
     } else {
-        $("#viewModalContent").html('<img src="/Home/GetTypeIcon/' + typeid + '"/>');
+        $("#viewModalContent").html('<img class="img-responsive center-block" src="/Home/GetTypeIcon/' + typeid + '"/>');
         previewButton.hide();
     }
 
     $("#viewModalInfo")
         .html(objectToDlist({
-            "Размер": size + " байт",
-            "Название": name
+            "Название": name,
+            "Размер": size + " байт"
         }));
 
     $("#modalDownloadButton").prop("href", downloadUrl + "?" + query);
-    $("#viewModalLabel").text(name);
     $("#viewModal").modal();
 }
 
 function objectToDlist(obj) {
-    var html = '<h4><i class="glyphicon glyphicon-exclamation-sign"></i>&nbsp;Информация</h4><dl>';
+    var html = '<h4><i class="glyphicon glyphicon-info-sign"></i>&nbsp;Информация</h4><dl>';
     $.each(obj,
         function (propName, propValue) {
             html += "<dt>" + propName + "</dt>";

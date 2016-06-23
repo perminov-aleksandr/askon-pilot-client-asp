@@ -6,8 +6,8 @@
 
 <div class="file-card" onclick="processCardClick(this)" data-id="@Model.Id" data-name="@Model.Name">
     <div class="file-card-icon">
-        <div style="position: relative">
-            <img src="@Url.Action("GetTypeIcon", "Home", new {id = Model.ObjectTypeId})" width="50" height="50" alt="@Model.ObjectTypeName" />
+        <div>
+            <img src="@Url.Action("GetTypeIcon", "Home", new {id = Model.ObjectTypeId})" alt="@Model.ObjectTypeName" />
             @*<input name="objectsIds" type="checkbox" value="@Model.Id" />*@
         </div>
     </div>
