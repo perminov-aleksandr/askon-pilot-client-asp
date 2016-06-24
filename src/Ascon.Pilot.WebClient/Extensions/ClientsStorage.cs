@@ -35,6 +35,13 @@ namespace Ascon.Pilot.WebClient.Extensions
             }
         }
 
+        /// <summary>
+        /// Deserialize values if type T from session dictionary using protobuf-net
+        /// </summary>
+        /// <typeparam name="T">type of value</typeparam>
+        /// <param name="session">Session where values located</param>
+        /// <param name="key">key of values in dictionary</param>
+        /// <returns></returns>
         public static T GetSessionValues<T>(this ISession session, string key)
         {
             var val = session.Get(key);

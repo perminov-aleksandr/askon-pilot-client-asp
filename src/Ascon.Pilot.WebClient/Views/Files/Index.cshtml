@@ -6,7 +6,7 @@
     Layout = "_FilesLayout";
 }
 
-<form action="@Url.Action("DownloadArchive")" id="downloadArchiveForm">
+<form action="@Url.Action("DownloadArchive")" id="downloadArchiveForm" method="post">
     <div class="row">
         <div class="col-md-4 hidden-xs hidden-sm collapse in" id="sidePanel" style="padding-right: 0;">
             @await Component.InvokeAsync("SidePanel", Model.CurrentFolderId)

@@ -109,7 +109,7 @@ function objectToDlist(obj) {
     return html + "</dl>";
 }
 
-function downloadArchive() {
+function downloadArchive(el) {
     $("form#downloadArchiveForm").submit();
 }
 

@@ -7,8 +7,8 @@
     <div class="file-card-icon">
         <div class="center-block">
             <img src="@Url.Action("GetTypeIcon", "Home", new {id = Model.ObjectTypeId})" alt="@Model.Name"/>
-            @*<input name="objectsIds" type="checkbox" value="@Model.Id" />*@
         </div>
+        <input name="objectsIds" type="checkbox" value="@Model.Id" />
     </div>
     <div class="file-card-name">
         <a href="@Url.Action("Index", "Files", new {id = Model.Id})">@name</a>

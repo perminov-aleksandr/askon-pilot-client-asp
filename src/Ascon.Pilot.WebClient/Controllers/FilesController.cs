@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
+using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.ViewComponents;
 using Ascon.Pilot.WebClient.ViewModels;
@@ -15,7 +16,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Session;
 using Microsoft.Extensions.Logging;
-using Microsoft.Net.Http.Headers;
+
 #if DNX451
 using MuPDFLib;
 using System.Drawing;
@@ -137,7 +138,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             });
         }
 
-        public async Task<IActionResult> DownloadArchive(Guid[] objectsIds)
+        public IActionResult DownloadArchive(Guid[] objectsIds)
         {
             if (objectsIds.Length == 0)
                 return HttpNotFound();
@@ -145,30 +146,55 @@ namespace Ascon.Pilot.WebClient.Controllers
             var serverApi = HttpContext.GetServerApi();
             var objects = serverApi.GetObjects(objectsIds);
 
+            var types = HttpContext.Session.GetMetatypes();
+
             using (var compressedFileStream = new MemoryStream())
             {
                 using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Update, true))
                 {
-                    foreach (var obj in objects)
+                    AddObjectsToArchive(serverApi, objects, zipArchive, types, "");
+                }
+                return new FileContentResult(compressedFileStream.ToArray(), "application/zip") { FileDownloadName = "archive.zip" };
+            }
+        }
+
+        private void AddObjectsToArchive(IServerApi serverApi, List<DObject> objects, ZipArchive archive, IDictionary<int, MType> types, string currentPath)
+        {
+            foreach (var obj in objects)
+            {
+                if (!types[obj.TypeId].Children.Any())
+                {
+                    var dFile = obj.ActualFileSnapshot.Files.FirstOrDefault();
+                    if (dFile == null)
+                        continue;
+
+                    var fileId = dFile.Body.Id;
+                    var fileSize = dFile.Body.Size;
+                    var fileBody = serverApi.GetFileChunk(fileId, 0, (int)fileSize);
+
+                    if (archive.Entries.Any(x => x.Name == dFile.Name))
+                        dFile.Name += " Conflicted";
+                    var zipEntry = archive.CreateEntry(Path.Combine(currentPath, dFile.Name), CompressionLevel.NoCompression);
+
+                    //Get the stream of the attachment
+                    using (var originalFileStream = new MemoryStream(fileBody))
+                    using (var zipEntryStream = zipEntry.Open())
                     {
-                        var dFile = obj.ActualFileSnapshot.Files.First();
-                        var fileId = dFile.Body.Id;
-                        var fileSize = dFile.Body.Size;
-                        var fileBody = serverApi.GetFileChunk(fileId, 0, (int)fileSize);
-
-                        var zipEntry = zipArchive.CreateEntry(dFile.Name, CompressionLevel.NoCompression);
-
-                        //Get the stream of the attachment
-                        using (var originalFileStream = new MemoryStream(fileBody))
-                        using (var zipEntryStream = zipEntry.Open())
-                        {
-                            //Copy the attachment stream to the zip entry stream
-                            await originalFileStream.CopyToAsync(zipEntryStream);
-                        }
+                        //Copy the attachment stream to the zip entry stream
+                        originalFileStream.CopyTo(zipEntryStream);
                     }
                 }
+                else
+                {
+                    var name = obj.GetTitle(types[obj.TypeId]);
+                    var directoryPath = Path.Combine(currentPath, name);
+                    var objChildrenIds = obj.Children.Select(x => x.ObjectId).ToArray();
+                    if (!objChildrenIds.Any())
+                        continue;
 
-                return new FileContentResult(compressedFileStream.ToArray(), "application/zip") { FileDownloadName = "archive.zip" };
+                    var objChildren = serverApi.GetObjects(objChildrenIds);
+                    AddObjectsToArchive(serverApi, objChildren, archive, types, directoryPath);
+                }
             }
         }
 
@@ -222,25 +248,7 @@ namespace Ascon.Pilot.WebClient.Controllers
 #endif
             return virtualFileResult;
         }
-
-        private byte[] GetFileFromObject(Guid id)
-        {
-            var serverApi = HttpContext.GetServerApi();
-            var dObjects = serverApi.GetObjects(new [] {id});
-            var obj = dObjects.First();
-            if (obj?.ActualFileSnapshot?.Files?.Any() == false)
-                return null;
-
-            var file = obj.ActualFileSnapshot.Files.First();
-            var fileExtension = Path.GetExtension(file.Name);
-            if (fileExtension == ".pdf" || fileExtension == ".xps")
-            {
-                byte[] result = serverApi.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
-                return result;
-            }
-            return null;
-        }
-
+        
         [HttpPost]
         public ActionResult Rename(Guid idToRename, string newName, Guid renameRootId)
         {
@@ -276,7 +284,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                 if (file.Length == 0)
                     throw new ArgumentNullException(nameof(file));
 
-                string fileName = GetFileName(file.ContentDisposition);
+                string fileName = file.GetFileName();
                 var pathToSave = Path.Combine(_environment.WebRootPath, fileName);
                 //await file.SaveAsAsync(pathToSave);
             }
@@ -285,13 +293,6 @@ namespace Ascon.Pilot.WebClient.Controllers
                 _logger.LogWarning(1, "Unable to upload file", ex);
             }
             return RedirectToAction("Index", new { id = folderId });
-        }
-
-        private static string GetFileName(string contentDisposition)
-        {
-            ContentDispositionHeaderValue cd;
-            ContentDispositionHeaderValue.TryParse(contentDisposition, out cd);
-            return HeaderUtilities.RemoveQuotes(cd?.FileName);
         }
     }
 }
