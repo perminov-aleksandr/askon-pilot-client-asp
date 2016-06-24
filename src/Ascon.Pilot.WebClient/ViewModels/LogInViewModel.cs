@@ -29,5 +29,9 @@ namespace Ascon.Pilot.WebClient.ViewModels
         [Display(Name = "Пароль")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Required]
+        [Display(Name = "Запомнить меня")]
+        public bool RememberMe { get; set; }
     }
 }

@@ -65,7 +65,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         {
             return await Task.Run(() =>
             {
-                var serverApi = HttpContext.Session.GetServerApi();
+                var serverApi = HttpContext.GetServerApi();
                 var node = serverApi.GetObjects(new[] {id}).First();
 
                 var types = HttpContext.Session.GetMetatypes();
@@ -113,7 +113,7 @@ namespace Ascon.Pilot.WebClient.Controllers
 
         public IActionResult DownloadPdf(Guid id, int size, string name)
         {
-            var serverApi = HttpContext.Session.GetServerApi();
+            var serverApi = HttpContext.GetServerApi();
             var fileChunk = serverApi.GetFileChunk(id, 0, size);
             var fileDownloadName = string.IsNullOrWhiteSpace(name) ? id.ToString() : name;
             if (Response.Headers.ContainsKey("Content-Disposition"))
@@ -127,7 +127,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             return await Task.Run(() =>
             {
                 {
-                    var serverApi = HttpContext.Session.GetServerApi();
+                    var serverApi = HttpContext.GetServerApi();
                     var fileChunk = serverApi.GetFileChunk(id, 0, size);
                     return new FileContentResult(fileChunk, "application/octet-stream")
                     {
@@ -142,7 +142,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             if (objectsIds.Length == 0)
                 return HttpNotFound();
 
-            var serverApi = HttpContext.Session.GetServerApi();
+            var serverApi = HttpContext.GetServerApi();
             var objects = serverApi.GetObjects(objectsIds);
 
             using (var compressedFileStream = new MemoryStream())
@@ -181,7 +181,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             if (size >= 10*1024*1024)
                 return virtualFileResult;
 
-            var serverApi = HttpContext.Session.GetServerApi();
+            var serverApi = HttpContext.GetServerApi();
             var file = serverApi.GetFileChunk(id, 0, size);
             try
             {
@@ -225,7 +225,7 @@ namespace Ascon.Pilot.WebClient.Controllers
 
         private byte[] GetFileFromObject(Guid id)
         {
-            var serverApi = HttpContext.Session.GetServerApi();
+            var serverApi = HttpContext.GetServerApi();
             var dObjects = serverApi.GetObjects(new [] {id});
             var obj = dObjects.First();
             if (obj?.ActualFileSnapshot?.Files?.Any() == false)
@@ -244,7 +244,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         [HttpPost]
         public ActionResult Rename(Guid idToRename, string newName, Guid renameRootId)
         {
-            var api = HttpContext.Session.GetServerApi();
+            var api = HttpContext.GetServerApi();
             var objectToRename = api.GetObjects(new[] {idToRename})[0];
             var newObject = objectToRename.Clone();
             

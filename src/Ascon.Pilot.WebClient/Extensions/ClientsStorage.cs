@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.Claims;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
@@ -45,70 +47,63 @@ namespace Ascon.Pilot.WebClient.Extensions
         }
     }
 
-    public static class ClientsStorage
+    public static class HttpContextClientsStorage
     {
         private static readonly Dictionary<Guid, HttpPilotClient>  ClientsDictionary = new Dictionary<Guid, HttpPilotClient>();
 
-        public static HttpPilotClient GetClient(this ISession session)
+        public static HttpPilotClient GetClient(this HttpContext context)
         {
-            var clientIdString = session.GetString(SessionKeys.ClientId);
+            var clientIdString = context.User.FindFirstValue(ClaimTypes.Sid);
             if (string.IsNullOrEmpty(clientIdString))
-            {
-                clientIdString = Guid.NewGuid().ToString();
-                session.SetString(SessionKeys.ClientId, clientIdString);
-            }
+                return null;
 
             var clientId = Guid.Parse(clientIdString);
             if (ClientsDictionary.ContainsKey(clientId))
             {
                 var client = ClientsDictionary[clientId];
-                if (!client.IsClientActive())
-                {
-                    return null;
-                    /*client.Connect(ApplicationConst.PilotServerUrl);
-                    var serverApi = session.GetServerApi();
-                    var dbInfo = serverApi.OpenDatabase(
-                        session.GetString(SessionKeys.DatabaseName), 
-                        session.GetString(SessionKeys.Login),
-                        session.GetString(SessionKeys.ProtectedPassword), false);
-                    if (dbInfo == null)
-                        return null;*/
-                }
-                return client;
+                if (client.IsClientActive())
+                    return client;
             }
 
-            var newClient = new HttpPilotClient();
-            ClientsDictionary.Add(clientId, newClient);
-            return newClient;
+            return null;
         }
 
-        public static IServerApi GetServerApi(this ISession session, IServerCallback callback = null)
+        public static void SetClient(this HttpContext context, HttpPilotClient client, Guid clientId)
+        {
+            ClientsDictionary[clientId] = client;
+        }
+
+        public static IServerApi GetServerApi(this HttpContext context, IServerCallback callback = null)
         {
             if (callback == null)
                 callback = CallbackFactory.Get<IServerCallback>();
-            var client = session.GetClient();
+            var client = context.GetClient();
             if (client == null)
-                client = Reconnect(session, callback);
+                client = Reconnect(context, callback);
             return client.GetServerApi(callback);
         }
 
-        private static HttpPilotClient Reconnect(ISession session, IServerCallback callback)
+        private static HttpPilotClient Reconnect(HttpContext context, IServerCallback callback)
         {
-            var clientIdString = session.GetString(SessionKeys.ClientId);
             var client = new HttpPilotClient();
-
             client.Connect(ApplicationConst.PilotServerUrl);
 
             var serverApi = client.GetServerApi(callback);
             
-            var dbName = session.GetString(SessionKeys.DatabaseName);
-            var login = session.GetString(SessionKeys.Login);
-            var password = session.GetString(SessionKeys.ProtectedPassword);
+            var dbName = context.User.FindFirstValue(ClaimTypes.Surname);
+            var login = context.User.FindFirstValue(ClaimTypes.Name);
+            var protectedPassword = context.User.FindFirstValue(ClaimTypes.UserData);
             var useWindowsAuth = login.Contains("/") || login.Contains("\\");
-            var dbInfo = serverApi.OpenDatabase(dbName, login, password, useWindowsAuth);
+            var dbInfo = serverApi.OpenDatabase(dbName, login, protectedPassword, useWindowsAuth);
             if (dbInfo == null)
                 throw new TransportException();
+
+            var clientIdString = context.User.FindFirstValue(ClaimTypes.Sid);
             ClientsDictionary[Guid.Parse(clientIdString)] = client;
+
+            DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
+            context.Session.SetSessionValues(SessionKeys.MetaTypes, dMetadata.Types.ToDictionary(x => x.Id, y => y));
+
             return client;
         }
     }

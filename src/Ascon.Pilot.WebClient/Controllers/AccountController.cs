@@ -5,6 +5,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Ascon.Pilot.Core;
+using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.ViewModels;
@@ -52,9 +53,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             if (!ModelState.IsValid)
                 return View("LogIn");
 
-            var client = HttpContext.Session.GetClient();
-            if (client == null)
-                return new HttpStatusCodeResult((int)HttpStatusCode.InternalServerError);
+            var client = HttpContext.GetClient() ?? new HttpPilotClient();
 
             var serverUrl = ApplicationConst.PilotServerUrl;
             try
@@ -67,7 +66,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                 ModelState.AddModelError("", "Сервер недоступен.");
                 return View();
             }
-
+            
             var serviceCallbackProxy = CallbackFactory.Get<IServerCallback>();
             var serverApi = client.GetServerApi(serviceCallbackProxy);
 
@@ -79,21 +78,17 @@ namespace Ascon.Pilot.WebClient.Controllers
                 ModelState.AddModelError("", "Авторизация не удалась, проверьте данные и повторите вход");
                 return View("LogIn", model);
             }
-            await SignInAsync(dbInfo, model.DatabaseName, protectedPassword);
+            var sid = Guid.NewGuid();
+            await SignInAsync(dbInfo, model.DatabaseName, protectedPassword, sid, model.RememberMe);
 
+            HttpContext.SetClient(client, sid);
             DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
-            HttpContext.Session.SetString(SessionKeys.DatabaseName, model.DatabaseName);
-            HttpContext.Session.SetString(SessionKeys.Login, model.Login);
-            HttpContext.Session.SetString(SessionKeys.ProtectedPassword, protectedPassword);
-            //HttpContext.Session.SetSessionValues(SessionKeys.DatabaseName, model.DatabaseName);
-            //HttpContext.Session.SetSessionValues(SessionKeys.Login, model.Login);
-            //HttpContext.Session.SetSessionValues(SessionKeys.ProtectedPassword, protectedPassword);
             HttpContext.Session.SetSessionValues(SessionKeys.MetaTypes, dMetadata.Types.ToDictionary(x => x.Id, y => y));
 
             return RedirectToAction("Index", "Home");
         }
         
-        private async Task SignInAsync(DDatabaseInfo dbInfo, string dbName, string protectedPassword)
+        private async Task SignInAsync(DDatabaseInfo dbInfo, string dbName, string protectedPassword, Guid clientId, bool isPersistent)
         {
             var claims = new List<Claim>
             {
@@ -101,18 +96,19 @@ namespace Ascon.Pilot.WebClient.Controllers
                 new Claim(ClaimTypes.Name, dbInfo.Person.Login),
                 new Claim(ClaimTypes.GivenName, dbInfo.Person.DisplayName),
                 new Claim(ClaimTypes.Role, dbInfo.Person.IsAdmin ? Roles.Admin : Roles.User),
-                new Claim(ClaimTypes.UserData, protectedPassword)
+                new Claim(ClaimTypes.UserData, protectedPassword),
+                new Claim(ClaimTypes.Sid, clientId.ToString())
             };
 
             var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, ApplicationConst.PilotMiddlewareInstanceName));
             
-            await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal, new AuthenticationProperties { IsPersistent = true });
+            await HttpContext.Authentication.SignInAsync(ApplicationConst.PilotMiddlewareInstanceName, principal, new AuthenticationProperties { IsPersistent = isPersistent });
         }
         
         public async Task<IActionResult> LogOff()
         {
             await HttpContext.Authentication.SignOutAsync(ApplicationConst.PilotMiddlewareInstanceName);
-            HttpContext.Session.GetClient()?.Dispose();
+            HttpContext.GetClient()?.Dispose();
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }

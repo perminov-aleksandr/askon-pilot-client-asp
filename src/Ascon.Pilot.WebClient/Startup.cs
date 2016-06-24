@@ -65,26 +65,7 @@ namespace Ascon.Pilot.WebClient
             }
 
             app.UseSession();
-
-            app.Use(async (context, next) =>
-            {
-                int visits = context.Session.GetInt32(SessionKeys.VisitsCount) ?? 0;
-                if (visits == 0)
-                {
-                    // New session, do any initial setup and then mark the session as ready
-                    if (context.User?.Identity?.IsAuthenticated == true)
-                    {
-                        await context.Authentication.SignOutAsync(ApplicationConst.PilotMiddlewareInstanceName);
-                        context.Response.Redirect("/Account/LogIn");
-                    }
-                    else
-                    {
-                        context.Session.SetInt32(SessionKeys.VisitsCount, 1);
-                    }
-                }
-                await next();
-            });
-
+            
             app.UseIISPlatformHandler();
 
             app.UseStaticFiles();

@@ -6,7 +6,7 @@
     {
         var crumb = Model.Dequeue();
         <li>
-            <a href="@Url.Action("Index", new { id = crumb.Key })">@crumb.Value</a>
+            <a href="@Url.Action("Index", "Files", new { id = crumb.Key })">@crumb.Value</a>
         </li>
     }
 }

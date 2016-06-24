@@ -30,7 +30,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                     var viewName = panelType == FilesPanelType.List ? "List" : "Grid";
 
                     var types = HttpContext.Session.GetMetatypes();
-                    var serverApi = HttpContext.Session.GetServerApi();
+                    var serverApi = HttpContext.GetServerApi();
                     var folder = serverApi.GetObjects(new[] { folderId }).First();
                     
                     if (folder.Children?.Any() != true)

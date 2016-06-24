@@ -33,7 +33,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
         {
             id = id ?? DObject.RootId;
             
-            var serverApi = HttpContext.Session.GetServerApi();
+            var serverApi = HttpContext.GetServerApi();
             var rootObject = serverApi.GetObjects(new[] { id.Value }).First();
 
             var mTypes = HttpContext.Session.GetMetatypes();
