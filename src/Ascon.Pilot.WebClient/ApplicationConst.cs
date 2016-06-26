@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.WebClient.Controllers;
+using Ascon.Pilot.WebClient.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace Ascon.Pilot.WebClient

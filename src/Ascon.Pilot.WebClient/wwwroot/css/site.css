@@ -251,6 +251,20 @@ a#menuToggler:hover {
     color: white
 }
 
+.file-grid .file-card.back {
+    display: table;
+}
+
+.file-grid .file-card.back div {
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.file-grid .file-card.back div .glyphicon {
+    font-size: 2em
+}
+
 /*-------------file-card for list-------------------*/
 
 .file-list .file-card {
@@ -343,6 +357,21 @@ a#menuToggler:hover {
     max-height: 50px;
     max-width: 50px;
     margin: auto;
+}
+
+.file-list .file-card.back {
+    height: 50px;
+    display: table;
+    width: 100%;
+}
+
+.file-list .file-card.back div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.file-list .file-card.back .glyphicon {
+    font-size: 2em;
 }
 
 /*icon checkboxes*/

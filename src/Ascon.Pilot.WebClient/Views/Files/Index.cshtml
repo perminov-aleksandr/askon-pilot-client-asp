@@ -13,7 +13,7 @@
         </div>
         <div class="col-md-8 col-sm-12" id="filesPanelContainer">
             <div>
-                <ol class="breadcrumb" id="breadcrumbs" style="margin-bottom: 15px;"></ol>
+                @Component.Invoke("Breadcrumbs", Model.CurrentFolderId)
             </div>
             <div id="filesPanel" style="padding-bottom: 15px;">
                 @await Component.InvokeAsync("FilesPanel", Model.CurrentFolderId, Model.FilesPanelType, ViewBag.IsSource ?? false)

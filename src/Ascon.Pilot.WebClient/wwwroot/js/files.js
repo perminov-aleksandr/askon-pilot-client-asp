@@ -8,12 +8,12 @@ $(document).ready(function () {
 
     treeControl = createTreeView(treeData);
     setObjectIdsCheckCallback();
-    var selected = treeControl.getSelected();
-    var selectedNode = { id: "", text: "Начало" };
-    if (selected.length !== 0) {
-        selectedNode = selected[0];
-    }
-    $("#breadcrumbs").html(createHtmlForBreadcrumbs(selectedNode));
+    //var selected = treeControl.getSelected();
+    //var selectedNode = { id: "", text: "Начало" };
+    //if (selected.length !== 0) {
+    //    selectedNode = selected[0];
+    //}
+    //$("#breadcrumbs").html(createHtmlForBreadcrumbs(selectedNode));
     $("#sidePanel").on("hidden.bs.collapse", function () {
         $("#filesPanelContainer").removeClass("col-md-8").addClass("col-md-12");
     });

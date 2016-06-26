@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.WebClient.Controllers;
 using Ascon.Pilot.WebClient.Extensions;
+using Ascon.Pilot.WebClient.Models;
 using Ascon.Pilot.WebClient.ViewModels;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc;
@@ -49,7 +50,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                     var model = new List<FileViewModel>(childrens.Count);
 
                     var folderType = types[folder.TypeId];
-                    if (folderType.IsMountable)
+                    if (folderType.IsMountable && !(ViewBag.IsSource ?? false))
                         model.Add(new FileViewModel
                         {
                             IsFolder = true,

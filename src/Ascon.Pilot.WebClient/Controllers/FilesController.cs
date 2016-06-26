@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.Server.Api.Contracts;
 using Ascon.Pilot.WebClient.Extensions;
+using Ascon.Pilot.WebClient.Models;
 using Ascon.Pilot.WebClient.ViewComponents;
 using Ascon.Pilot.WebClient.ViewModels;
 using Castle.Core.Logging;
@@ -25,12 +26,6 @@ using System.Drawing.Imaging;
 
 namespace Ascon.Pilot.WebClient.Controllers
 {
-    public enum FilesPanelType
-    {
-        List,
-        Grid
-    }
-
     [Authorize]
     public class FilesController : Controller
     {
@@ -47,6 +42,11 @@ namespace Ascon.Pilot.WebClient.Controllers
         {
             HttpContext.Session.SetSessionValues(SessionKeys.FilesPanelType, type);
             return Redirect(returnUrl);
+        }
+
+        public IActionResult GetBreabcrumbs(Guid id)
+        {
+            return ViewComponent(typeof(BreadcrumbsViewComponent), id);
         }
 
         public IActionResult Index(Guid? id, bool isSource = false)
