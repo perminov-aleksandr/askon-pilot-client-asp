@@ -14,10 +14,13 @@ namespace Ascon.Pilot.WebClient
             var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
             var config = builder.Build();
             PilotServerUrl = config["PilotServer:Url"];
+            ShowIconAsThumbnail = bool.Parse(config["PilotServer:ShowIconAsThumbnail"]);
         }
 
         public static readonly string PilotServerUrl;
         public static readonly string PilotMiddlewareInstanceName = "AskonPilotMiddlewareInstance";
+
+        public static readonly bool ShowIconAsThumbnail;
 
         public static readonly string HttpSchemeName = "http";
         public static readonly string SchemeDelimiter = "://";

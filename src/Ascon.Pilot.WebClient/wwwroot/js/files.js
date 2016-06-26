@@ -83,7 +83,7 @@ function processFileCardClick(el) {
             previewButton.prop("href", "/Files/Preview?" + query);
             previewButton.show();
         }
-        var url = "/Files/Thumbnail/" + id + "?size=" + size + "&extension=" + ext;
+        var url = "/Files/Image/" + id + "?size=" + size + "&extension=" + ext;
         $("#viewModalContent").html('<img class="img-responsive center-block" src="' + url + '" alt="' + name + '"/>');
     } else {
         $("#viewModalContent").html('<img class="img-responsive center-block" src="/Home/GetTypeIcon/' + typeid + '"/>');

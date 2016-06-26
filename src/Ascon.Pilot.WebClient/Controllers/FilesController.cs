@@ -204,13 +204,20 @@ namespace Ascon.Pilot.WebClient.Controllers
             }
         }
 
-        public async Task<IActionResult> Thumbnail(Guid id, int size, string extension)
+        public IActionResult Thumbnail(Guid id, int size, string extension, int typeId)
+        {
+            if (ApplicationConst.ShowIconAsThumbnail)
+                return Image(id, size, extension);
+            return RedirectToAction("GetTypeIcon", "Home", new { id = typeId });
+        }
+
+        public IActionResult Image(Guid id, int size, string extension)
         {
             const string pngContentType = "image/png";
             const string svgContentType = "image/svg+xml";
             var virtualFileResult = File(Url.Content("~/images/file.svg"), svgContentType);
 #if DNX451
-            if (size >= 10*1024*1024)
+            if (size >= 10 * 1024 * 1024)
                 return virtualFileResult;
 
             var serverApi = HttpContext.GetServerApi();
@@ -254,7 +261,7 @@ namespace Ascon.Pilot.WebClient.Controllers
 #endif
             return virtualFileResult;
         }
-        
+
         [HttpPost]
         public ActionResult Rename(Guid idToRename, string newName, Guid renameRootId)
         {
