@@ -1,0 +1,6 @@
+user@server:~$ wget -N https://raw.githubusercontent.com/VeselovAndrey/dotnet-install/master/debian-dotnet-install.sh && chmod +x debian-dotnet-install.sh
+
+user@server:~$ sudo apt-get install git
+user@server:~$ git clone git://github.com/VeselovAndrey/dotnet-install.git ~/dotnet-install
+user@server:~$ cd dotnet-install
+user@server:~/dotnet-install$ chmod +x *.sh
