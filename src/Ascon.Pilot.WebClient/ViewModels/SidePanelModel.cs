@@ -109,6 +109,9 @@ namespace Ascon.Pilot.WebClient.ViewModels
                 }
             var mType = types[DObject.TypeId];
             string icon;
+            var tags = new List<string>(2){DObject.Children.Count(x => !types[x.TypeId].IsProjectFileOrFolder()).ToString()};
+            if (mType.IsMountable)
+                tags.Add("ИФ");
             return new
             {
                 id = DObject.Id,
@@ -118,7 +121,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
                     selected = Selected,
                     expanded = Expanded
                 },
-                tags = new [] {DObject.Children.Count.ToString()},
+                tags = tags.ToArray(),
                 nodes = nodes.Any() || DObject.Children.Any(y => types[y.TypeId].Children.Any()) ? nodes.ToArray() : null
             };
         }

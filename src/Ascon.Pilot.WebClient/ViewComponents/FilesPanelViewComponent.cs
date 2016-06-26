@@ -7,7 +7,9 @@ using Ascon.Pilot.Core;
 using Ascon.Pilot.WebClient.Controllers;
 using Ascon.Pilot.WebClient.Extensions;
 using Ascon.Pilot.WebClient.ViewModels;
+using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Ascon.Pilot.WebClient.ViewComponents
 {
@@ -16,68 +18,139 @@ namespace Ascon.Pilot.WebClient.ViewComponents
     /// </summary>
     public class FilesPanelViewComponent : ViewComponent
     {
+        private ILogger<FilesController> _logger;
+
+        public FilesPanelViewComponent(ILogger<FilesController> logger)
+        {
+            _logger = logger;
+        }
+
         /// <summary>
-        /// Асинхронный вызов представления панели управления файлами
+        /// Вызвать компонент панели файлов
         /// </summary>
-        /// <param name="folderId">Имя текущего каталога</param>
+        /// <param name="folderId">Идентификатор текущего каталога</param>
         /// <param name="panelType">Тип отображения панели</param>
+        /// <param name="onlySource">Отображать только исходные файлы</param>
         /// <returns>Представление панели управения файлом для каталога с идентификатором Id и итпом отбражения Type.</returns>
-        public async Task<IViewComponentResult> InvokeAsync(Guid folderId, FilesPanelType panelType)
+        public async Task<IViewComponentResult> InvokeAsync(Guid folderId, FilesPanelType panelType, bool onlySource = false)
         {
             return await Task.Run(() =>
             {
                 {
-                    var viewName = panelType == FilesPanelType.List ? "List" : "Grid";
-
                     var types = HttpContext.Session.GetMetatypes();
                     var serverApi = HttpContext.GetServerApi();
                     var folder = serverApi.GetObjects(new[] { folderId }).First();
                     
                     if (folder.Children?.Any() != true)
-                        return View(viewName, new FileViewModel[] { });
-
-                    var childrenIds = folder.Children
-                        .Select(x => x.ObjectId).ToArray();
+                        return View(panelType == FilesPanelType.List ? "List" : "Grid", new FileViewModel[] { });
+                    
+                    var childrenIds = folder.Children.Select(x => x.ObjectId).ToArray();
                     var childrens = serverApi.GetObjects(childrenIds);
                     var model = new List<FileViewModel>(childrens.Count);
-                    foreach (var dObject in childrens)
-                    {
-                        var mType = types[dObject.TypeId];
-                        if (mType.Children.Any())
-                            model.Add(new FileViewModel
-                            {
-                                Id = dObject.Id,
-                                IsFolder = true,
-                                ObjectId = dObject.Id,
-                                ObjectTypeId = dObject.TypeId,
-                                ObjectTypeName = types[dObject.TypeId].Name,
-                                ObjectName = dObject.GetTitle(mType),
-                                FileName = dObject.GetTitle(mType),
-                                CreatedDate = dObject.Created,
-                                LastModifiedDate = dObject.Created,
-                                ChildrenCount = dObject.Children.Count
-                            });
-                        else if (dObject.ActualFileSnapshot?.Files?.Any() == true)
+
+                    var folderType = types[folder.TypeId];
+                    if (folderType.IsMountable)
+                        model.Add(new FileViewModel
                         {
-                            var file = dObject.ActualFileSnapshot.Files.First();
-                            model.Add(new FileViewModel
-                            {
-                                Id = file.Body.Id,
-                                IsFolder = false,
-                                ObjectId = dObject.Id,
-                                ObjectTypeId = dObject.TypeId,
-                                ObjectTypeName = types[dObject.TypeId].Name,
-                                ObjectName = dObject.GetTitle(mType),
-                                FileName = file.Name,
-                                Size = (int)file.Body.Size,
-                                LastModifiedDate = file.Body.Modified,
-                                CreatedDate = file.Body.Created
-                            });
-                        }
-                    };
-                    return View(viewName, model); 
+                            IsFolder = true,
+                            Id = folder.Id,
+                            ObjectId = folder.Id,
+                            ObjectName = "Исходные файлы",
+                            ObjectTypeName = "Папка с исходными файлами",
+                            ObjectTypeId = ApplicationConst.SOURCEFOLDER_TYPEID,
+                            LastModifiedDate = folder.Created,
+                            ChildrenCount = folder.Children.Count(x => types[x.TypeId].IsProjectFileOrFolder())
+                        });
+
+                    if (onlySource)
+                    {
+                        FillModelWithSource(childrens, types, model);
+                    }
+                    else
+                    {
+                        FillModel(childrens, types, model);
+                    }
+
+                    return View(panelType == FilesPanelType.List ? "List" : "Grid", model); 
                 }
             });
+        }
+
+        private static void FillModel(List<DObject> childrens, IDictionary<int, MType> types, List<FileViewModel> model)
+        {
+            foreach (var dObject in childrens.Where(x => !types[x.TypeId].IsProjectFileOrFolder()))
+            {
+                var mType = types[dObject.TypeId];
+                if (mType.Children.Any())
+                    model.Add(new FileViewModel
+                    {
+                        Id = dObject.Id,
+                        IsFolder = true,
+                        ObjectId = dObject.Id,
+                        ObjectTypeId = mType.Id,
+                        ObjectTypeName = mType.Name,
+                        ObjectName = dObject.GetTitle(mType),
+                        FileName = dObject.GetTitle(mType),
+                        LastModifiedDate = dObject.Created,
+                        ChildrenCount = dObject.Children.Count(x => !types[x.TypeId].IsProjectFileOrFolder()),
+                        IsMountable = mType.IsMountable
+                    });
+                else if (dObject.ActualFileSnapshot?.Files?.Any() == true)
+                {
+                    var file = dObject.ActualFileSnapshot.Files.First();
+                    model.Add(new FileViewModel
+                    {
+                        Id = file.Body.Id,
+                        IsFolder = false,
+                        ObjectId = dObject.Id,
+                        ObjectTypeId = mType.Id,
+                        ObjectTypeName = mType.Name,
+                        ObjectName = dObject.GetTitle(mType),
+                        FileName = file.Name,
+                        Size = (int) file.Body.Size,
+                        LastModifiedDate = file.Body.Modified
+                    });
+                }
+            }
+        }
+
+        private static void FillModelWithSource(List<DObject> childrens, IDictionary<int, MType> types, List<FileViewModel> model)
+        {
+            var projectChilds = childrens.Where(x => types[x.TypeId].IsProjectFileOrFolder());
+            foreach (var dObject in projectChilds)
+            {
+                var mType = types[dObject.TypeId];
+                if (mType.IsProjectFolder())
+                    model.Add(new FileViewModel
+                    {
+                        Id = dObject.Id,
+                        IsFolder = true,
+                        ObjectId = dObject.Id,
+                        ObjectTypeId = mType.Id,
+                        ObjectTypeName = mType.Name,
+                        ObjectName = dObject.GetTitle(mType),
+                        FileName = dObject.GetTitle(mType),
+                        LastModifiedDate = dObject.Created,
+                        ChildrenCount = dObject.Children.Count,
+                        IsMountable = mType.IsMountable
+                    });
+                else if (mType.IsProjectFile())
+                {
+                    var file = dObject.ActualFileSnapshot.Files.First();
+                    model.Add(new FileViewModel
+                    {
+                        Id = file.Body.Id,
+                        IsFolder = false,
+                        ObjectId = dObject.Id,
+                        ObjectTypeId = mType.Id,
+                        ObjectTypeName = mType.Name,
+                        ObjectName = dObject.GetTitle(mType),
+                        FileName = file.Name,
+                        Size = (int)file.Body.Size,
+                        LastModifiedDate = file.Body.Modified
+                    });
+                }
+            }
         }
     }
 }

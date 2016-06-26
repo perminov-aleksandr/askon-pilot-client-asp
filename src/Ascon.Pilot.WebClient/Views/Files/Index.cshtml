@@ -16,7 +16,7 @@
                 <ol class="breadcrumb" id="breadcrumbs" style="margin-bottom: 15px;"></ol>
             </div>
             <div id="filesPanel" style="padding-bottom: 15px;">
-                @await Component.InvokeAsync("FilesPanel", Model.CurrentFolderId, Model.FilesPanelType)
+                @await Component.InvokeAsync("FilesPanel", Model.CurrentFolderId, Model.FilesPanelType, ViewBag.IsSource ?? false)
             </div>
         </div>
     </div>
@@ -56,6 +56,7 @@
     <script type="text/javascript">
         var baseFilesUrl = '/Files/Index/';
         var getFilesUrl = '@Html.Raw(Url.Action("GetObject", "Files"))';
+        var getSourceUrl = '@Html.Raw(Url.Action("GetSource", "Files"))';
         var getChildsUrl = '@Html.Raw(Url.Action("GetNodeChilds", "Files"))';
         var getSidePanelUrl = '@Html.Raw(Url.Action("SidePanel", "Files"))';
         var downloadUrl = '@Html.Raw(Url.Action("Download"))';

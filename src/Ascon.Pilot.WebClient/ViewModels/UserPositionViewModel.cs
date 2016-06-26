@@ -18,7 +18,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
         /// Тип панели управления файлами
         /// </summary>
         public FilesPanelType FilesPanelType { get; set; }
-
+        
         /// <summary>
         /// Модель боковой панели
         /// </summary>

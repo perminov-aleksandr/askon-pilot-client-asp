@@ -49,7 +49,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             return Redirect(returnUrl);
         }
 
-        public IActionResult Index(Guid? id)
+        public IActionResult Index(Guid? id, bool isSource = false)
         {
             id = id ?? DObject.RootId;
             FilesPanelType type = HttpContext.Session.GetSessionValues<FilesPanelType>(SessionKeys.FilesPanelType);
@@ -59,6 +59,7 @@ namespace Ascon.Pilot.WebClient.Controllers
                 FilesPanelType = type
             };
             ViewBag.FilesPanelType = type;
+            ViewBag.IsSource = isSource;
             return View(model);
         }
         
@@ -98,10 +99,15 @@ namespace Ascon.Pilot.WebClient.Controllers
             return ViewComponent(typeof (SidePanelViewComponent), id);
         }
 
-        public IActionResult GetObject(Guid id)
+        public IActionResult GetObject(Guid id, bool isSource = false)
         {
             var filesPanelType = HttpContext.Session.GetSessionValues<FilesPanelType>(SessionKeys.FilesPanelType);
-            return ViewComponent(typeof (FilesPanelViewComponent), id, filesPanelType);
+            return ViewComponent(typeof (FilesPanelViewComponent), id, filesPanelType, isSource);
+        }
+
+        public IActionResult GetSource(Guid id)
+        {
+            return GetObject(id, true);
         }
 
         public IActionResult Preview(Guid id, int size, string name)

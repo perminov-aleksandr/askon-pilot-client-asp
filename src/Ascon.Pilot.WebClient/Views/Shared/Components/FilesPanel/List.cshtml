@@ -8,7 +8,7 @@
     }
     else
     {
-        foreach (var fileModel in Model)
+        foreach (var fileModel in Model.OrderBy(x => !x.IsFolder).ThenBy(x => x.ObjectTypeId != ApplicationConst.SOURCEFOLDER_TYPEID).ThenBy(x => x.Name))
         {
             if (fileModel.IsFolder)
             {

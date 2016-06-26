@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Ascon.Pilot.Core;
 using Ascon.Pilot.WebClient.Controllers;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +32,8 @@ namespace Ascon.Pilot.WebClient
 
         //implicitly default files panel type is LIST cause its index in enum is 0
         public const FilesPanelType DefaultFilesPanelType = 0;
+
+        public const int SOURCEFOLDER_TYPEID = -24;
     }
     
     public static class Roles

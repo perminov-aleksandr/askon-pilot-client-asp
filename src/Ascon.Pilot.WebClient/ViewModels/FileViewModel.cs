@@ -6,17 +6,6 @@ namespace Ascon.Pilot.WebClient.ViewModels
     public class FileViewModel
     {
         public Guid Id { get; set; }
-        public bool IsFolder { get; set; }
-        public string Extension {
-            get { return Path.GetExtension(FileName); }
-        }  
-        public bool IsThumbnailAvailable {
-            get
-            {
-                var extension = Extension;
-                return extension == ".xps" || extension == ".pdf";
-            }
-        }
 
         public int ObjectTypeId { get; set; }
         public string ObjectTypeName { get; set; }
@@ -49,8 +38,24 @@ namespace Ascon.Pilot.WebClient.ViewModels
             }
         }
 
+        public bool IsFolder { get; set; }
+        public string Extension
+        {
+            get { return Path.GetExtension(FileName); }
+        }
+        public bool IsThumbnailAvailable
+        {
+            get
+            {
+                var extension = Extension;
+                return extension == ".xps" || extension == ".pdf";
+            }
+        }
+
+        public bool IsMountable { get; set; }
+
         public DateTime LastModifiedDate { get; set; }
-        public DateTime CreatedDate { get; set; }
+        
         public int ChildrenCount { get; set; }
     }
 }

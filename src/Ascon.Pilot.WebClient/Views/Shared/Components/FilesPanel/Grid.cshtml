@@ -8,17 +8,9 @@
     }
     else
     {
-        foreach (var fileModel in Model)
+        foreach (var fileModel in Model.OrderBy(x => !x.IsFolder).ThenBy(x => x.ObjectTypeId != ApplicationConst.SOURCEFOLDER_TYPEID).ThenBy(x => x.Name))
         {
-            if (fileModel.IsFolder)
-            {
-                @Html.Partial("Components/FilesPanel/_GridFolder", fileModel)
-            }
-            else
-            {
-                @Html.Partial("Components/FilesPanel/_GridFile", fileModel)
-            }
-
+            @Html.Partial(fileModel.IsFolder ? "Components/FilesPanel/_GridFolder" : "Components/FilesPanel/_GridFile", fileModel)
         }
     }
 </div>

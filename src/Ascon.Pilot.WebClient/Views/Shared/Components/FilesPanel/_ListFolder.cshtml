@@ -12,7 +12,7 @@
         <input name="objectsIds" type="checkbox" value="@Model.Id" />
     </div>
     <div class="file-card-name" style="width: 100%">
-        <a href="@Url.Action("Index", "Files", new {id = Model.Id})">@name</a>
+        <a href="@Url.Action("Index", "Files", new {id = Model.Id, isSource = Model.ObjectTypeId == ApplicationConst.SOURCEFOLDER_TYPEID || ViewBag.IsSource})">@name</a>
     </div>
     <div class="file-card-info">
         <span title="Количество элементов в папке">@Model.ChildrenCount</span>
