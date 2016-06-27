@@ -85,7 +85,7 @@ namespace Ascon.Pilot.WebClient.Controllers
             DMetadata dMetadata = serverApi.GetMetadata(dbInfo.MetadataVersion);
             HttpContext.Session.SetSessionValues(SessionKeys.MetaTypes, dMetadata.Types.ToDictionary(x => x.Id, y => y));
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Files");
         }
         
         private async Task SignInAsync(DDatabaseInfo dbInfo, string dbName, string protectedPassword, Guid clientId, bool isPersistent)

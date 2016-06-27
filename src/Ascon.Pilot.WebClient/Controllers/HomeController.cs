@@ -16,7 +16,7 @@ namespace Ascon.Pilot.WebClient.Controllers
         /// <returns>представление Index</returns>
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Files");
         }
         /// <summary>
         /// Представление Types

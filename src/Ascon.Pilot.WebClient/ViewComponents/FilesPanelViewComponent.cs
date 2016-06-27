@@ -112,6 +112,19 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                         LastModifiedDate = file.Body.Modified
                     });
                 }
+                else
+                {
+                    model.Add(new FileViewModel
+                    {
+                        IsFolder = true,
+                        Id = dObject.Id,
+                        ObjectName = dObject.GetTitle(mType),
+                        ChildrenCount = dObject.Children.Count(x => !types[x.TypeId].IsProjectFileOrFolder()),
+                        ObjectId = dObject.Id,
+                        ObjectTypeId = mType.Id,
+                        ObjectTypeName = mType.Name
+                    });
+                }
             }
         }
 

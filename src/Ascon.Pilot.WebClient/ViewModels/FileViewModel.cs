@@ -48,7 +48,7 @@ namespace Ascon.Pilot.WebClient.ViewModels
             get
             {
                 var extension = Extension;
-                return ApplicationConst.ShowIconAsThumbnail && (extension == ".xps" || extension == ".pdf");
+                return extension == ".xps" || extension == ".pdf";
             }
         }
 

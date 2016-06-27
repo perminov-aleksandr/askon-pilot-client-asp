@@ -14,7 +14,7 @@
                 <span class="icon-bar"></span>
             </button>
             <div class="navbar-brand">
-                <a id="menuToggler" role="button" title="Меню" onclick="toggleMenu(this)"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+                @*<a id="menuToggler" role="button" title="Меню" onclick="toggleMenu(this)"><span class="glyphicon glyphicon-menu-hamburger"></span></a>*@
                 <a asp-controller="Home" asp-action="Index" >
                     <img src="@Url.Content("~/images/ascon_logo.png")" height="25" alt="АСКОН"/>
                 </a>
@@ -49,7 +49,7 @@
         <div>
             <div class="navbar-header pull-right">
                 <div class="navbar-brand">
-                    <a id="downloadButton" role="button" title="Скачать" style="display: none;">
+                    <a id="downloadButton" href="#" role="button" title="Скачать" style="display: none;" target="_blank">
                         <span class="glyphicon glyphicon-download-alt"></span>&nbsp;
                         <span class="hidden-xs">Скачать</span>
                     </a>
@@ -57,19 +57,7 @@
                         <span class="glyphicon glyphicon-folder-close"></span>&nbsp;
                         <span class="hidden-xs">Скачать&nbsp;архивом</span>
                     </a>
-                    <a id="renameButton" role="button" data-toggle="modal" href="#renameModal" title="Переименовать" style="display: none;">
-                        <span class="glyphicon glyphicon-pencil"></span>&nbsp;
-                        <span class="hidden-xs">Переименовать</span>
-                    </a>
-                    <a id="removeButton" role="button" data-toggle="modal" href="#removeModal" title="Удалить" style="display: none;">
-                        <span class="glyphicon glyphicon-remove"></span>&nbsp;
-                        <span class="hidden-xs">Удалить</span>
-                    </a>
-                    <a id="uploadButton" role="button" data-toggle="modal" href="#uploadModal" title="Загрузить">
-                        <span class="glyphicon glyphicon-cloud-upload"></span>&nbsp;
-                        <span class="hidden-xs">Загрузить</span>
-                    </a>
-                    <a id="filesPanelToggler" @*onclick="toggleFilesPanelMode(this)"*@
+                    <a id="filesPanelToggler"
                        href="@Url.Action("ChangeFilesPanelType", "Files", new {type = currentFilesPanelType == FilesPanelType.List ? FilesPanelType.Grid : FilesPanelType.List, returnUrl = Context.Request.GetDisplayUrl()})"
                        title="Режим отображения: @(currentFilesPanelType == FilesPanelType.List ? "список" : "плитки")">
                         <span class="glyphicon @(currentFilesPanelType == FilesPanelType.List ? "glyphicon-th-list" : "glyphicon-th")"></span>
@@ -80,14 +68,7 @@
     </div>
 }
 
-<script type="text/javascript">
-    /*function toggleFilesPanelMode(el) {
-        var button = $(el);
-        var span = button.children("span");
-        span.toggleClass("glyphicon-th glyphicon-th-list");
-        button.attr("title", "Режим отображения: " + (span.hasClass("glyphicon-th-list") ? "список" : "плитки"))        
-    }*/
-    
+<script type="text/javascript">    
     function toggleMenu(el) {        
         var menu = $("#menu");
         if (menu.hasClass("menu-slide-in")) {

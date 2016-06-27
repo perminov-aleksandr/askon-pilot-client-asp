@@ -5,7 +5,8 @@
     var name = Model.Name;
     var fileDownloadRouteValues = new { id = Model.Id, size = Model.Size, name = name.EndsWith(Model.Extension) ? name : $"{name}{Model.Extension}" };
     string href;
-    if (Model.IsThumbnailAvailable)
+    var isThumbnail = Model.IsThumbnailAvailable && ApplicationConst.ShowIconAsThumbnail;
+    if (isThumbnail)
     {
         href = Url.Action("Thumbnail", "Files", new { id = Model.Id, size = Model.Size, extension = Model.Extension, typeId = Model.ObjectTypeId });
     }
@@ -15,7 +16,7 @@
     }
 }
 
-<div class="file-card @(Model.IsThumbnailAvailable ? "with-thumbnail" : "")" onclick="processCardClick(this)" 
+<div class="file-card @(isThumbnail ? "with-thumbnail" : "")" onclick="processCardClick(this)" 
      data-id="@Model.Id" data-name="@Html.Raw(name)" data-size="@Model.Size" data-ext="@Model.Extension" data-typeid="@Model.ObjectTypeId">
     <div class="file-card-icon">
         <div>

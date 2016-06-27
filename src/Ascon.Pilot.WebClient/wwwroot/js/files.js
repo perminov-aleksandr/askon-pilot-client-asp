@@ -8,12 +8,7 @@ $(document).ready(function () {
 
     treeControl = createTreeView(treeData);
     setObjectIdsCheckCallback();
-    //var selected = treeControl.getSelected();
-    //var selectedNode = { id: "", text: "Начало" };
-    //if (selected.length !== 0) {
-    //    selectedNode = selected[0];
-    //}
-    //$("#breadcrumbs").html(createHtmlForBreadcrumbs(selectedNode));
+    
     $("#sidePanel").on("hidden.bs.collapse", function () {
         $("#filesPanelContainer").removeClass("col-md-8").addClass("col-md-12");
     });
@@ -45,24 +40,26 @@ $(document).ready(function () {
 function processCardClick(el) {
     $(".file-card").removeClass("active");
     var card = $(el);
-    card.addClass("active");
-    $("#renameButton").show();
-    $("#removeButton").show();
+    card.addClass("active");    
 
     var id = card.data("id");
     var name = card.data("name");
     var size = card.data("size");
     var ext = card.data("ext");
     if (size === undefined)
+    {
+        $("#downloadButton").hide();
         return;
+    }       
 
     var query = jQuery.param({
         id: id,
         name: name.endsWith(ext) ? name : name + ext,
         size: size
     });
-    $("#downloadButton").prop("href", downloadUrl + "?" + query);
-    $("#downloadButton").show();
+    var downloadButton = $("#downloadButton");
+    downloadButton.prop("href", downloadUrl + "?" + query);
+    downloadButton.show();    
 }
 
 function processFileCardClick(el) {
