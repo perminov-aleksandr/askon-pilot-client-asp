@@ -58,7 +58,7 @@ namespace Ascon.Pilot.WebClient.ViewComponents
                             ObjectId = folder.Id,
                             ObjectName = "Исходные файлы",
                             ObjectTypeName = "Папка с исходными файлами",
-                            ObjectTypeId = ApplicationConst.SOURCEFOLDER_TYPEID,
+                            ObjectTypeId = ApplicationConst.SourcefolderTypeid,
                             LastModifiedDate = folder.Created,
                             ChildrenCount = folder.Children.Count(x => types[x.TypeId].IsProjectFileOrFolder())
                         });

@@ -14,13 +14,10 @@ namespace Ascon.Pilot.WebClient
             var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");
             var config = builder.Build();
             PilotServerUrl = config["PilotServer:Url"];
-            ShowIconAsThumbnail = bool.Parse(config["PilotServer:ShowIconAsThumbnail"]);
         }
 
         public static readonly string PilotServerUrl;
         public static readonly string PilotMiddlewareInstanceName = "AskonPilotMiddlewareInstance";
-
-        public static readonly bool ShowIconAsThumbnail;
 
         public static readonly string HttpSchemeName = "http";
         public static readonly string SchemeDelimiter = "://";
@@ -37,7 +34,7 @@ namespace Ascon.Pilot.WebClient
         //implicitly default files panel type is LIST cause its index in enum is 0
         public const FilesPanelType DefaultFilesPanelType = 0;
 
-        public const int SOURCEFOLDER_TYPEID = -24;
+        public const int SourcefolderTypeid = -24;
     }
     
     public static class Roles

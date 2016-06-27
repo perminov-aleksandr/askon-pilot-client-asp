@@ -7,11 +7,6 @@ body {
     padding-top: 100px;
 }
 
-input[type="checkbox"]{
-  width: 20px;
-  height: 20px;
-}
-
 .breadcrumb li {
     max-width: 300px;
     white-space: nowrap;
@@ -386,6 +381,8 @@ a#menuToggler:hover {
 }
 
 .file-card-icon input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
     margin: 0;
     padding: 0;
     position: absolute;

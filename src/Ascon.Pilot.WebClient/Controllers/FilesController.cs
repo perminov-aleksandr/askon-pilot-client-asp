@@ -206,8 +206,6 @@ namespace Ascon.Pilot.WebClient.Controllers
 
         public IActionResult Thumbnail(Guid id, int size, string extension, int typeId)
         {
-            if (ApplicationConst.ShowIconAsThumbnail)
-                return Image(id, size, extension);
             return RedirectToAction("GetTypeIcon", "Home", new { id = typeId });
         }
 

@@ -5,7 +5,7 @@
     var name = Model.Name;
     var fileDownloadRouteValues = new { id = Model.Id, size = Model.Size, name = name.EndsWith(Model.Extension) ? name : $"{name}{Model.Extension}" };
     string href;
-    var isThumbnail = Model.IsThumbnailAvailable && ApplicationConst.ShowIconAsThumbnail;
+    var isThumbnail = false;
     if (isThumbnail)
     {
         href = Url.Action("Thumbnail", "Files", new { id = Model.Id, size = Model.Size, extension = Model.Extension, typeId = Model.ObjectTypeId });
